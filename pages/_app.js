@@ -1,7 +1,20 @@
 import '../styles/globals.css'
+import App from 'next/app'
+import { Provider } from 'react-redux'
+import { createWrapper } from 'next-redux-wrapper'
+import store from '../store/store'
+import '../scss/main.scss'
+import { RouteGuard } from '../components/RouteGuard'
 
 function MyApp({ Component, pageProps }) {
-  return <Component {...pageProps} />
+  return <Provider store={store}>
+    <RouteGuard>
+      <Component {...pageProps} />
+    </RouteGuard >
+  </Provider>
 }
 
-export default MyApp
+const makestore = () => store
+const wrapper = createWrapper(makestore)
+
+export default wrapper.withRedux(MyApp)
