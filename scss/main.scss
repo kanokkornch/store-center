@@ -34,6 +34,7 @@ $secound-app-color: #3A82FF;
     // min-width: 1220px;
     background-color: #eef0f4;
     color: #5a5a5a;
+
     .content {
         height: 100%;
         padding: 12px 0;
@@ -75,4 +76,13 @@ $secound-app-color: #3A82FF;
 
 .MuiPaper-elevation1 {
     box-shadow: 0 2px 18px 0 rgba(0, 0, 0, 0.04) !important;
+}
+
+@media screen and (min-width: 960px) {
+    .main-layout-content .content {
+        padding-left: 250px;
+    }
+    .fixd-menu {
+        display: flex !important;
+    }
 }

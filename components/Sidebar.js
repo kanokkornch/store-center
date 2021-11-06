@@ -19,7 +19,7 @@ import {
     Drawer, Button, IconButton,
     SwipeableDrawer, List, ListItem, ListItemIcon,
     ListItemText, Collapse, Menu, MenuItem,
-    Divider
+    Divider, Hidden
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 
@@ -31,7 +31,8 @@ const useStyles = makeStyles({
     drawerHeader: {
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'flex-end'
+        // justifyContent: 'flex-end',
+        height: '80px'
     },
     fullList: {
         width: 'auto',
@@ -77,9 +78,9 @@ function Sidebar() {
         >
             <div className={classes.drawerHeader}>
                 Logo จ้าา
-                <IconButton onClick={() => setSidebar(false)}>
+                {/* <IconButton onClick={() => setSidebar(false)}>
                     <CloseIcon />
-                </IconButton>
+                </IconButton> */}
             </div>
             <List component="nav">
                 {SidebarData.map((menu, i) => (
@@ -135,6 +136,14 @@ function Sidebar() {
                     <SettingsIcon />
                 </IconButton>
             </div>
+            <Drawer
+                className='d-none fixd-menu'
+                variant='permanent'
+                anchor='left'
+                open={true}
+            >
+                {list}
+            </Drawer>
             <SwipeableDrawer
                 anchor='left'
                 open={sidebar}
@@ -152,7 +161,7 @@ function Sidebar() {
                 PaperProps={{
                     style: {
                         // maxHeight: 48 * 4.5,
-                        width: '15rem',
+                        width: '13rem',
                     },
                 }}
             >
