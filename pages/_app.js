@@ -1,17 +1,54 @@
 import '../styles/globals.css'
 import App from 'next/app'
+import Head from "next/head";
+import { useEffect, Fragment } from 'react'
 import { Provider } from 'react-redux'
 import { createWrapper } from 'next-redux-wrapper'
 import store from '../store/store'
 import '../scss/main.scss'
-import { RouteGuard } from '../components/RouteGuard'
+import { ThemeProvider } from '@material-ui/core/styles';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import theme from '../src/theme';
+import MainLayout from '../components/MainLayout'
+import { useRouter } from "next/router"
+// import { RouteGuard } from '../components/RouteGuard'
 
 function MyApp({ Component, pageProps }) {
-  return <Provider store={store}>
-    <RouteGuard>
-      <Component {...pageProps} />
-    </RouteGuard >
-  </Provider>
+  const router = useRouter();
+  useEffect(() => {
+    // Remove the server-side injected CSS.
+    const jssStyles = document.querySelector('#jss-server-side');
+    if (jssStyles) {
+      jssStyles.parentElement.removeChild(jssStyles);
+    }
+  }, []);
+  return <>
+    <Head>
+      <meta charset="utf-8" />
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, shrink-to-fit=no"
+      />
+      {/* Bootstrap CSS */}
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+      <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@200;400;500&display=swap" rel="stylesheet" />
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    </Head>
+
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        {/* <RouteGuard> */}
+        <CssBaseline />
+        <MainLayout>
+          <Component {...pageProps} />
+
+        </MainLayout>
+        {/* </RouteGuard > */}
+      </ThemeProvider>
+    </Provider>
+  </>
 }
 
 const makestore = () => store

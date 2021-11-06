@@ -1,9 +1,8 @@
-import React from 'react'
-
+import { Fragment } from 'react'
 function store() {
     return (
         <div>
-            Store Page
+            Store
         </div>
     )
 }
