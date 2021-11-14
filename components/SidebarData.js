@@ -1,6 +1,13 @@
 import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasket';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
+import AssessmentIcon from '@material-ui/icons/Assessment'
 export const SidebarData = [
+    {
+        id: 0,
+        title: 'Dashbord',
+        prefix: '/dashbord',
+        icon: <AssessmentIcon />,
+    },
     {
         id: 1,
         title: 'สินค้า',

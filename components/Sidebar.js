@@ -2,17 +2,10 @@ import React, { useState, Fragment } from 'react'
 import styled from 'styled-components'
 import Link from 'next/link'
 import clsx from 'clsx'
-// import MenuIcon, HighlightOffIcon from '@material-ui/icons';
 import MenuIcon from '@material-ui/icons/Menu';
-import HighlightOffIcon from '@material-ui/icons/HighlightOff';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
-import StarBorder from '@material-ui/icons/StarBorder';
 import SettingsIcon from '@material-ui/icons/Settings';
-import CloseIcon from '@material-ui/icons/Close';
 import { SidebarData } from './SidebarData'
 import { useRouter } from "next/router";
 import {
@@ -24,25 +17,12 @@ import {
 import { makeStyles } from '@material-ui/core/styles'
 
 const useStyles = makeStyles({
-    list: {
-        minWidth: 'fit-content',
-        width: '250px'
-    },
-    drawerHeader: {
-        display: 'flex',
-        alignItems: 'center',
-        // justifyContent: 'flex-end',
-        height: '80px'
-    },
-    fullList: {
-        width: 'auto',
-    },
     nested: {
         paddingLeft: '2.5rem',
     },
     menuActive: {
-        color: '#201ADB',
-        background: '#E2EFFF',
+        color: '#fff',
+        background: '#3A82FF',
     },
     menu: {
         color: '#111'
@@ -70,13 +50,13 @@ function Sidebar() {
         setIndex(i)
         setIndexOpen(open)
     }
-    console.log(`router.pathname`, router.pathname)
+    // console.log(`router.pathname`, router.pathname)
     const list = (
         <div
-            className={clsx(classes.list)}
+            className='sidebar-list'
             role="presentation"
         >
-            <div className={classes.drawerHeader}>
+            <div className='sidebar-haeder'>
                 Logo จ้าา
                 {/* <IconButton onClick={() => setSidebar(false)}>
                     <CloseIcon />
@@ -85,25 +65,36 @@ function Sidebar() {
             <List component="nav">
                 {SidebarData.map((menu, i) => (
                     <div key={menu.id}>
-                        <ListItem className={`main-menu ${index === i && indexOpen ? 'active' : ''}`} onClick={() => setOpenCollapseMeu(i, index !== i ? true : !indexOpen)}>
-                            <ListItemIcon>{menu.icon}</ListItemIcon>
-                            <ListItemText primary={menu.title} />
-                            {index === i && indexOpen ? <ExpandLess /> : <ExpandMore />}
-                        </ListItem>
-                        {menu.subNav && menu.subNav.length && menu.subNav.map(sub => (
-                            <Collapse key={sub.title} in={index === i && indexOpen} timeout="auto" unmountOnExit>
-                                <List disablePadding>
-                                    <Link href={`${menu.prefix}${sub.path}`}>
-                                        <ListItem className='sub-menu' button className={clsx(classes.nested, {
-                                            [classes.menuActive]: `${menu.prefix}${sub.path}` === router.pathname,
-                                            [classes.menu]: `${menu.prefix}${sub.path}` !== router.pathname,
-                                        })}>
-                                            <ListItemText primary={sub.title} />
-                                        </ListItem>
-                                    </Link>
-                                </List>
-                            </Collapse>
-                        ))}
+                        {menu.subNav && menu.subNav.length && <>
+                            <ListItem className={`main-menu ${index === i && indexOpen ? 'active' : ''}`} onClick={() => setOpenCollapseMeu(i, index !== i ? true : !indexOpen)}>
+                                <ListItemIcon>{menu.icon}</ListItemIcon>
+                                <ListItemText primary={menu.title} />
+                                {index === i && indexOpen ? <ExpandLess /> : <ExpandMore />}
+                            </ListItem>
+                            {menu.subNav.map(sub => (
+                                <Collapse key={sub.title} in={index === i && indexOpen} timeout="auto" unmountOnExit>
+                                    <List disablePadding>
+                                        <Link href={`${menu.prefix}${sub.path}`}>
+                                            <ListItem className='sub-menu' button className={clsx(classes.nested, {
+                                                [classes.menuActive]: `${menu.prefix}${sub.path}` === router.pathname,
+                                                [classes.menu]: `${menu.prefix}${sub.path}` !== router.pathname,
+                                            })}>
+                                                <ListItemText primary={sub.title} />
+                                            </ListItem>
+                                        </Link>
+                                    </List>
+                                </Collapse>
+                            ))}
+                        </>}
+                        {!menu.subNav && <Link href={`${menu.prefix}`}>
+                            <ListItem button
+                                // onClick={() => setOpenCollapseMeu(i, index !== i ? true : !indexOpen)}
+                                className={`one-menu ${menu.prefix === router.pathname ? 'active' : ''}`}>
+                                <ListItemIcon>{menu.icon}</ListItemIcon>
+                                <ListItemText primary={menu.title} />
+                            </ListItem>
+                        </Link>}
+
                     </div>
                 ))}
             </List>

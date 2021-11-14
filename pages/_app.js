@@ -14,7 +14,8 @@ import { useRouter } from "next/router"
 // import { RouteGuard } from '../components/RouteGuard'
 
 function MyApp({ Component, pageProps }) {
-  const router = useRouter();
+  const router = useRouter()
+  console.log(`pathname`, router.pathname)
   useEffect(() => {
     // Remove the server-side injected CSS.
     const jssStyles = document.querySelector('#jss-server-side');
@@ -41,10 +42,13 @@ function MyApp({ Component, pageProps }) {
       <ThemeProvider theme={theme}>
         {/* <RouteGuard> */}
         <CssBaseline />
-        <MainLayout>
-          <Component {...pageProps} />
-
-        </MainLayout>
+        {
+          router.pathname !== '/login' && router.pathname !== '/register' ?
+            <MainLayout>
+              <Component {...pageProps} />
+            </MainLayout> :
+            <Component {...pageProps} />
+        }
         {/* </RouteGuard > */}
       </ThemeProvider>
     </Provider>
