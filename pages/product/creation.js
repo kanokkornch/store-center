@@ -1,9 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Card, CardContent, CardAction } from '@material-ui/core'
-import { Input } from 'antd'
 import { useForm, Controller } from "react-hook-form";
-import { yupResolver } from '@hookform/resolvers/yup/dist/yup'
-import * as yup from "yup";
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import DeleteIcon from '@material-ui/icons/Delete'
 
@@ -11,15 +8,6 @@ function creation(props) {
     const fileInputRef = useRef(null)
     const [images, setImages] = useState([])
     const [imagesURL, setImagesURL] = useState([])
-    const schema = yup.object().shape({
-        product_name: yup.string()
-            .required('First Name is required'),
-        lastName: yup.string()
-            .required('Last name is required')
-    })
-    // const { register, control, handleSubmit, formState: { errors } } = useForm({
-    //     resolver: yupResolver(schema)
-    // })
     const { register, control, handleSubmit, formState: { errors } } = useForm()
     const onSubmit = (data) => {
         console.log(data);

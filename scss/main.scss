@@ -168,6 +168,7 @@ $secound-app-color: #3A82FF;
 
     .login-form {
         min-width: 60%;
+
         &.MuiPaper-elevation1 {
             box-shadow: none !important;
         }
@@ -253,12 +254,21 @@ h3 {
 
 }
 
+.MuiFormControl-root {
+    margin-bottom: 5px !important;
+    margin-top: 5px !important;
+}
+#error-text {
+    color: #f44336;
+}
+
 @media screen and (max-width: 960px) {
     .content-container {
         padding-left: 2rem !important;
         padding-right: 2rem !important;
     }
 }
+
 @media screen and (min-width: 960px) {
     .main-layout-content .content {
         padding-left: 250px;
@@ -267,10 +277,12 @@ h3 {
     .fixd-menu {
         display: flex !important;
     }
+
     .content-container {
         padding-left: 10rem !important;
         padding-right: 10rem !important;
     }
+
     // .login-form {
     //     width: 55% !important;
     // }

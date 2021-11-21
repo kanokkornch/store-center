@@ -8,5 +8,8 @@ module.exports = {
         permanent: true,
       }
     ]
+  },
+  env: {
+    REACT_APP_SELLER_API: process.env.SELLER_API
   }
 }
