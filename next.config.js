@@ -10,6 +10,6 @@ module.exports = {
     ]
   },
   env: {
-    REACT_APP_SELLER_API: process.env.SELLER_API
+    SELLER_API: process.env.SELLER_API
   }
 }

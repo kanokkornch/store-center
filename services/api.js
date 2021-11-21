@@ -1,4 +1,4 @@
-const BASE_API_URL = process.env.REACT_APP_SELLER_API
+const BASE_API_URL = process.env.SELLER_API
 import axios from 'axios'
 
 // ---------------------- Authorization -------------------- //
