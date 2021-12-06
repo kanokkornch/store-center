@@ -5,8 +5,9 @@ import { Login, Logout } from '../store/actions/authAction'
 import {
     Card, CardContent, CardAction, TextField, FormControl,
     InputLabel, Input, InputAdornment, IconButton, Button,
-    FormHelperText
+    FormHelperText, FormControlLabel, FormGroup
 } from '@material-ui/core'
+import Checkbox from '@material-ui/core/Checkbox';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff'
 import Image from 'next/image'
@@ -19,27 +20,31 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 const MySwal = withReactContent(Swal)
 function register() {
-    const { reset, control, handleSubmit, formState: { errors }, setError } = useForm({
+    const { reset, control, handleSubmit, formState: { errors }, setError, clearErrors } = useForm({
         defaultValues: {
             name: '',
             username: '',
             password: '',
             confirm_password: '',
             email: '',
-            phone: ''
+            phone: '',
+            accept_term_service: false
         }
     })
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+    const [acceptTermService, setAcceptTermService] = useState(false)
     const handleMouseDownPassword = (event) => {
         event.preventDefault();
     }
     const onSubmit = (data) => {
         if (data.password !== data.confirm_password) {
             setError('confirm_password', { type: 'manual', message: 'ยืนยันรหัสผ่านไม่ตรงกับรหัสผ่าน' })
+        } else if (!acceptTermService) {
+            setError('accept_term_service', { type: 'manual', message: 'กรุณายอมรับเงื่อนไขก่อนลงทะเบียน' })
         } else {
             APIshopRegister(data).then(res => {
-                if (res.status) {
+                if (res.success) {
                     reset()
                     return MySwal.fire({
                         title: res.message,
@@ -65,6 +70,13 @@ function register() {
             // console.log(`REGISTER DATA`, data)
         }
     }
+    const handleAcceptTermService = (e) => {
+        if (e.target.checked) {
+            clearErrors('accept_term_service')
+        }
+        setAcceptTermService(e.target.checked)
+    }
+
     return (
         <div className="blank-layout">
             <div className="row m-0 signup-section">
@@ -210,6 +222,18 @@ function register() {
                             rules={{ required: true, pattern: /[0-9]{10}/, maxLength: 10 }}
                         />
                         {errors.phone && <FormHelperText id="error-text">หมายเลขโทรศัพท์ไม่ถูกต้อง</FormHelperText>}
+                        <div class="form-check mt-3">
+                            <input
+                                class="form-check-input"
+                                name='acceptTermService'
+                                type="checkbox"
+                                onChange={handleAcceptTermService}
+                                id="acceptTermService" />
+                            <label class="form-check-label" for="acceptTermService">
+                                ยอมรับเงื่อนไขและข้อตกลง
+                            </label>
+                        </div>
+                        {errors.accept_term_service && <FormHelperText id="error-text">{errors.accept_term_service.message}</FormHelperText>}
                         <Button className="w-100 my-2" type='submit' variant="contained" color="primary">
                             ลงทะเบียน
                         </Button>

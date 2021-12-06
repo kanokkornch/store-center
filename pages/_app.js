@@ -11,18 +11,29 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import theme from '../src/theme';
 import MainLayout from '../components/MainLayout'
 import { useRouter } from "next/router"
+import { isUserLogin } from "../services/api"
 // import { RouteGuard } from '../components/RouteGuard'
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter()
   console.log(`pathname`, router.pathname)
+
   useEffect(() => {
     // Remove the server-side injected CSS.
     const jssStyles = document.querySelector('#jss-server-side');
     if (jssStyles) {
       jssStyles.parentElement.removeChild(jssStyles);
     }
-  }, []);
+  }, [])
+
+  useEffect(() => {
+    if (router.pathname !== '/login' && router.pathname !== '/register') {
+      console.log('Check login')
+      if (!isUserLogin()) {
+        window.location.assign('/login')
+      }
+    }
+  })
   return <>
     <Head>
       <meta charSet="utf-8" />

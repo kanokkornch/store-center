@@ -11,3 +11,53 @@ export const APIshopRegister = async (data) => {
         return err
     }
 }
+export const APIshopLogin = async (data) => {
+    localStorage.clear()
+    try {
+        const res = await axios.post(`${BASE_API_URL}/login`, data)
+        if (res.data.success) {
+            localStorage.setItem('_data', JSON.stringify(res.data.data))
+            window.location.assign('/dashbord')
+        }
+    } catch (err) {
+        const res = {
+            status: false,
+            message: 'username หรือ password ไม่ถูกต้อง',
+        }
+        return res
+    }
+}
+export const isUserLogin = () => {
+    const getLocalState = localStorage.getItem("_data")
+    if (getLocalState !== null) {
+        return true
+    } else {
+        return false
+    }
+}
+// ---------------------- End Authorization -------------------- //
+
+// ---------------------- Products -------------------- //
+export const geProductCategoriesWithSubCategories = async () => {
+    const storage = JSON.parse(localStorage.getItem('_data'))
+    axios.defaults.headers.common['Authorization'] = `Bearer ${storage.api_token}`
+    try {
+        const res = await axios.get(`${BASE_API_URL}/categories`)
+        return await res.data
+    } catch (err) {
+        console.log(`err`, err)
+        return err
+    }
+}
+export const getProductUnits = async () => {
+    const storage = JSON.parse(localStorage.getItem('_data'))
+    axios.defaults.headers.common['Authorization'] = `Bearer ${storage.api_token}`
+    try {
+        const res = await axios.get(`${BASE_API_URL}/product/units`)
+        return await res.data
+    } catch (err) {
+        console.log(`err`, err)
+        return err
+    }
+}
+// ---------------------- End Products -------------------- //
