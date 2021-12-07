@@ -32,10 +32,15 @@ $danger-app-color: #D93232;
         font-size: #{$i}px !important;
     }
 }
+
 @for $i from -1 through 10000 {
     .z-index-#{$i} {
         z-index: #{$i};
     }
+}
+
+.MuiCard-root {
+    overflow: visible !important;
 }
 
 .main-overlay {
@@ -105,6 +110,28 @@ svg.delete-icon {
         height: 100%;
         padding: 12px 0;
         margin: 0 24px;
+    }
+}
+
+.select__control.css-1s2u09g-control {
+    min-height: 40px;
+}
+
+.MuiToolbar-regular {
+    min-height: 0px !important;
+}
+
+.MuiTableCell-paddingCheckbox {
+    width: 48px;
+    padding: 0 0 0 15px !important;
+}
+
+input[type='checkbox'] {
+
+    &.indeterminate {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10h8'/%3e%3c/svg%3e");
     }
 }
 
