@@ -113,7 +113,7 @@ function Sidebar() {
 
     return (
         <>
-            <div className="header-nav d-flex px-1 align-items-center justify-content-between">
+            <div className="header-nav z-index-10 d-flex px-1 align-items-center justify-content-between">
                 <IconButton
                     onClick={showSidebar}
                     aria-label="menu">

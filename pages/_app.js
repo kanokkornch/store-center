@@ -10,10 +10,13 @@ import { ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import theme from '../src/theme';
 import MainLayout from '../components/MainLayout'
-import { useRouter } from "next/router"
+import Router, { useRouter } from "next/router"
 import { isUserLogin } from "../services/api"
-// import { RouteGuard } from '../components/RouteGuard'
-
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
+Router.events.on('routeChangeStart', () => NProgress.start());
+Router.events.on('routeChangeComplete', () => NProgress.done());
+Router.events.on('routeChangeError', () => NProgress.done());
 function MyApp({ Component, pageProps }) {
   const router = useRouter()
   console.log(`pathname`, router.pathname)
@@ -49,9 +52,15 @@ function MyApp({ Component, pageProps }) {
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     </Head>
 
+    {/* <div className="main-overlay">
+      <div className="d-flex justify-content-center">
+        <div className="spinner-grow text-primary" role="status" style={{ width: '3rem', height: '3rem', zIndex: '20' }}>
+        </div>
+      </div>
+    </div> */}
+
     <Provider store={store}>
       <ThemeProvider theme={theme}>
-        {/* <RouteGuard> */}
         <CssBaseline />
         {
           router.pathname !== '/login' && router.pathname !== '/register' ?
@@ -60,7 +69,6 @@ function MyApp({ Component, pageProps }) {
             </MainLayout> :
             <Component {...pageProps} />
         }
-        {/* </RouteGuard > */}
       </ThemeProvider>
     </Provider>
   </>

@@ -36,6 +36,19 @@ export const isUserLogin = () => {
     }
 }
 // ---------------------- End Authorization -------------------- //
+// ---------------------- Utills -------------------- //
+export const uploadImage = async (data) => {
+    const storage = JSON.parse(localStorage.getItem('_data'))
+    axios.defaults.headers.common['Authorization'] = `Bearer ${storage.api_token}`
+    try {
+        const res = await axios.post(`${BASE_API_URL}/media/upload`, data)
+        return await res.data
+    } catch (err) {
+        console.log(`err`, err)
+        return err
+    }
+}
+// ---------------------- End Utills -------------------- //
 
 // ---------------------- Products -------------------- //
 export const geProductCategoriesWithSubCategories = async () => {
@@ -54,6 +67,17 @@ export const getProductUnits = async () => {
     axios.defaults.headers.common['Authorization'] = `Bearer ${storage.api_token}`
     try {
         const res = await axios.get(`${BASE_API_URL}/product/units`)
+        return await res.data
+    } catch (err) {
+        console.log(`err`, err)
+        return err
+    }
+}
+export const saveProduct = async (data) => {
+    const storage = JSON.parse(localStorage.getItem('_data'))
+    axios.defaults.headers.common['Authorization'] = `Bearer ${storage.api_token}`
+    try {
+        const res = await axios.post(`${BASE_API_URL}/products`, data)
         return await res.data
     } catch (err) {
         console.log(`err`, err)

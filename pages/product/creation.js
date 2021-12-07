@@ -5,10 +5,13 @@ import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import DeleteIcon from '@material-ui/icons/Delete'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import AddIcon from '@material-ui/icons/Add'
-// import { geProductCategoriesWithSubCategories } from '../../services/api'
+import { uploadImage, saveProduct } from '../../services/api'
 import { geProductCategories, getUnits } from '../../store/actions/productAction'
 import { useDispatch, useSelector } from 'react-redux'
 import Select from "react-select"
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+const MySwal = withReactContent(Swal)
 
 function NestedOption({ nestIndex, control, register }) {
     const { fields, remove, append } = useFieldArray({
@@ -24,8 +27,15 @@ function NestedOption({ nestIndex, control, register }) {
                         className={`form-control`}
                         id={`options[${nestIndex}].option[${i}].value`}
                         name={`options[${nestIndex}].option[${i}].value`}
-                        {...register(`options[${nestIndex}].option[${i}].value`, { required: false })}
+                        {...register(`options[${nestIndex}].option[${i}].value`, { required: true })}
                         placeholder="" />
+                    <input
+                        type="number"
+                        className={`form-control`}
+                        id={`options[${nestIndex}].option[${i}].qty`}
+                        name={`options[${nestIndex}].option[${i}].qty`}
+                        {...register(`options[${nestIndex}].option[${i}].qty`, { required: true })}
+                        placeholder="จำนวน" />
                     <input
                         type="number"
                         className={`form-control`}
@@ -51,7 +61,7 @@ function NestedOption({ nestIndex, control, register }) {
                 </div>
             ))}
             <div>
-                <Button size="small" variant="outlined" color="primary" onClick={() => append({ value: '' })}>
+                <Button size="small" variant="outlined" color="primary" onClick={() => append({ value: '', type: 1, qty: 1 })}>
                     เพิ่ม Option
                 </Button>
             </div>
@@ -67,15 +77,17 @@ function creation(props) {
     const thumbnailInputRef = useRef(null)
     const [images, setImages] = useState([])
     const [imagesURL, setImagesURL] = useState([])
+    const [imagesFile, setImagesFile] = useState([])
     const [productOptions, setProductOptions] = useState([])
     const [categoryFocus, setCategoryFocus] = useState(false)
     const [selectedCategory, setSelectedCategory] = useState(1)
     const [thumbnail, setThumbnail] = useState(null)
     const [thumbnailURL, setThumbnailURL] = useState(null)
+    const [thumbnailFile, setThumbnailFile] = useState(null)
 
     const [categoryID, setcategoryID] = useState(null)
     const [subCategoryId, setsubCategoryId] = useState(null)
-    const { register, control, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm({
+    const { register, control, handleSubmit, formState: { errors }, setValue, getValues, reset } = useForm({
         defaultValues: {
             unit: {
                 value: 1,
@@ -84,6 +96,7 @@ function creation(props) {
             qty: 1,
             cost_price: 0,
             sell_price: 0,
+            discount_price: 0,
             options: []
         }
     })
@@ -93,18 +106,75 @@ function creation(props) {
             name: "options"
         }
     )
+    const clearform = () => {
+        reset()
+        setImages([])
+        setThumbnail(null)
+    }
+
     const onSubmit = (data) => {
-        console.log('FORM DATA--->', data)
-        // cost_price = parseFloat(data.cost_price)
-        // discount_price = parseFloat(data.discount_price)
-        // qty = parseFloat(data.qty)
-        // sell_price = parseFloat(data.sell_price)
-        // unit = data.unit.name
-        // category_id= categoryID
-        // sub_category_id= subCategoryId
-        // status=1
-        // product_options = getValues().options
-        // product_galleries=
+        const product_galleries = []
+        if (imagesFile.length > 0) {
+            imagesFile.map(img => {
+                uploadImage({ type: 'cats', image_data: img }).then(res => {
+                    if (res.success) {
+                        product_galleries.push(res.data)
+                    } else {
+                        alert('UPLOAD ไม่สำเร็จ')
+                    }
+                }).catch(err => {
+                    console.log(`UPLOAD IMAGE FAILED:`, err)
+                    // alert('UPLOAD IMAGE FAILED: ', err)
+                })
+            })
+        } else {
+            alert('กรุณา Upload รูปของสินค้า อย่างน้อย 1 รูปภาพ')
+            return
+        }
+        if (thumbnailFile) {
+            uploadImage({ type: 'cats', image_data: thumbnailFile }).then(res => {
+                if (res.success) {
+                    data.thumbnail = res.data.image_url
+                    data.qty = parseFloat(data.qty)
+                    data.unit = data.unit.label
+                    data.cost_price = parseFloat(data.cost_price)
+                    data.sell_price = parseFloat(data.sell_price)
+                    data.discount_price = parseFloat(data.discount_price || 0)
+                    data.category_id = categoryID
+                    data.sub_category_id = subCategoryId
+                    data.status = 1
+                    data.product_galleries = product_galleries
+                    data.product_options = data.options
+
+                    console.log('FORM DATA--->', JSON.stringify(data))
+                    saveProduct(data).then(res => {
+                        if (res.success) {
+                            clearform()
+                            return MySwal.fire({
+                                title: res.message,
+                                text: 'บันทึกสินค้าสำเร็จ',
+                                icon: 'success'
+                            })
+                        } else {
+                            return MySwal.fire({
+                                title: 'ข้อความจากระบบ',
+                                text: res.message,
+                                icon: 'error'
+                            })
+                        }
+                    }).catch(err => {
+                        alert('บันทึกไม่สำเร็จ')
+                    })
+                } else {
+                    alert('UPLOAD ไม่สำเร็จ')
+                }
+            }).catch(err => {
+                console.log(`UPLOAD IMAGE FAILED:`, err)
+            })
+        } else {
+            alert('กรุณา Upload Thumbnail 1 รูปภาพ')
+            return
+        }
     }
     useEffect(() => {
         dispatch(geProductCategories())
@@ -116,11 +186,23 @@ function creation(props) {
     useEffect(() => {
         if (images.length < 1) {
             setImagesURL([])
+            setImagesFile([])
             return
         }
         const list = []
         images.forEach(image => list.push(URL.createObjectURL(image)))
         setImagesURL(list)
+        const forUploadList = []
+        images.forEach(img => {
+            const reader = new FileReader()
+            reader.onloadend = () => {
+                forUploadList.push(reader.result)
+            }
+            reader.readAsDataURL(img)
+            setImagesFile(forUploadList)
+        })
+
+        // setImagesFile()
     }, [images])
     const onImageChange = (e) => {
         if (e.target.files.length > 8) return alert('แนบรูปภาพได้สูงสุด 8 รูป')
@@ -142,8 +224,14 @@ function creation(props) {
     useEffect(() => {
         if (thumbnail) {
             setThumbnailURL(URL.createObjectURL(thumbnail))
+            const reader = new FileReader()
+            reader.onloadend = () => {
+                setThumbnailFile(reader.result)
+            }
+            reader.readAsDataURL(thumbnail)
         } else {
             setThumbnailURL(null)
+            setThumbnailFile(null)
         }
     }, [thumbnail])
 
@@ -206,11 +294,21 @@ function creation(props) {
             </div>
         </Fragment>
     )
-    const handleUploadImage = () => {
-        if (images.length > 0) {
-
+    const testupload = () => {
+        if (thumbnailFile) {
+            uploadImage({ type: 'cats', image_data: thumbnailFile }).then(res => {
+                if (res.success) {
+                    console.log(`thumbnailFile`, res.data.image_url)
+                } else {
+                    alert('UPLOAD ไม่สำเร็จ')
+                    // return
+                }
+            }).catch(err => {
+                alert('UPLOAD IMAGE FAILED: ', err)
+            })
         }
     }
+
 
     return (
         <div>
@@ -238,7 +336,7 @@ function creation(props) {
                                     {imagesURL.length > 0 ? <div className="preview-container flex-wrap p-2">
                                         {imagesURL.map((image, i) => (
                                             <div key={i} className="preview-item">
-                                                <DeleteIcon onClick={() => deleteImage(i)} />
+                                                <DeleteIcon className='z-index-5' onClick={() => deleteImage(i)} />
                                                 <img
                                                     className="preview-img"
                                                     src={image} alt='' />
@@ -301,7 +399,6 @@ function creation(props) {
                                         className={`form-control ${errors.category ? 'is-invalid' : ''}`}
                                         id="category"
                                         onFocus={() => setCategoryFocus(!categoryFocus)}
-                                        // onBlur={() => setCategoryFocus(false)}
                                         placeholder="หมวดหมู่สินค้า" />
                                 </div>
                                 {categoryFocus ? <div className='d-flex'>
@@ -327,7 +424,7 @@ function creation(props) {
                                         />
                                         {thumbnailURL ? <div className="preview-container flex-wrap p-2">
                                             <div className="preview-item">
-                                                <DeleteIcon onClick={() => setThumbnail(null)} />
+                                                <DeleteIcon className='z-index-5' onClick={() => setThumbnail(null)} />
                                                 <img
                                                     className="preview-img"
                                                     src={thumbnailURL} alt='' />
@@ -349,9 +446,9 @@ function creation(props) {
                                         รายละเอียด
                                     </label>
                                     <textarea
-                                        className="form-control"
+                                        className={`form-control ${errors.description ? 'is-invalid' : ''}`}
                                         id="description"
-                                        {...register('description', { required: false, })}
+                                        {...register('description', { required: true, })}
                                         placeholder="รายละเอียด"
                                         rows="3">
                                     </textarea>
@@ -485,11 +582,11 @@ function creation(props) {
                                 </div> */}
                             </CardContent>
                         </Card>
-                        <Card>
+                        <Card className='mb-3'>
                             <CardContent>
                                 <div className="h5 mb-2">ตัวเลือกสินค้า</div>
                                 <div className="mb-3">เพิ่มตัวเลือกของสินค้า ในกรณีที่สินค้ามีรูปแบบที่หลากหลาย เช่น สี และ ขนาด</div>
-                                {/* {productOptions.length > 0 ? productOptions.map((op, i) => (
+                                {productOptions.length > 0 ? productOptions.map((op, i) => (
                                     <div className="option-item" key={`option_${i + 1}`}>
                                         <div className='default-flex-between'>
                                             <span>ตัวเลือกที่ {i + 1}</span>
@@ -509,7 +606,7 @@ function creation(props) {
                                                 placeholder="" />
                                         </div>
                                     </div>
-                                )) : null} */}
+                                )) : null}
                                 {fields.map((it, i) => (
                                     <div key={it.id} className="option-item">
                                         <div className='default-flex-between'>
@@ -547,9 +644,22 @@ function creation(props) {
                                 </Button>
                             </CardContent>
                         </Card>
+                        <Card>
+                            <CardContent>
+                                <div className="row">
+                                    <div className="col-md-6"></div>
+                                    <div className="col-md-6">
+                                        <Button className='w-100' variant="contained" color="primary" type='submit'>
+                                            บันทึก
+                                        </Button>
+                                    </div>
+                                </div>
+
+                            </CardContent>
+                        </Card>
                     </div>
                     <div className="col-md-4">
-                        <button type='submit'>TEST</button>
+
                     </div>
                 </div>
             </form>
