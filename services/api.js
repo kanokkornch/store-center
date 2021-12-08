@@ -84,4 +84,15 @@ export const saveProduct = async (data) => {
         return err
     }
 }
+export const getProducts = async () => {
+    const storage = JSON.parse(localStorage.getItem('_data'))
+    axios.defaults.headers.common['Authorization'] = `Bearer ${storage.api_token}`
+    try {
+        const res = await axios.get(`${BASE_API_URL}/products`)
+        return await res.data
+    } catch (err) {
+        console.log(`err`, err)
+        return err
+    }
+}
 // ---------------------- End Products -------------------- //

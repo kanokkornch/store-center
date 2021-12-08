@@ -126,6 +126,13 @@ svg.delete-icon {
     padding: 0 0 0 15px !important;
 }
 
+td.MuiTableCell-body.no-data-table {
+    text-align-last: center;
+    opacity: 0.5;
+    font-size: 20px;
+    line-height: 200px;
+}
+
 input[type='checkbox'] {
 
     &.indeterminate {

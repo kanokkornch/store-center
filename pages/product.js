@@ -3,15 +3,17 @@ import {
     Card, CardContent, CardAction, Fade, Paper, Button,
     AppBar, Tabs, Tab, Typography, Box, Badge,
     Table, TableBody, TableCell, TableContainer, TableHead,
-    TablePagination, TableRow, TableSortLabel, Checkbox
+    TablePagination, TableRow, TableSortLabel, Checkbox,
+    Snackbar
 } from '@material-ui/core'
+import { notification } from 'antd'
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import DeleteIcon from '@material-ui/icons/Delete'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import SearchIcon from '@material-ui/icons/Search';
 import AddIcon from '@material-ui/icons/Add'
-// import { uploadImage, saveProduct } from '../../services/api'
+import { getProducts } from '../services/api'
 // import { geProductCategories, getUnits } from '../../store/actions/productAction'
 import { useDispatch, useSelector } from 'react-redux'
 import Select from "react-select"
@@ -21,6 +23,8 @@ const MySwal = withReactContent(Swal)
 import CustomTable from '../components/bootstrap5/table'
 function product() {
     const [value, setValue] = useState(0)
+    const [products, setProducts] = useState([])
+    const [notFound, setNotFound] = useState(false)
     const [filterValue, setFilterValue] = useState('')
     const [filterTitle, setFilterTitle] = useState({ value: 1, text: 'ชื่อสินค้า' })
     const handleChangeTab = (e, newValue) => {
@@ -34,6 +38,32 @@ function product() {
             'aria-controls': `scrollable-auto-tabpanel-${index}`,
         };
     }
+    const openNotificationWithIcon = (type, desc) => {
+        notification[type]({
+            message: 'ข้อความจากระบบ',
+            description: desc,
+        })
+    }
+    const fetchProducts = () => {
+        setNotFound(false)
+        getProducts().then(res => {
+            if (res.success) {
+                res.data.length < 1 && setNotFound(true)
+                setProducts(res.data)
+            } else {
+                openNotificationWithIcon('error', res.message)
+                setNotFound(true)
+            }
+        }).catch(err => {
+            alert('SERVER ERROR')
+            setNotFound(true)
+        })
+    }
+
+    useEffect(() => {
+        fetchProducts()
+        return () => { }
+    }, [])
     useEffect(() => {
         //filter
     }, [filterValue])
@@ -44,6 +74,7 @@ function product() {
         { value: 4, text: 'ราคา' },
         { value: 5, text: 'จำนวน stock' },
     ]
+
     return (
         <div>
             <div className="h3">จัดการสินค้า</div>
@@ -133,20 +164,11 @@ function product() {
                     { id: 'qty', numeric: true, disablePadding: false, label: 'จำนวน' },
                     { id: 'manage', numeric: false, disablePadding: false, label: '' },
                 ]}
-                rows={[
-                    { name: 'test1', sell_price: 200, qty: 150, manage: '' },
-                    { name: 'test2', sell_price: 250, qty: 100, manage: '' },
-                    { name: 'test3', sell_price: 250, qty: 100, manage: '' },
-                    { name: 'test4', sell_price: 250, qty: 100, manage: '' },
-                    { name: 'test5', sell_price: 250, qty: 100, manage: '' },
-                    { name: 'test6', sell_price: 250, qty: 100, manage: '' },
-                    { name: 'test7', sell_price: 250, qty: 100, manage: '' },
-                    { name: 'test8', sell_price: 250, qty: 100, manage: '' },
-                    { name: 'test9', sell_price: 250, qty: 100, manage: '' },
-                    { name: 'test10', sell_price: 250, qty: 100, manage: '' },
-                    { name: 'test11', sell_price: 250, qty: 100, manage: '' },
-                    { name: 'test12', sell_price: 250, qty: 100, manage: '' },
-                ]}
+                rows={products.length > 0 ? products.map(pd => {
+                    pd.manage = ''
+                    return pd
+                }) : []}
+                notFound={notFound}
             />
             {/* </CardContent>
             </Card> */}

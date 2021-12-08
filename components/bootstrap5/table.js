@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link'
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
@@ -15,31 +16,17 @@ import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
+import EditIcon from '@material-ui/icons/Edit';
 import Tooltip from '@material-ui/core/Tooltip';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
-
-// function createData(name, calories, fat, carbs, protein) {
-//     return { name, calories, fat, carbs, protein };
-// }
-
-// const rows = [
-//     createData('Cupcake', 305, 3.7, 67, 4.3),
-//     createData('Donut', 452, 25.0, 51, 4.9),
-//     createData('Eclair', 262, 16.0, 24, 6.0),
-//     createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-//     createData('Gingerbread', 356, 16.0, 49, 3.9),
-//     createData('Honeycomb', 408, 3.2, 87, 6.5),
-//     createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-//     createData('Jelly Bean', 375, 0.0, 94, 0.0),
-//     createData('KitKat', 518, 26.0, 65, 7.0),
-//     createData('Lollipop', 392, 0.2, 98, 0.0),
-//     createData('Marshmallow', 318, 0, 81, 2.0),
-//     createData('Nougat', 360, 19.0, 9, 37.0),
-//     createData('Oreo', 437, 18.0, 63, 4.0),
-// ];
+import { Skeleton, Empty } from 'antd'
+import {
+    Drawer, Button, Popper, MenuItem, Grow, ClickAwayListener,
+    Divider, MenuList,
+} from '@material-ui/core'
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -66,19 +53,10 @@ function stableSort(array, comparator) {
     });
     return stabilizedThis.map((el) => el[0]);
 }
-
-// const headCells = [
-//     { id: 'name', numeric: false, disablePadding: true, label: 'Dessert (100g serving)' },
-//     { id: 'calories', numeric: true, disablePadding: false, label: 'Calories' },
-//     { id: 'fat', numeric: true, disablePadding: false, label: 'Fat (g)' },
-//     { id: 'carbs', numeric: true, disablePadding: false, label: 'Carbs (g)' },
-//     { id: 'protein', numeric: true, disablePadding: false, label: 'Protein (g)' },
-// ];
-
 function EnhancedTableHead(props) {
     const { classes, onSelectAllClick, order,
         orderBy, numSelected, rowCount,
-        onRequestSort, headCells } = props;
+        onRequestSort, headCells, rows } = props;
     const createSortHandler = (property) => (event) => {
         onRequestSort(event, property);
     };
@@ -87,13 +65,14 @@ function EnhancedTableHead(props) {
         <TableHead>
             <TableRow>
                 <TableCell padding="checkbox">
-                    <input
+                    {rows.length > 0 && <input
                         className={`form-check-input ${numSelected > 0 && numSelected < rowCount ? 'indeterminate' : ''}`}
                         type="checkbox"
                         onClick={onSelectAllClick}
                         aria-label='select all desserts'
                         checked={rowCount > 0 && numSelected === rowCount}>
-                    </input>
+                    </input>}
+
                 </TableCell>
                 {headCells.map((headCell) => (
                     <TableCell
@@ -219,7 +198,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function EnhancedTable(props) {
-    const { headCells, rows } = props
+    const { headCells, rows, notFound = false } = props
     const classes = useStyles();
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
@@ -227,6 +206,32 @@ export default function EnhancedTable(props) {
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const [open, setOpen] = React.useState(false)
+    const anchorRef = React.useRef(null)
+
+    const handleToggle = () => {
+        setOpen((prevOpen) => !prevOpen);
+    };
+
+    const handleClose = (event) => {
+        if (anchorRef.current && anchorRef.current.contains(event.target)) {
+            return;
+        }
+
+        setOpen(false);
+    };
+    const prevOpen = React.useRef(open)
+
+    function handleListKeyDown(event) {
+        if (event.key === 'Tab') {
+            event.preventDefault();
+            setOpen(false);
+        }
+    }
+
+    React.useEffect(() => {
+        console.log(`rows`, rows)
+    }, [rows])
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -301,9 +306,10 @@ export default function EnhancedTable(props) {
                             onRequestSort={handleRequestSort}
                             rowCount={rows.length}
                             headCells={headCells}
+                            rows={rows}
                         />
                         <TableBody>
-                            {stableSort(rows, getComparator(order, orderBy))
+                            {rows.length > 0 ? stableSort(rows, getComparator(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row, index) => {
                                     const isItemSelected = isSelected(row.name);
@@ -312,11 +318,10 @@ export default function EnhancedTable(props) {
                                     return (
                                         <TableRow
                                             hover
-                                            // onClick={(event) => handleClick(event, row.name)}
                                             role="checkbox"
                                             aria-checked={isItemSelected}
                                             tabIndex={-1}
-                                            key={row.name}
+                                            key={row.id}
                                             selected={isItemSelected}
                                         >
                                             <TableCell padding="checkbox">
@@ -333,10 +338,37 @@ export default function EnhancedTable(props) {
                                             </TableCell>
                                             <TableCell align="right">{row.sell_price}</TableCell>
                                             <TableCell align="right">{row.qty}</TableCell>
-                                            <TableCell align="right">จัดการ</TableCell>
+                                            <TableCell align="center">
+                                                <Tooltip title="Edit">
+                                                    <Link href={`/product/${row.id}`}>
+                                                        <IconButton color="primary" aria-label="edit">
+                                                            <EditIcon />
+                                                        </IconButton>
+                                                    </Link>
+                                                </Tooltip>
+                                                <Tooltip title="Delete">
+                                                    <IconButton aria-label="delete">
+                                                        <DeleteIcon />
+                                                    </IconButton>
+                                                </Tooltip>
+                                            </TableCell>
                                         </TableRow>
-                                    );
-                                })}
+                                    )
+                                }) : !notFound ? <TableRow
+                                >
+                                    <TableCell padding="checkbox">
+                                        <Skeleton active />
+                                    </TableCell>
+                                    <TableCell scope="row" padding="none">
+                                        <Skeleton active />
+                                    </TableCell>
+                                    <TableCell><Skeleton active /></TableCell>
+                                    <TableCell><Skeleton active /></TableCell>
+                                    <TableCell><Skeleton active /></TableCell>
+                                </TableRow> : <TableRow>
+                                <TableCell className='no-data-table' colSpan={6}><Empty /></TableCell>
+                            </TableRow>
+                            }
                             {emptyRows > 0 && (
                                 <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
                                     <TableCell colSpan={6} />
@@ -345,7 +377,7 @@ export default function EnhancedTable(props) {
                         </TableBody>
                     </Table>
                 </TableContainer>
-                <TablePagination
+                {rows.length > 0 && <TablePagination
                     rowsPerPageOptions={[10, 20, 50]}
                     component="div"
                     count={rows.length}
@@ -353,7 +385,8 @@ export default function EnhancedTable(props) {
                     page={page}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
-                />
+                />}
+
             </Paper>
             {/* <FormControlLabel
                 control={<Switch checked={dense} onChange={handleChangeDense} />}
