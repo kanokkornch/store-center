@@ -340,7 +340,7 @@ export default function EnhancedTable(props) {
                                             <TableCell align="right">{row.qty}</TableCell>
                                             <TableCell align="center">
                                                 <Tooltip title="Edit">
-                                                    <Link href={`/product/${row.id}`}>
+                                                    <Link href={`/product/edit/${row.id}`}>
                                                         <IconButton color="primary" aria-label="edit">
                                                             <EditIcon />
                                                         </IconButton>

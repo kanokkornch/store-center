@@ -95,4 +95,15 @@ export const getProducts = async () => {
         return err
     }
 }
+export const getProductsById = async (id) => {
+    const storage = JSON.parse(localStorage.getItem('_data'))
+    axios.defaults.headers.common['Authorization'] = `Bearer ${storage.api_token}`
+    try {
+        const res = await axios.get(`${BASE_API_URL}/products/${id}`)
+        return await res.data
+    } catch (err) {
+        console.log(`err`, err)
+        return err
+    }
+}
 // ---------------------- End Products -------------------- //

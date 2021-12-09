@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef, Fragment } from 'react'
+import { useRouter } from 'next/router'
+import { getProductsById, uploadImage } from '../../services/api'
+import { geProductCategories, getUnits } from '../../store/actions/productAction'
 import { Card, CardContent, CardAction, Fade, Paper, Button } from '@material-ui/core'
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import DeleteIcon from '@material-ui/icons/Delete'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import AddIcon from '@material-ui/icons/Add'
-import { uploadImage, saveProduct } from '../../services/api'
-import { geProductCategories, getUnits } from '../../store/actions/productAction'
 import { useDispatch, useSelector } from 'react-redux'
 import Select from "react-select"
 import Swal from 'sweetalert2'
@@ -69,7 +70,11 @@ function NestedOption({ nestIndex, control, register }) {
     )
 }
 
-function creation(props) {
+function edit() {
+    const router = useRouter()
+    const { productId } = router.query
+    const [data, setData] = useState(null)
+
     const dispatch = useDispatch()
     const store = useSelector(state => state.product)
     const { categories, units } = store
@@ -84,6 +89,8 @@ function creation(props) {
     const [thumbnail, setThumbnail] = useState(null)
     const [thumbnailURL, setThumbnailURL] = useState(null)
     const [thumbnailFile, setThumbnailFile] = useState(null)
+
+    const [galleries, setGalleries] = useState([])
 
     const [categoryID, setcategoryID] = useState(null)
     const [subCategoryId, setsubCategoryId] = useState(null)
@@ -112,6 +119,46 @@ function creation(props) {
         setThumbnail(null)
     }
 
+    useEffect(() => {
+        getProductsById(productId ? productId : 7).then(res => {
+            if (res.success) {
+                if (res.data.product_galleries.length) {
+                    const photos = res.data.product_galleries.map(pt => pt.url)
+                    setImagesURL([...photos])
+                    setGalleries([...photos])
+                }
+                setThumbnail(res.data.thumbnail)
+                setValue('name', res.data.name)
+                setValue('name', res.data.name)
+                setValue('shop_id', res.data.shop_id)
+                setValue('code', res.data.code)
+                setValue('sku', res.data.sku)
+                setValue('description', res.data.description)
+                setValue('description', res.data.description)
+                setValue('qty', res.data.qty)
+                setValue('cost_price', res.data.cost_price)
+                setValue('sell_price', res.data.sell_price)
+                setValue('discount_price', res.data.discount_price)
+                setValue('options', res.data.product_options)
+                setcategoryID(res.data.category_id)
+                setsubCategoryId(res.data.sub_category_id)
+                setData(res.data)
+            }
+        }).catch(err => {
+
+        })
+        return () => {
+
+        }
+    }, [])
+
+    useEffect(() => {
+        if (units.length > 0 && data) {
+            const unit = units.find(u => u.name === data.unit)
+            unit && setValue('unit', unit)
+        }
+    }, [units, data])
+
     const onSubmit = (data) => {
         const product_galleries = []
         if (imagesFile.length > 0) {
@@ -128,12 +175,19 @@ function creation(props) {
                 })
             })
         } else {
-            alert('กรุณา Upload รูปของสินค้า อย่างน้อย 1 รูปภาพ')
-            return
+            if (galleries.length < 1) {
+                alert('กรุณา Upload รูปของสินค้า อย่างน้อย 1 รูปภาพ')
+                return
+            }
+            if (imagesFile.length < 1 && galleries.length < 1) {
+                alert('กรุณา Upload รูปของสินค้า อย่างน้อย 1 รูปภาพ')
+                return
+            }
         }
         if (thumbnailFile) {
             uploadImage({ type: 'cats', image_data: thumbnailFile }).then(res => {
                 if (res.success) {
+                    data.id = data.id
                     data.thumbnail = res.data.image_url
                     data.qty = parseFloat(data.qty)
                     data.unit = data.unit.label
@@ -172,8 +226,11 @@ function creation(props) {
                 console.log(`UPLOAD IMAGE FAILED:`, err)
             })
         } else {
-            alert('กรุณา Upload Thumbnail 1 รูปภาพ')
-            return
+            if (!thumbnail) {
+                alert('กรุณา Upload Thumbnail 1 รูปภาพ')
+                return
+            }
+
         }
     }
     useEffect(() => {
@@ -184,37 +241,65 @@ function creation(props) {
         console.log(`errors`, errors)
     }, [errors])
     useEffect(() => {
+        let list = []
         if (images.length < 1) {
             setImagesURL([])
             setImagesFile([])
             return
+
         }
-        const list = []
-        images.forEach(image => list.push(URL.createObjectURL(image)))
+        images.forEach(image => {
+            if (typeof (image) === 'string') {
+                list.push(image)
+            } else {
+                list.push(URL.createObjectURL(image))
+            }
+        })
         setImagesURL(list)
         const forUploadList = []
         images.forEach(img => {
-            const reader = new FileReader()
-            reader.onloadend = () => {
-                forUploadList.push(reader.result)
+            if (typeof (img) === 'string') {
+            } else {
+                const reader = new FileReader()
+                reader.onloadend = () => {
+                    forUploadList.push(reader.result)
+                }
+                reader.readAsDataURL(img)
+                setImagesFile(forUploadList)
             }
-            reader.readAsDataURL(img)
-            setImagesFile(forUploadList)
+
         })
 
-        // setImagesFile()
     }, [images])
     const onImageChange = (e) => {
         if (e.target.files.length > 8) return alert('แนบรูปภาพได้สูงสุด 8 รูป')
-        setImages([...e.target.files])
+        if (galleries.length > 0) {
+            setImages([...galleries, ...e.target.files])
+        } else {
+            setImages([...e.target.files])
+        }
     }
-    const deleteImage = (idx) => {
-        images.splice(idx, 1)
-        setImages([...images])
+    const deleteImage = (idx, url) => {
+        if (galleries.length > 0) {
+            const find = galleries.findIndex(img => img === url)
+            if (find !== -1) {
+                galleries.splice(find, 1)
+                setGalleries([...galleries])
+            }
+        }
+        if (images.length) {
+            images.splice(idx, 1)
+            setImages([...images])
+        } else {
+            imagesURL.splice(idx, 1)
+            setImagesURL([...imagesURL])
+            data.product_galleries.splice(idx, 1)
+            setData(data)
+        }
+
     }
 
     const deleteOptions = (id) => {
-        // productOptions.splice(idx, 1)
         setProductOptions([...productOptions.filter(op => op.id !== id)])
     }
 
@@ -223,12 +308,16 @@ function creation(props) {
     }
     useEffect(() => {
         if (thumbnail) {
-            setThumbnailURL(URL.createObjectURL(thumbnail))
-            const reader = new FileReader()
-            reader.onloadend = () => {
-                setThumbnailFile(reader.result)
+            if (typeof (thumbnail) === 'string') {
+                setThumbnailURL(thumbnail)
+            } else {
+                setThumbnailURL(URL.createObjectURL(thumbnail))
+                const reader = new FileReader()
+                reader.onloadend = () => {
+                    setThumbnailFile(reader.result)
+                }
+                reader.readAsDataURL(thumbnail)
             }
-            reader.readAsDataURL(thumbnail)
         } else {
             setThumbnailURL(null)
             setThumbnailFile(null)
@@ -253,20 +342,8 @@ function creation(props) {
         setProductOptions([...productOptions])
     }
     useEffect(() => {
-        console.log(`options`, getValues().options)
+        // console.log(`options`, getValues().options)
     }, [getValues().options])
-
-    const handleAddOption = (idx) => {
-        setValue(`options[${idx}].option`, [...getValues().options[idx].option, {
-            value: '',
-            qty: 0,
-            thumbnail: null,
-            cost_price: 0,
-            sell_price: 0,
-            discount_price: 0,
-        }])
-    }
-
 
     const displayCategories = () => (
         <Fragment>
@@ -294,10 +371,24 @@ function creation(props) {
             </div>
         </Fragment>
     )
+    const setDefaultCategory = () => {
+        let name = ''
+        let subName = ''
+        if (data) {
+            const find = categories.find(c => c.id === data.category_id)
+            if (find) {
+                name = find.name
+                const subCat = find.sub_categories.find(sub => sub.id === data.sub_category_id)
+                if (subCat) subName = subCat.name
+            }
+        }
+        return `${name} > ${subName}`
+    }
+
 
     return (
         <div>
-            <div className="h3">เพิ่มสินค้า</div>
+            <div className="h3">เพิ่ม/แก้ไขสินค้า</div>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="row">
                     <div className="col-md-9">
@@ -321,7 +412,7 @@ function creation(props) {
                                     {imagesURL.length > 0 ? <div className="preview-container flex-wrap p-2">
                                         {imagesURL.map((image, i) => (
                                             <div key={i} className="preview-item">
-                                                <DeleteIcon className='z-index-5' onClick={() => deleteImage(i)} />
+                                                <DeleteIcon className='z-index-5' onClick={() => deleteImage(i, image)} />
                                                 <img
                                                     className="preview-img"
                                                     src={image} alt='' />
@@ -380,6 +471,7 @@ function creation(props) {
                                     </label>
                                     <input
                                         type="text"
+                                        defaultValue={setDefaultCategory()}
                                         {...register('category', { required: true, })}
                                         className={`form-control ${errors.category ? 'is-invalid' : ''}`}
                                         id="category"
@@ -428,7 +520,7 @@ function creation(props) {
                                 </div>
                                 <div className="mb-3">
                                     <label htmlFor="description" className="form-label">
-                                        รายละเอียด
+                                        <span className='requird'>* </span>รายละเอียด
                                     </label>
                                     <textarea
                                         className={`form-control ${errors.description ? 'is-invalid' : ''}`}
@@ -519,6 +611,7 @@ function creation(props) {
                                         </label>
                                         <input
                                             type="number"
+                                            defaultValue={data ? data.cost_price : 0}
                                             {...register('cost_price', { required: true, })}
                                             className={`form-control text-end ${errors.cost_price ? 'is-invalid' : ''}`}
                                             id="cost_price"
@@ -531,6 +624,7 @@ function creation(props) {
                                         </label>
                                         <input
                                             type="number"
+                                            defaultValue={data ? data.sell_price : 0}
                                             {...register('sell_price', { required: true, })}
                                             className={`form-control text-end ${errors.sell_price ? 'is-invalid' : ''}`}
                                             id="sell_price"
@@ -544,6 +638,7 @@ function creation(props) {
                                         </label>
                                         <input
                                             type="number"
+                                            defaultValue={data ? data.discount_price : 0}
                                             {...register('discount_price', { required: false, })}
                                             className={`form-control text-end`}
                                             id="discount_price"
@@ -652,10 +747,4 @@ function creation(props) {
     )
 }
 
-export async function getStaticProps(context) {
-    return {
-        props: {}, // will be passed to the page component as props
-    }
-}
-export default creation
-
+export default edit

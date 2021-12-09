@@ -28,7 +28,7 @@ export const SidebarData = [
             },
             {
                 title: 'เพิ่ม/แก้ไขสินค้า',
-                path: '/edition'
+                path: '/edit'
             }
         ]
     },
