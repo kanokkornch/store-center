@@ -1,6 +1,8 @@
 import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasket';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 import AssessmentIcon from '@material-ui/icons/Assessment'
+import StorefrontIcon from '@material-ui/icons/Storefront';
+import MonetizationOnIcon from '@material-ui/icons/MonetizationOn'
 export const SidebarData = [
     {
         id: 0,
@@ -12,11 +14,7 @@ export const SidebarData = [
         id: 1,
         title: 'สินค้า',
         prefix: '/product',
-        // path: appPrefix('product'),
-        // path: '/product',
         icon: <ShoppingBasketIcon />,
-        // iconClosed: <ExpandMoreIcon />,
-        // iconOpened: <ExpandLessIcon />,
         subNav: [
             {
                 title: 'จัดการสินค้า',
@@ -27,9 +25,9 @@ export const SidebarData = [
                 path: '/creation'
             },
             {
-                title: 'เพิ่ม/แก้ไขสินค้า',
-                path: '/edit'
-            }
+                title: 'โปรโมชั่น',
+                path: '/promotion'
+            },
         ]
     },
     {
@@ -46,10 +44,38 @@ export const SidebarData = [
                 title: 'การคืนสินค้า',
                 path: '/reverse'
             },
+            // {
+            //     title: 'รีวิว',
+            //     path: '/review'
+            // },
+        ]
+    },
+    {
+        id: 3,
+        title: 'จัดการร้านค้า',
+        prefix: '/shop',
+        icon: <StorefrontIcon />,
+        subNav: [
             {
-                title: 'รีวิว',
-                path: '/review'
+                title: 'ตกแต่งร้านค้า',
+                path: '/pageManage'
             },
+            {
+                title: 'ตั้งค่าร้านค้า',
+                path: '/infoSetting'
+            },
+        ]
+    },
+    {
+        id: 4,
+        title: 'การเงิน',
+        prefix: '/finance',
+        icon: <MonetizationOnIcon />,
+        subNav: [
+            {
+                title: 'รายการเดินบัญชี',
+                path: '/statement'
+            }
         ]
     },
 

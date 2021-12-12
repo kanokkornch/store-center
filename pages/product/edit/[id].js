@@ -420,7 +420,7 @@ function editProduct() {
 
     return (
         <div>
-            <div className="h3">เพิ่ม/แก้ไขสินค้า</div>
+            <div className="h4">เพิ่ม/แก้ไขสินค้า</div>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="row">
                     <div className="col-md-9">

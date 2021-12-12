@@ -106,7 +106,7 @@ function product() {
 
     return (
         <div>
-            <div className="h3">จัดการสินค้า</div>
+            <div className="h4">จัดการสินค้า</div>
             <Tabs
                 value={value}
                 onChange={handleChangeTab}

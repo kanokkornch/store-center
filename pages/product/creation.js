@@ -298,7 +298,7 @@ function creation(props) {
 
     return (
         <div>
-            <div className="h3">เพิ่มสินค้า</div>
+            <div className="h4">เพิ่มสินค้า</div>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="row">
                     <div className="col-md-9">
