@@ -16,7 +16,8 @@ export const APIshopLogin = async (data) => {
     try {
         const res = await axios.post(`${BASE_API_URL}/login`, data)
         if (res.data.success) {
-            localStorage.setItem('_data', JSON.stringify(res.data.data))
+            // localStorage.setItem('_data', JSON.stringify(res.data.data))
+            sessionStorage.setItem('_data', JSON.stringify(res.data.data))
             window.location.assign('/dashbord')
         }
     } catch (err) {
@@ -27,8 +28,14 @@ export const APIshopLogin = async (data) => {
         return res
     }
 }
+export const APIshopLogout = async () => {
+    // localStorage.clear()
+    sessionStorage.clear()
+    window.location.assign('/login')
+}
 export const isUserLogin = () => {
-    const getLocalState = localStorage.getItem("_data")
+    // localStorage.getItem("_data")
+    const getLocalState = sessionStorage.getItem('_data')
     if (getLocalState !== null) {
         return true
     } else {

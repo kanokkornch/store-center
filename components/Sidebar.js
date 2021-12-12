@@ -15,6 +15,7 @@ import {
     Divider, Hidden
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
+import { APIshopLogout } from '../services/api'
 
 const useStyles = makeStyles({
     nested: {
@@ -102,13 +103,34 @@ function Sidebar() {
     )
 
     const options = [
-        'แหล่งเรียนรู้',
-        'ศูนย์ช่วยเหลือ',
-        'ข้อมูลส่วนตัว',
-        'การจัดการผู้ใช้',
-        'ตั้งค่าบัญชี',
-        'ตั้งค่าระบบแชท',
-        'ออกจากระบบ'
+        {
+            name: 'แหล่งเรียนรู้',
+            onClick: () => { }
+        },
+        {
+            name: 'ศูนย์ช่วยเหลือ',
+            onClick: () => { }
+        },
+        {
+            name: 'ข้อมูลส่วนตัว',
+            onClick: () => { }
+        },
+        {
+            name: 'การจัดการผู้ใช้',
+            onClick: () => { }
+        },
+        {
+            name: 'ตั้งค่าบัญชี',
+            onClick: () => { }
+        },
+        {
+            name: 'ตั้งค่าระบบแชท',
+            onClick: () => { }
+        },
+        {
+            name: 'ออกจากระบบ',
+            onClick: () => APIshopLogout()
+        }
     ]
 
     return (
@@ -157,8 +179,8 @@ function Sidebar() {
                 }}
             >
                 {options.map((option) => (
-                    <MenuItem className='justify-content-center' key={option} selected={option === 'Pyxis'} onClick={handleClose}>
-                        {option}
+                    <MenuItem className='justify-content-center' key={option.name} selected={option.name === 'Pyxis'} onClick={option.onClick}>
+                        {option.name}
                     </MenuItem>
                 ))}
             </Menu>

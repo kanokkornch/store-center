@@ -324,7 +324,7 @@ export default function EnhancedTable(props) {
                                             key={row.id}
                                             selected={isItemSelected}
                                         >
-                                            <TableCell padding="checkbox">
+                                            <TableCell padding="checkbox" className='mr-3'>
                                                 <input
                                                     className="form-check-input"
                                                     type="checkbox"
