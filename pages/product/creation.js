@@ -10,6 +10,7 @@ import { uploadImage } from '../../services/utills'
 import { geProductCategories, getUnits } from '../../store/actions/productAction'
 import { useDispatch, useSelector } from 'react-redux'
 import Select from "react-select"
+import { Alert } from 'antd'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 const MySwal = withReactContent(Swal)
@@ -300,7 +301,7 @@ function creation(props) {
         <div>
             <div className="h4">เพิ่มสินค้า</div>
             <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="row">
+                <div className="row flex-row">
                     <div className="col-md-9">
                         <Card className='mb-3'>
                             <CardContent>
@@ -644,8 +645,13 @@ function creation(props) {
                             </CardContent>
                         </Card>
                     </div>
-                    <div className="col-md-4">
-
+                    <div className="col-md-3 d-none d-md-block">
+                        <Alert
+                            message="Tips"
+                            description="กรุณาใส่ URL วีดีโอ"
+                            type="info"
+                            showIcon
+                        />
                     </div>
                 </div>
             </form>

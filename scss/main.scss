@@ -522,8 +522,21 @@ h3 {
     margin-bottom: 10px;
 }
 
-
-
+.ant-alert.ant-alert-info {
+    .ant-alert-icon {
+        padding-top: 5px;
+        svg {
+            font-size: 18px;
+        }
+    }
+    .ant-alert-content {
+        .ant-alert-message {
+            font-size: 18px;
+            font-weight: 600;
+            color: $secound-app-color;
+        }
+    }
+}
 
 
 @media screen and (max-width: 960px) {
