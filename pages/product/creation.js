@@ -5,7 +5,8 @@ import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import DeleteIcon from '@material-ui/icons/Delete'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import AddIcon from '@material-ui/icons/Add'
-import { uploadImage, saveProduct } from '../../services/api'
+import { saveProduct } from '../../services/product'
+import { uploadImage } from '../../services/utills'
 import { geProductCategories, getUnits } from '../../store/actions/productAction'
 import { useDispatch, useSelector } from 'react-redux'
 import Select from "react-select"
@@ -297,7 +298,7 @@ function creation(props) {
 
     return (
         <div>
-            <div className="h3">เพิ่มสินค้า</div>
+            <div className="h4">เพิ่มสินค้า</div>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="row">
                     <div className="col-md-9">

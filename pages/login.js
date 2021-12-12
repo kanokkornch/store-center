@@ -29,28 +29,23 @@ function login() {
     const { register, control, handleSubmit, formState: { errors }, setError } = useForm()
     const onSubmit = (data) => {
         APIshopLogin(data).then(res => {
-            // if (res.status) {
-            //     reset()
-            //     return MySwal.fire({
-            //         title: res.message,
-            //         text: 'ท่านสามารถเข้าสู่ระบบได้แล้ว',
-            //         icon: 'success'
-            //     })
-            // } else {
-            //     return MySwal.fire({
-            //         title: 'ข้อความจากระบบ',
-            //         text: res.message,
-            //         icon: 'error'
-            //     })
-            // }
+            if (res && !res.status) {
+                return MySwal.fire({
+                    position: 'top-end',
+                    icon: 'error',
+                    text: res.message,
+                    showConfirmButton: false,
+                    timer: 2000
+                })
+            }
         }).catch(err => {
-            // return MySwal.fire({
-            //     position: 'top-end',
-            //     icon: 'error',
-            //     title: 'เกิดความผิดพลาดของ Service',
-            //     showConfirmButton: false,
-            //     timer: 2000
-            // })
+            return MySwal.fire({
+                position: 'top-end',
+                icon: 'error',
+                text: 'เกิดความผิดพลาดของ Service',
+                showConfirmButton: false,
+                timer: 2000
+            })
         })
     }
     return (

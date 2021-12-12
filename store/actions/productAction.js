@@ -1,4 +1,4 @@
-import { geProductCategoriesWithSubCategories, getProductUnits } from '../../services/api'
+import { geProductCategoriesWithSubCategories, getProductUnits } from '../../services/product'
 
 export const geProductCategories = () => async (dispatch, getState) => {
     geProductCategoriesWithSubCategories().then(res => {

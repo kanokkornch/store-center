@@ -77,6 +77,7 @@ svg.delete-icon {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-size: 15px;
     font-family: 'Sarabun', sans-serif !important;
 }
 
@@ -90,11 +91,11 @@ svg.delete-icon {
     top: 0;
     left: 0;
     top: 0;
-    background: $app-color;
-    height: 80px;
+    background: #fff;
+    height: 60px;
 
     svg {
-        color: #fff;
+        color: $secound-app-color;
         font-size: 2rem;
     }
 }
@@ -117,13 +118,18 @@ svg.delete-icon {
     min-height: 40px;
 }
 
+.MuiTypography-body1 {
+    font-size: 14px !important;
+    line-height: 1 !important;
+}
+
 .MuiToolbar-regular {
     min-height: 0px !important;
 }
 
 .MuiTableCell-paddingCheckbox {
     width: 48px;
-    padding: 0 0 0 15px !important;
+    padding: 0 12px 0 15px !important;
 }
 
 td.MuiTableCell-body.no-data-table {
@@ -140,6 +146,10 @@ input[type='checkbox'] {
         border-color: #0d6efd;
         background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10h8'/%3e%3c/svg%3e");
     }
+}
+
+.MuiListItem-root:hover {
+    color: #111;
 }
 
 .main-menu {
@@ -193,6 +203,7 @@ input[type='checkbox'] {
 
 .MuiDrawer-paper {
     overflow: hidden;
+    z-index: 999 !important;
 }
 
 .MuiPaper-root {
@@ -510,6 +521,8 @@ h3 {
     padding: 10px;
     margin-bottom: 10px;
 }
+
+
 
 
 
