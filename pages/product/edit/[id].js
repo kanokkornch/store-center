@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, Fragment } from 'react'
 import { useRouter } from 'next/router'
-import { getProductsById, uploadImage } from '../../../services/api'
+import { getProductsById } from '../../../services/product'
+import { uploadImage } from '../../../services/utills'
 import { geProductCategories, getUnits } from '../../../store/actions/productAction'
 import { Card, CardContent, CardAction, Fade, Paper, Button } from '@material-ui/core'
 import { useForm, Controller, useFieldArray } from "react-hook-form";

@@ -12,11 +12,11 @@ export const APIshopRegister = async (data) => {
     }
 }
 export const APIshopLogin = async (data) => {
-    localStorage.clear()
+    sessionStorage.clear()
     try {
         const res = await axios.post(`${BASE_API_URL}/login`, data)
         if (res.data.success) {
-            // localStorage.setItem('_data', JSON.stringify(res.data.data))
+            // sessionStorage.setItem('_data', JSON.stringify(res.data.data))
             sessionStorage.setItem('_data', JSON.stringify(res.data.data))
             window.location.assign('/dashbord')
         }
@@ -29,12 +29,12 @@ export const APIshopLogin = async (data) => {
     }
 }
 export const APIshopLogout = async () => {
-    // localStorage.clear()
+    // sessionStorage.clear()
     sessionStorage.clear()
     window.location.assign('/login')
 }
 export const isUserLogin = () => {
-    // localStorage.getItem("_data")
+    // sessionStorage.getItem("_data")
     const getLocalState = sessionStorage.getItem('_data')
     if (getLocalState !== null) {
         return true
@@ -43,74 +43,3 @@ export const isUserLogin = () => {
     }
 }
 // ---------------------- End Authorization -------------------- //
-// ---------------------- Utills -------------------- //
-export const uploadImage = async (data) => {
-    const storage = JSON.parse(localStorage.getItem('_data'))
-    axios.defaults.headers.common['Authorization'] = `Bearer ${storage.api_token}`
-    try {
-        const res = await axios.post(`${BASE_API_URL}/media/upload`, data)
-        return await res.data
-    } catch (err) {
-        console.log(`err`, err)
-        return err
-    }
-}
-// ---------------------- End Utills -------------------- //
-
-// ---------------------- Products -------------------- //
-export const geProductCategoriesWithSubCategories = async () => {
-    const storage = JSON.parse(localStorage.getItem('_data'))
-    axios.defaults.headers.common['Authorization'] = `Bearer ${storage.api_token}`
-    try {
-        const res = await axios.get(`${BASE_API_URL}/categories`)
-        return await res.data
-    } catch (err) {
-        console.log(`err`, err)
-        return err
-    }
-}
-export const getProductUnits = async () => {
-    const storage = JSON.parse(localStorage.getItem('_data'))
-    axios.defaults.headers.common['Authorization'] = `Bearer ${storage.api_token}`
-    try {
-        const res = await axios.get(`${BASE_API_URL}/product/units`)
-        return await res.data
-    } catch (err) {
-        console.log(`err`, err)
-        return err
-    }
-}
-export const saveProduct = async (data) => {
-    const storage = JSON.parse(localStorage.getItem('_data'))
-    axios.defaults.headers.common['Authorization'] = `Bearer ${storage.api_token}`
-    try {
-        const res = await axios.post(`${BASE_API_URL}/products`, data)
-        return await res.data
-    } catch (err) {
-        console.log(`err`, err)
-        return err
-    }
-}
-export const getProducts = async () => {
-    const storage = JSON.parse(localStorage.getItem('_data'))
-    axios.defaults.headers.common['Authorization'] = `Bearer ${storage.api_token}`
-    try {
-        const res = await axios.get(`${BASE_API_URL}/products`)
-        return await res.data
-    } catch (err) {
-        console.log(`err`, err)
-        return err
-    }
-}
-export const getProductsById = async (id) => {
-    const storage = JSON.parse(localStorage.getItem('_data'))
-    axios.defaults.headers.common['Authorization'] = `Bearer ${storage.api_token}`
-    try {
-        const res = await axios.get(`${BASE_API_URL}/products/${id}`)
-        return await res.data
-    } catch (err) {
-        console.log(`err`, err)
-        return err
-    }
-}
-// ---------------------- End Products -------------------- //

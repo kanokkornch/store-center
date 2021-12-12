@@ -129,7 +129,7 @@ svg.delete-icon {
 
 .MuiTableCell-paddingCheckbox {
     width: 48px;
-    padding: 0 0 0 15px !important;
+    padding: 0 12px 0 15px !important;
 }
 
 td.MuiTableCell-body.no-data-table {
@@ -199,6 +199,7 @@ input[type='checkbox'] {
 
 .MuiDrawer-paper {
     overflow: hidden;
+    z-index: 999 !important;
 }
 
 .MuiPaper-root {

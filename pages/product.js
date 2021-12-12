@@ -6,14 +6,14 @@ import {
     TablePagination, TableRow, TableSortLabel, Checkbox,
     Snackbar
 } from '@material-ui/core'
-import { notification } from 'antd'
+import { notification, message } from 'antd'
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import DeleteIcon from '@material-ui/icons/Delete'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import SearchIcon from '@material-ui/icons/Search';
 import AddIcon from '@material-ui/icons/Add'
-import { getProducts } from '../services/api'
+import { getProducts, deleteProduct } from '../services/product'
 // import { geProductCategories, getUnits } from '../../store/actions/productAction'
 import { useDispatch, useSelector } from 'react-redux'
 import Select from "react-select"
@@ -55,7 +55,7 @@ function product() {
                 setNotFound(true)
             }
         }).catch(err => {
-            alert('SERVER ERROR')
+            openNotificationWithIcon('error', 'SERVER ERROR')
             setNotFound(true)
         })
     }
@@ -74,6 +74,35 @@ function product() {
         { value: 4, text: 'ราคา' },
         { value: 5, text: 'จำนวน stock' },
     ]
+
+    const handleDelete = (id) => {
+        return MySwal.fire({
+            text: "ยืนยันลบสินค้า?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'ใช่, ลบเลย',
+            cancelButtonText: 'ยกเลิก',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const loading = message.loading('กำลังลบสินค้า...', 0)
+                deleteProduct(id).then(res => {
+                    setTimeout(loading, 0)
+                    if (res.success) {
+                        fetchProducts()
+                        message.success('ลบสินค้าสำเร็จ')
+                    } else {
+                        message.error('ลบสินค้าไม่สำเร็จ')
+                    }
+                }).catch(err => {
+                    setTimeout(loading, 0)
+                    message.error('SERVER ERROR')
+                })
+            }
+        })
+
+    }
 
     return (
         <div>
@@ -169,6 +198,7 @@ function product() {
                     return pd
                 }) : []}
                 notFound={notFound}
+                handleDelete={handleDelete}
             />
             {/* </CardContent>
             </Card> */}

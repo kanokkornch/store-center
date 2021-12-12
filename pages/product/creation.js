@@ -5,7 +5,8 @@ import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import DeleteIcon from '@material-ui/icons/Delete'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import AddIcon from '@material-ui/icons/Add'
-import { uploadImage, saveProduct } from '../../services/api'
+import { saveProduct } from '../../services/product'
+import { uploadImage } from '../../services/utills'
 import { geProductCategories, getUnits } from '../../store/actions/productAction'
 import { useDispatch, useSelector } from 'react-redux'
 import Select from "react-select"
