@@ -525,16 +525,43 @@ h3 {
 .ant-alert.ant-alert-info {
     .ant-alert-icon {
         padding-top: 5px;
+
         svg {
             font-size: 18px;
         }
     }
+
     .ant-alert-content {
         .ant-alert-message {
             font-size: 18px;
             font-weight: 600;
             color: $secound-app-color;
         }
+    }
+}
+
+.upload-btn-wrapper {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+}
+
+.upload-btn-wrapper {
+    .btn {
+        border: none;
+        color: #fff;
+        background-color: $secound-app-color;
+        padding: 4px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    input[type=file] {
+        font-size: 100px;
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
     }
 }
 
