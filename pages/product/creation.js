@@ -1,5 +1,8 @@
 import { useState, useEffect, useRef, Fragment } from 'react'
-import { Card, CardContent, CardAction, Fade, Paper, Button } from '@material-ui/core'
+import {
+    Card, CardContent, CardAction, Fade,
+    Paper, Button, CircularProgress
+} from '@material-ui/core'
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import DeleteIcon from '@material-ui/icons/Delete'
@@ -11,7 +14,6 @@ import { geProductCategories, getUnits } from '../../store/actions/productAction
 import { useDispatch, useSelector } from 'react-redux'
 import Select from "react-select"
 import { Alert, message, Upload, Button as AntButton } from 'antd'
-import { UploadOutlined } from '@ant-design/icons'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 const MySwal = withReactContent(Swal)
@@ -90,6 +92,7 @@ function creation(props) {
 
     const [categoryID, setcategoryID] = useState(null)
     const [subCategoryId, setsubCategoryId] = useState(null)
+    const [saving, setSaving] = useState(false)
     const { register, control, handleSubmit, formState: { errors }, setValue, getValues, reset, watch } = useForm({
         defaultValues: {
             unit: {
@@ -117,16 +120,19 @@ function creation(props) {
 
     const handleSaveProduct = async (data) => {
         const loading = message.loading('กำลังบันทึกข้อมูล...')
+        setSaving(true)
         const product_galleries = await uploadProductImage()
         const thumbnailUpload = await uploadImage({ type: 'cats', image_data: thumbnailFile }).then(res => {
             if (res.success) {
                 return res.data
             } else {
+                setSaving(false)
                 setTimeout(loading, 0)
                 message.warning('UPLOAD thumbnail ไม่สำเร็จ')
                 return
             }
         }).catch(err => {
+            setSaving(false)
             setTimeout(loading, 0)
             message.warning('UPLOAD thumbnail IMAGE FAILED')
             return
@@ -142,7 +148,9 @@ function creation(props) {
         data.status = 1
         data.product_galleries = product_galleries
         data.product_options = product_options
+        console.log(`SAVE DATA---`, JSON.stringify(data))
         await saveProduct(data).then(res => {
+            setSaving(false)
             setTimeout(loading, 0)
             if (res.success) {
                 clearform()
@@ -151,6 +159,7 @@ function creation(props) {
                 message.error(`บันทึกไม่สำเร็จ. ${res.message}`)
             }
         }).catch(err => {
+            setSaving(false)
             setTimeout(loading, 0)
             message.error(`บันทึกไม่สำเร็จ. ${res.message}`)
         })
@@ -245,11 +254,6 @@ function creation(props) {
     const deleteImage = (idx) => {
         images.splice(idx, 1)
         setImages([...images])
-    }
-
-    const deleteOptions = (id) => {
-        // productOptions.splice(idx, 1)
-        setProductOptions([...productOptions.filter(op => op.id !== id)])
     }
 
     const onThumbnailChange = (e) => {
@@ -580,54 +584,6 @@ function creation(props) {
                             <CardContent>
                                 <div className="h5 mb-2">ตัวเลือกสินค้า</div>
                                 <div className="mb-3">เพิ่มตัวเลือกของสินค้า ในกรณีที่สินค้ามีรูปแบบที่หลากหลาย เช่น สี และ ขนาด</div>
-                                {productOptions.length > 0 ? productOptions.map((op, i) => (
-                                    <div className="option-item" key={`option_${i + 1}`}>
-                                        <div className='default-flex-between'>
-                                            <span>ตัวเลือกที่ {i + 1}</span>
-                                            <DeleteIcon className='delete-icon' onClick={() => deleteOptions(op.id)} />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="name" className="form-label">
-                                                <span className='requird'>* </span>
-                                                Variant Name
-                                            </label>
-                                            <input
-                                                type="text"
-                                                className={`form-control`}
-                                                id="name"
-                                                defaultValue={op.name}
-                                                // onChange={(e) => onChangeOption('name', i, e)}
-                                                placeholder="" />
-                                        </div>
-                                    </div>
-                                )) : null}
-                                {/* {fields.map((it, i) => (
-                                    <div key={it.id} className="option-item">
-                                        <div className='default-flex-between'>
-                                            <span>ตัวเลือกที่ {i + 1}</span>
-                                            <DeleteIcon className='delete-icon' onClick={() => remove(i)} />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="name" className="form-label">
-                                                <span className='requird'>* </span>
-                                                Variant Name
-                                            </label>
-                                            <input
-                                                type="text"
-                                                className={`form-control`}
-                                                id={`options[${i}].name`}
-                                                name={`options[${i}].name`}
-                                                {...register(`options[${i}].name`, { required: true })}
-                                                placeholder="เช่น สี/ไซต์/รุ่น" />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label className="form-label">
-                                                Options
-                                            </label>
-                                            <NestedOption nestIndex={i} {...{ control, register }} />
-                                        </div>
-                                    </div>
-                                ))} */}
                                 {fields.map((it, i) => (
                                     <div key={it.id} className="option-item">
                                         <div className='default-flex-between mb-2'>
@@ -715,13 +671,6 @@ function creation(props) {
                                             </div>
                                         </div>
                                         <div className="mt-2"></div>
-                                        {/* <input
-                                            accept=".png, .jpg, .jpeg"
-                                            className='upload-button'
-                                            id={`product_options[${i}].image`}
-                                            name={`product_options[${i}].image`}
-                                            {...register(`product_options[${i}].image`, { required: true, })}
-                                            type="file" /> */}
                                         <div className="upload-btn-wrapper d-flex align-items-center flex-wrap">
                                             <button className="btn me-2">Upload a file</button>
                                             <input
@@ -732,7 +681,7 @@ function creation(props) {
                                                 name={`product_options[${i}].image`}
                                                 onInput={e => {
                                                     e.preventDefault()
-                                                    document.getElementById(`image-${i}`).innerHTML = e.target.files[0].name
+                                                    document.getElementById(`option-preview-${i}`).src = URL.createObjectURL(e.target.files[0])
                                                     const reader = new FileReader()
                                                     reader.onloadend = () => {
                                                         setValue(`product_options[${i}].thumbnail`, reader.result)
@@ -741,11 +690,10 @@ function creation(props) {
                                                 }}
                                                 {...register(`product_options[${i}].image`, { required: false, })}
                                             />
-                                            <div id={`image-${i}`}></div>
+                                            <img id={`option-preview-${i}`} style={{ maxHeight: '25px' }} src='' alt='' />
                                         </div>
                                     </div>
                                 ))}
-                                <button type='button' onClick={() => console.log('product_options', getValues().product_options)}>test</button>
                                 <Button
                                     variant="contained"
                                     color="primary"
@@ -762,7 +710,10 @@ function creation(props) {
                                 <div className="row">
                                     <div className="col-md-6"></div>
                                     <div className="col-md-6">
-                                        <Button className='w-100' variant="contained" color="primary" type='submit'>
+                                        <Button
+                                            disabled={saving}
+                                            startIcon={saving ? <CircularProgress /> : null}
+                                            className='w-100' variant="contained" color="primary" type='submit'>
                                             บันทึก
                                         </Button>
                                     </div>

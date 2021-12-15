@@ -77,7 +77,7 @@ svg.delete-icon {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-size: 15px;
+    font-size: 13px;
     font-family: 'Sarabun', sans-serif !important;
 }
 
@@ -139,6 +139,10 @@ td.MuiTableCell-body.no-data-table {
     line-height: 200px;
 }
 
+.MuiTableCell-root {
+    font-size: 13px !important;
+}
+
 input[type='checkbox'] {
 
     &.indeterminate {
@@ -150,6 +154,10 @@ input[type='checkbox'] {
 
 .MuiListItem-root:hover {
     color: #111;
+}
+
+.MuiTableRow-head {
+    background: #deeaff;
 }
 
 .main-menu {
@@ -563,6 +571,11 @@ h3 {
         top: 0;
         opacity: 0;
     }
+}
+
+.MuiCircularProgress-root.MuiCircularProgress-colorPrimary.MuiCircularProgress-indeterminate {
+    width: 18px !important;
+    height: 18px !important;
 }
 
 
