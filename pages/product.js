@@ -21,9 +21,11 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 const MySwal = withReactContent(Swal)
 import CustomTable from '../components/bootstrap5/table'
+import FilterListIcon from '@material-ui/icons/FilterList';
 function product() {
     const [value, setValue] = useState(0)
     const [products, setProducts] = useState([])
+    const [listData, setListData] = useState({ counts: 0, limit: 10, offset: 0 })
     const [notFound, setNotFound] = useState(false)
     const [filterValue, setFilterValue] = useState('')
     const [filterTitle, setFilterTitle] = useState({ value: 1, text: 'ชื่อสินค้า' })
@@ -44,12 +46,14 @@ function product() {
             description: desc,
         })
     }
-    const fetchProducts = () => {
+
+    const fetchProducts = (limit = 2, offset = 0, keyword = '') => {
         setNotFound(false)
-        getProducts().then(res => {
+        getProducts(limit, offset, keyword).then(res => {
             if (res.success) {
                 res.data.length < 1 && setNotFound(true)
-                setProducts(res.data)
+                setProducts(res.data.products)
+                setListData(res.data)
             } else {
                 openNotificationWithIcon('error', res.message)
                 setNotFound(true)
@@ -61,7 +65,7 @@ function product() {
     }
 
     useEffect(() => {
-        fetchProducts()
+        fetchProducts(2, 0, '')
         return () => { }
     }, [])
     useEffect(() => {
@@ -75,7 +79,7 @@ function product() {
         { value: 5, text: 'จำนวน stock' },
     ]
 
-    const handleDelete = (id) => {
+    const handleDelete = (id, limit = 2, offset = 0, keyword = '') => {
         return MySwal.fire({
             text: "ยืนยันลบสินค้า?",
             icon: 'warning',
@@ -90,7 +94,7 @@ function product() {
                 deleteProduct(id).then(res => {
                     setTimeout(loading, 0)
                     if (res.success) {
-                        fetchProducts()
+                        fetchProducts(limit, offset, keyword)
                         message.success('ลบสินค้าสำเร็จ')
                     } else {
                         message.error('ลบสินค้าไม่สำเร็จ')
@@ -123,7 +127,10 @@ function product() {
             <Card className='my-3'>
                 <CardContent>
                     <div className='mb-3 default-flex-between'>
-                        <span>ตัวกรองสินค้า</span>
+                        <span>
+                            <FilterListIcon className='me-2' />
+                            ตัวกรองสินค้า
+                        </span>
                         <Button variant="outlined" size="small" color="primary">
                             รีเซ็ต
                         </Button>
@@ -197,8 +204,10 @@ function product() {
                     pd.manage = ''
                     return pd
                 }) : []}
+                listData={listData}
                 notFound={notFound}
                 handleDelete={handleDelete}
+                fetchProducts={fetchProducts}
             />
             {/* </CardContent>
             </Card> */}

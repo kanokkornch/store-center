@@ -73,6 +73,10 @@ svg.delete-icon {
     }
 }
 
+.text-gray {
+    color: #999;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -114,8 +118,15 @@ svg.delete-icon {
     }
 }
 
-.select__control.css-1s2u09g-control {
-    min-height: 40px;
+.select__control.css-1s2u09g-control,
+.select__control.select__control--menu-is-open,
+.select__control--is-focused.css-1pahdxg-control {
+    min-height: 35px !important;
+}
+
+.css-tlfecz-indicatorContainer,
+.css-1gtu0rj-indicatorContainer {
+    padding: 6px 8px !important;
 }
 
 .MuiTypography-body1 {
@@ -158,6 +169,17 @@ input[type='checkbox'] {
 
 .MuiTableRow-head {
     background: #deeaff;
+}
+
+button.MuiTab-root.MuiTab-textColorPrimary {
+    span.MuiTab-wrapper {
+        font-size: 14px;
+        font-weight: 600;
+    }
+}
+
+.PrivateTabIndicator-root-4.PrivateTabIndicator-colorPrimary-5.MuiTabs-indicator {
+    height: 4px;
 }
 
 .main-menu {
@@ -578,6 +600,21 @@ h3 {
     height: 18px !important;
 }
 
+.table-header-content {
+
+    img.table-image {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+
+    span.title {
+        font-size: 14px;
+        color: #333;
+        font-weight: 500;
+    }
+}
 
 @media screen and (max-width: 960px) {
     .content-container {

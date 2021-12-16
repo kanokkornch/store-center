@@ -21,6 +21,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
+import BorderColorIcon from '@material-ui/icons/BorderColor';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import { Skeleton, Empty, Spin } from 'antd'
 import {
@@ -198,14 +199,15 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function EnhancedTable(props) {
-    const { headCells, rows, notFound = false, handleDelete } = props
+    const { headCells, rows, notFound = false,
+        handleDelete, listData, fetchProducts } = props
     const classes = useStyles();
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
     const [selected, setSelected] = React.useState([]);
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const [rowsPerPage, setRowsPerPage] = React.useState(2);
     const [open, setOpen] = React.useState(false)
     const anchorRef = React.useRef(null)
 
@@ -265,6 +267,7 @@ export default function EnhancedTable(props) {
     };
 
     const handleChangePage = (event, newPage) => {
+        fetchProducts(parseInt(rowsPerPage), parseInt(listData.offset) + parseInt(rowsPerPage), '')
         setPage(newPage);
     };
 
@@ -331,10 +334,27 @@ export default function EnhancedTable(props) {
                                                     </input>
                                                 </TableCell>
                                                 <TableCell component="th" id={labelId} scope="row" padding="none">
-                                                    {row.name}
+                                                    <div className='d-flex table-header-content'>
+                                                        <img className='me-3 table-image' src={row.thumbnail} alt="" />
+                                                        <div className='d-flex flex-column'>
+                                                            <span className='title mb-1'>{row.name}</span>
+                                                            <span>
+                                                                <span className='text-gray'>Seller sku: {row.sku}</span>
+                                                            </span>
+                                                        </div>
+                                                    </div>
                                                 </TableCell>
-                                                <TableCell align="right">{row.sell_price}</TableCell>
-                                                <TableCell align="right">{row.qty}</TableCell>
+                                                <TableCell align="right"><span className='text-gray'>฿</span>  {row.sell_price}
+                                                    <IconButton aria-label="delete" className='ms-2' size="small">
+                                                        <BorderColorIcon fontSize="inherit" />
+                                                    </IconButton>
+                                                </TableCell>
+                                                <TableCell align="right">
+                                                    {row.qty}
+                                                    <IconButton aria-label="delete" className='ms-2' size="small">
+                                                        <BorderColorIcon fontSize="inherit" />
+                                                    </IconButton>
+                                                </TableCell>
                                                 <TableCell align="center">
                                                     <Tooltip title="Edit">
                                                         <Link href={`/product/edit/${row.id}`}>
@@ -344,7 +364,7 @@ export default function EnhancedTable(props) {
                                                         </Link>
                                                     </Tooltip>
                                                     <Tooltip title="Delete">
-                                                        <IconButton aria-label="delete" onClick={() => handleDelete(row.id)}>
+                                                        <IconButton aria-label="delete" onClick={() => handleDelete(row.id, rowsPerPage, listData.offset + rowsPerPage, '')}>
                                                             <DeleteIcon />
                                                         </IconButton>
                                                     </Tooltip>
@@ -374,10 +394,10 @@ export default function EnhancedTable(props) {
                             </TableBody>
                         </Table>
                     </TableContainer>
-                    {rows.length > 0 && <TablePagination
-                        rowsPerPageOptions={[10, 20, 50]}
+                    {listData.counts > 0 && <TablePagination
+                        rowsPerPageOptions={[1, 2, 10, 20, 50]}
                         component="div"
-                        count={rows.length}
+                        count={listData.counts ? listData.counts : rows.length}
                         rowsPerPage={rowsPerPage}
                         page={page}
                         onPageChange={handleChangePage}
