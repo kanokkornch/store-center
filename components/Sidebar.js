@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from 'react'
+import React, { useState, Fragment, useEffect } from 'react'
 import styled from 'styled-components'
 import Link from 'next/link'
 import clsx from 'clsx'
@@ -16,6 +16,7 @@ import {
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import { APIshopLogout } from '../services/api'
+
 
 const useStyles = makeStyles({
     nested: {
@@ -36,7 +37,8 @@ function Sidebar() {
     const classes = useStyles()
     const [index, setIndex] = useState(null)
     const [indexOpen, setIndexOpen] = useState(false)
-    const [anchorEl, setAnchorEl] = useState(null);
+    const [anchorEl, setAnchorEl] = useState(null)
+    const [showVerify, setShowVerify] = useState(false)
     const open = Boolean(anchorEl);
 
     const handleClick = (event) => {
@@ -51,6 +53,14 @@ function Sidebar() {
         setIndex(i)
         setIndexOpen(open)
     }
+
+    useEffect(() => {
+        const _data = sessionStorage.getItem('_data')
+        if (_data) {
+            console.log(`check verify`)
+            if (!_data.shop_verification) setShowVerify(true)
+        }
+    })
     // console.log(`router.pathname`, router.pathname)
     const list = (
         <div
@@ -63,6 +73,7 @@ function Sidebar() {
                     <CloseIcon />
                 </IconButton> */}
             </div>
+
             <List component="nav">
                 {SidebarData.map((menu, i) => (
                     <div key={menu.id}>
@@ -141,13 +152,20 @@ function Sidebar() {
                     aria-label="menu">
                     <MenuIcon />
                 </IconButton>
-                <IconButton
-                    aria-label="more"
-                    aria-controls="long-menu"
-                    aria-haspopup="true"
-                    onClick={handleClick}>
-                    <SettingsIcon />
-                </IconButton>
+                <div>
+                    {showVerify && <Button color="primary"
+                        onClick={() => { }}>
+                        กรุณายืนยันตัวตน
+                    </Button>}
+                    <IconButton
+                        aria-label="more"
+                        aria-controls="long-menu"
+                        aria-haspopup="true"
+                        onClick={handleClick}>
+                        <SettingsIcon />
+                    </IconButton>
+                </div>
+
             </div>
             <Drawer
                 className='d-none fixd-menu'
@@ -165,6 +183,7 @@ function Sidebar() {
             >
                 {list}
             </SwipeableDrawer>
+
             <Menu
                 id="long-menu"
                 anchorEl={anchorEl}

@@ -34,6 +34,17 @@ export const saveProduct = async (data) => {
         return err
     }
 }
+export const updateProduct = async (data) => {
+    const storage = JSON.parse(sessionStorage.getItem('_data'))
+    axios.defaults.headers.common['Authorization'] = `Bearer ${storage.api_token}`
+    try {
+        const res = await axios.put(`${BASE_API_URL}/products/${data.id}`, data)
+        return await res.data
+    } catch (err) {
+        console.log(`err`, err)
+        return err
+    }
+}
 export const getProducts = async () => {
     const storage = JSON.parse(sessionStorage.getItem('_data'))
     axios.defaults.headers.common['Authorization'] = `Bearer ${storage.api_token}`

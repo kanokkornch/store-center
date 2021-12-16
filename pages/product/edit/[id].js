@@ -1,15 +1,16 @@
 import { useState, useEffect, useRef, Fragment } from 'react'
 import { useRouter } from 'next/router'
-import { getProductsById } from '../../../services/product'
+import { getProductsById, updateProduct } from '../../../services/product'
 import { uploadImage } from '../../../services/utills'
 import { geProductCategories, getUnits } from '../../../store/actions/productAction'
-import { Card, CardContent, CardAction, Fade, Paper, Button } from '@material-ui/core'
+import { Card, CardContent, CardAction, Fade, Paper, Button, CircularProgress } from '@material-ui/core'
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import DeleteIcon from '@material-ui/icons/Delete'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import AddIcon from '@material-ui/icons/Add'
 import { useDispatch, useSelector } from 'react-redux'
+import { message } from 'antd'
 import Select from "react-select"
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
@@ -94,6 +95,7 @@ function editProduct() {
 
     const [categoryID, setcategoryID] = useState(null)
     const [subCategoryId, setsubCategoryId] = useState(null)
+    const [saving, setSaving] = useState(false)
     const { register, control, handleSubmit, formState: { errors }, setValue, getValues, reset } = useForm({
         defaultValues: {
             unit: {
@@ -101,16 +103,17 @@ function editProduct() {
                 label: "กล่อง"
             },
             qty: 1,
+            status: 1,
             cost_price: 0,
             sell_price: 0,
             discount_price: 0,
-            options: []
+            product_options: []
         }
     })
     const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
         {
             control,
-            name: "options"
+            name: "product_options"
         }
     )
     const clearform = () => {
@@ -129,19 +132,28 @@ function editProduct() {
                         setGalleries([...photos])
                     }
                     setThumbnail(res.data.thumbnail)
+                    setValue('id', id)
+                    setValue('name', res.data.name)
                     setValue('name', res.data.name)
                     setValue('code', res.data.code)
                     setValue('sku', res.data.sku)
-                    setValue('description', res.data.description)
+                    setValue('thumbnail', res.data.thumbnail)
                     setValue('description', res.data.description)
                     setValue('qty', res.data.qty)
                     setValue('cost_price', res.data.cost_price)
                     setValue('sell_price', res.data.sell_price)
                     setValue('discount_price', res.data.discount_price)
-                    setValue('options', res.data.product_options)
+                    setValue('product_options', res.data.product_options)
                     setcategoryID(res.data.category_id)
                     setsubCategoryId(res.data.sub_category_id)
                     setData(res.data)
+                    if (res.data.product_options.length > 0) {
+                        res.data.product_options.map((op, i) => {
+                            if (op.thumbnail) {
+                                document.getElementById(`option-preview-${i}`).src = op.thumbnail
+                            }
+                        })
+                    }
                 }
             }).catch(err => {
 
@@ -158,109 +170,128 @@ function editProduct() {
             const unit = units.find(u => u.name === data.unit)
             unit && setValue('unit', unit)
         }
-    }, [units])
+    }, [units, data])
 
-    const onSubmit = (data) => {
-        const product_galleries = []
-        if (imagesFile.length > 0) {
-            imagesFile.map(img => {
-                uploadImage({ type: 'cats', image_data: img }).then(res => {
-                    if (res.success) {
-                        product_galleries.push(res.data)
-                    } else {
-                        alert('UPLOAD ไม่สำเร็จ')
-                    }
-                }).catch(err => {
-                    console.log(`UPLOAD IMAGE FAILED:`, err)
-                    // alert('UPLOAD IMAGE FAILED: ', err)
-                })
-            })
-        } else {
-            if (galleries.length < 1) {
-                alert('กรุณา Upload รูปของสินค้า อย่างน้อย 1 รูปภาพ')
-                return
-            }
-            if (imagesFile.length < 1 && galleries.length < 1) {
-                alert('กรุณา Upload รูปของสินค้า อย่างน้อย 1 รูปภาพ')
-                return
-            }
+    const handleSaveProduct = async (data) => {
+        setSaving(true)
+        const loading = message.loading('กำลังบันทึกข้อมูล...')
+        let gals = []
+        if (galleries.length > 0) {
+            gals = galleries.map(img => ({ image_url: img }))
         }
-        //เช็คว่า Upload เสร็จรึยัง
+        let product_galleries = []
+        if (imagesFile.length > 0) {
+            product_galleries = await uploadProductImage()
+            product_galleries = [...gals, ...product_galleries]
+        } else {
+            product_galleries = gals
+        }
+        let thumbnailUpload = null
         if (thumbnailFile) {
-            uploadImage({ type: 'cats', image_data: thumbnailFile }).then(res => {
+            thumbnailUpload = await uploadImage({ type: 'cats', image_data: thumbnailFile }).then(res => {
                 if (res.success) {
-                    data.image_url = res.data.image_url
-                    handleSaveProduct(data, product_galleries)
+                    return res.data
                 } else {
-                    alert('UPLOAD ไม่สำเร็จ')
+                    setSaving(false)
+                    setTimeout(loading, 0)
+                    message.warning('UPLOAD thumbnail ไม่สำเร็จ')
+                    return
                 }
             }).catch(err => {
-                console.log(`UPLOAD IMAGE FAILED:`, err)
+                setSaving(false)
+                setTimeout(loading, 0)
+                message.warning('UPLOAD thumbnail IMAGE FAILED')
+                return
             })
         } else {
-            if (!thumbnail) {
-                alert('กรุณา Upload Thumbnail 1 รูปภาพ')
-                return
-            } else {
-                data.image_url = thumbnail
-                handleSaveProduct(data, product_galleries)
-            }
-
+            thumbnailUpload = data.thumbnail
         }
-    }
-    const handleSaveProduct = (param, galleriesList = []) => {
-        if (imagesFile.length < 1 && galleries.length > 0) {
-            galleriesList = galleries
+
+        let product_options = []
+        if (data.product_options.length > 0) {
+            product_options = await uploadProductOptionImage(data.product_options)
         }
-        // const formData = {
-        //     ...data,
-        //     id: data.id,
-        //     thumbnail: data.image_url,
-        //     qty: parseFloat(data.qty),
-        //     unit: data.unit.label,
-        //     cost_price: parseFloat(data.cost_price),
-        //     sell_price: parseFloat(data.sell_price),
-        //     discount_price: parseFloat(data.discount_price || 0),
-        //     category_id: categoryID,
-        //     sub_category_id: subCategoryId,
-        //     status: 1,
-        //     product_galleries: galleriesList,
-        //     product_options: data.options,
-        // }
-        const formData = param
-        formData.id = id
-        formData.thumbnail = param.image_url
-        formData.qty = parseFloat(data.qty)
-        formData.unit = param.unit.label
-        formData.cost_price = parseFloat(data.cost_price)
-        formData.sell_price = parseFloat(data.sell_price)
-        formData.discount_price = parseFloat(data.discount_price || 0)
-        formData.category_id = categoryID
-        formData.sub_category_id = subCategoryId
-        formData.status = 1
-        formData.product_galleries = galleriesList
-        formData.product_options = param.options
-
-
-        console.log('FORM DATA--->', JSON.stringify(formData))
-        saveProduct(formData).then(res => {
+        data.thumbnail = thumbnailUpload && thumbnailUpload.image_url ? thumbnailUpload.image_url : thumbnailUpload
+        data.unit = data.unit.label
+        data.category_id = categoryID
+        data.sub_category_id = subCategoryId
+        data.status = 1
+        data.product_galleries = product_galleries
+        data.product_options = product_options
+        console.log(`UPDATE DATA---`, JSON.stringify(data))
+        await updateProduct(data).then(res => {
+            setSaving(false)
+            setTimeout(loading, 0)
             if (res.success) {
-                clearform()
-                return MySwal.fire({
-                    title: res.message,
-                    text: 'บันทึกสินค้าสำเร็จ',
-                    icon: 'success'
-                })
+                message.success('อัพเดตสำเร็จ')
             } else {
-                return MySwal.fire({
-                    title: 'ข้อความจากระบบ',
-                    text: res.message,
-                    icon: 'error'
-                })
+                message.error(`อัพเดตไม่สำเร็จ. ${res.message}`)
             }
         }).catch(err => {
-            alert('บันทึกไม่สำเร็จ')
+            setSaving(false)
+            setTimeout(loading, 0)
+            message.error(`อัพเดตไม่สำเร็จ. ${res.message}`)
         })
+    }
+
+    const uploadProductImage = async () => {
+        const list = []
+        await Promise.all(imagesFile.map(async (img) => {
+            await uploadImage({ type: 'cats', image_data: img }).then(res => {
+                if (res.success) {
+                    list.push(res.data)
+                } else {
+                    message.warning('UPLOAD ไม่สำเร็จ')
+                    return
+                }
+            }).catch(err => {
+                message.warning('UPLOAD IMAGE FAILED')
+                return
+            })
+        }))
+        return await list
+    }
+    const uploadProductOptionImage = async (data) => {
+        const list = []
+        await Promise.all(data.map(async (img) => {
+            if (!img.thumbnail.includes('http')) {
+                await uploadImage({ type: 'cats', image_data: img.thumbnail }).then(res => {
+                    if (res.success) {
+                        img.thumbnail = res.data.image_url
+                        list.push(img)
+                    } else {
+                        message.warning('UPLOAD ไม่สำเร็จ')
+                        return
+                    }
+                }).catch(err => {
+                    message.warning('UPLOAD IMAGE FAILED')
+                    return
+                })
+            } else {
+                list.push(img)
+            }
+
+        }))
+        return await list
+    }
+
+    const onSubmit = (data) => {
+        if (imagesFile.length < 1 && galleries.length < 1) {
+            message.warning('กรุณา Upload รูปของสินค้า อย่างน้อย 1 รูปภาพ')
+            return
+        }
+        if (!thumbnailFile && !thumbnail) {
+            message.warning('กรุณา Upload Thumbnail 1 รูปภาพ')
+            return
+        }
+        if (data.product_options.length > 0) {
+            const checkNullImage = data.product_options.find(img => img.thumbnail === null)
+            if (checkNullImage) {
+                message.warning('กรุณาเพิ่มรูปภาพในตัวเลือกสินค้า')
+                return
+            }
+        }
+        handleSaveProduct(data)
     }
 
     useEffect(() => {
@@ -403,10 +434,10 @@ function editProduct() {
             </div>
         </Fragment>
     )
-    const setDefaultCategory = () => {
+    useEffect(() => {
         let name = ''
         let subName = ''
-        if (data) {
+        if (categories.length > 0 && data) {
             const find = categories.find(c => c.id === data.category_id)
             if (find) {
                 name = find.name
@@ -414,8 +445,8 @@ function editProduct() {
                 if (subCat) subName = subCat.name
             }
         }
-        return `${name} > ${subName}`
-    }
+        setValue('category', `${name} > ${subName}`)
+    }, [categories, data])
 
 
     return (
@@ -503,7 +534,7 @@ function editProduct() {
                                     </label>
                                     <input
                                         type="text"
-                                        defaultValue={setDefaultCategory()}
+                                        // defaultValue={setDefaultCategory()}
                                         {...register('category', { required: true, })}
                                         className={`form-control ${errors.category ? 'is-invalid' : ''}`}
                                         id="category"
@@ -517,6 +548,17 @@ function editProduct() {
                                         </div>
                                     </Fade>
                                 </div> : null}
+                                <div className="mb-3">
+                                    <label htmlFor="product_name" className="form-label">
+                                        URL วิดีโอ
+                                    </label>
+                                    <input
+                                        type="text"
+                                        {...register('video_url', { required: false })}
+                                        className={`form-control ${errors.video_url ? 'is-invalid' : ''}`}
+                                        id="video_url"
+                                        placeholder="" />
+                                </div>
                                 <div className="mb-3">
                                     <label className="form-label fw-bold">
                                         <span className='requird'>* </span>
@@ -596,43 +638,6 @@ function editProduct() {
                                                 }
                                             />}
                                         />
-                                        {/* <Controller
-                                            name={`product[${i}].name`}
-                                            control={control}
-                                            rules={{ required: true }}
-                                            defaultValue=''
-                                            render={(
-                                                { onChange, onBlur, value, name, ref },
-                                                { invalid, isTouched, isDirty }
-                                            ) => (
-                                                <Select
-                                                    className={`react-select custom ${invalid ? 'required' : ''}`}
-                                                    classNamePrefix='select'
-                                                    name={name}
-                                                    isLoading={!products || products.length < 1}
-                                                    options={products.length ? products.map(it => {
-                                                        it.value = it.id
-                                                        it.label = `${it.product_sku} : ${it.product_name}`
-                                                        it.price = it.product_price
-                                                        return it
-                                                    }) : []
-                                                    }
-                                                    innerRef={ref}
-                                                    isClearable={false}
-                                                    onChange={(data) => {
-                                                        onChange(data)
-                                                        const values = getValues()
-                                                        setValue(`product[${i}].price`, data.price)
-                                                        setValue(`product[${i}].total`, parseFloat(data.price || 0) * parseFloat(values.product[i].qty || 0))
-                                                        if (errors.product && errors.product[i] && errors.product[i].price) {
-                                                            clearErrors(`product[${i}].price`)
-                                                        }
-                                                        calTotal()
-                                                    }}
-                                                />
-                                            )}
-
-                                        /> */}
                                     </div>
                                 </div>
                                 <div className="mb-3 row">
@@ -681,17 +686,6 @@ function editProduct() {
                                 <div className="mb-3">
 
                                 </div>
-                                {/* <div className="mb-3">
-                                    <label htmlFor="product_name" className="form-label">
-                                        URL วิดีโอ
-                                    </label>
-                                    <input
-                                        type="text"
-                                        {...register('video_url', { required: false })}
-                                        className={`form-control ${errors.video_url ? 'is-invalid' : ''}`}
-                                        id="video_url"
-                                        placeholder="" />
-                                </div> */}
                             </CardContent>
                         </Card>
                         <Card className='mb-3'>
@@ -721,35 +715,120 @@ function editProduct() {
                                 )) : null}
                                 {fields.map((it, i) => (
                                     <div key={it.id} className="option-item">
-                                        <div className='default-flex-between'>
+                                        <div className='default-flex-between mb-2'>
                                             <span>ตัวเลือกที่ {i + 1}</span>
                                             <DeleteIcon className='delete-icon' onClick={() => remove(i)} />
                                         </div>
-                                        <div className="mb-3">
+                                        <div className="mb-2">
                                             <label htmlFor="name" className="form-label">
                                                 <span className='requird'>* </span>
-                                                Variant Name
+                                                ชื่อ
                                             </label>
                                             <input
                                                 type="text"
                                                 className={`form-control`}
-                                                id={`options[${i}].name`}
-                                                name={`options[${i}].name`}
-                                                {...register(`options[${i}].name`, { required: true })}
-                                                placeholder="เช่น สี/ไซต์/รุ่น" />
+                                                id={`product_options[${i}].name`}
+                                                name={`product_options[${i}].name`}
+                                                {...register(`product_options[${i}].name`, { required: true })}
+                                                placeholder="เช่น สี ไซต์ รุ่น" />
                                         </div>
-                                        <div className="mb-3">
-                                            <label className="form-label">
-                                                Options
+                                        <div className="mb-2">
+                                            <label htmlFor="name" className="form-label">
+                                                <span className='requird'>* </span>
+                                                ตัวเลือก
                                             </label>
-                                            <NestedOption nestIndex={i} {...{ control, register }} />
+                                            <input
+                                                type="text"
+                                                className={`form-control`}
+                                                id={`product_options[${i}].value`}
+                                                name={`product_options[${i}].value`}
+                                                {...register(`product_options[${i}].value`, { required: true })}
+                                                placeholder="เช่น แดง ดำ S M L" />
+                                        </div>
+                                        <div className="row">
+                                            <div className="col-md-6 mb-2">
+                                                <label htmlFor="qty" className="form-label">
+                                                    <span className='requird'>* </span>
+                                                    จำนวนสินค้า
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    id={`product_options[${i}].qty`}
+                                                    name={`product_options[${i}].qty`}
+                                                    {...register(`product_options[${i}].qty`, { required: true, })}
+                                                    className={`form-control text-end`}
+                                                    placeholder="" />
+                                            </div>
+                                            <div className="col-md-6">
+                                                <label htmlFor="qty" className="form-label">
+                                                    <span className='requird'>* </span>
+                                                    ต้นทุน
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    id={`product_options[${i}].cost_price`}
+                                                    name={`product_options[${i}].cost_price`}
+                                                    {...register(`product_options[${i}].cost_price`, { required: true, })}
+                                                    className={`form-control text-end`}
+                                                    placeholder="" />
+                                            </div>
+                                            <div className="col-md-6">
+                                                <label htmlFor="qty" className="form-label">
+                                                    <span className='requird'>* </span>
+                                                    ราคาขาย
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    id={`product_options[${i}].sell_price`}
+                                                    name={`product_options[${i}].sell_price`}
+                                                    {...register(`product_options[${i}].sell_price`, { required: true, })}
+                                                    className={`form-control text-end`}
+                                                    placeholder="" />
+                                            </div>
+                                            <div className="col-md-6">
+                                                <label htmlFor="qty" className="form-label">
+                                                    <span className='requird'>* </span>
+                                                    ส่วนลด
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    id={`product_options[${i}].discount_price`}
+                                                    name={`product_options[${i}].discount_price`}
+                                                    {...register(`product_options[${i}].discount_price`, { required: true, })}
+                                                    className={`form-control text-end`}
+                                                    placeholder="" />
+                                            </div>
+                                        </div>
+                                        <div className="mt-2"></div>
+                                        <div className="upload-btn-wrapper d-flex align-items-center flex-wrap">
+                                            <button className="btn me-2">Upload a file</button>
+                                            <input
+                                                type="file"
+                                                accept=".png, .jpg, .jpeg"
+                                                className='upload-button'
+                                                id={`product_options[${i}].image`}
+                                                name={`product_options[${i}].image`}
+                                                onInput={e => {
+                                                    e.preventDefault()
+                                                    if (document.getElementById(`option-preview-old-${i}`)) document.getElementById(`option-preview-old-${i}`).style.display = 'none'
+                                                    document.getElementById(`option-preview-${i}`).src = URL.createObjectURL(e.target.files[0])
+                                                    const reader = new FileReader()
+                                                    reader.onloadend = () => {
+                                                        setValue(`product_options[${i}].thumbnail`, reader.result)
+                                                    }
+                                                    reader.readAsDataURL(e.target.files[0])
+                                                }}
+                                                {...register(`product_options[${i}].image`, { required: false, })}
+                                            />
+                                            <img id={`option-preview-${i}`} style={{ maxHeight: '25px' }} src='' alt='' />
+                                            {getValues().product_options[i].thumbnail && getValues().product_options[i].thumbnail.includes('http') && console.log(`object`, getValues().product_options[i].thumbnail)}
                                         </div>
                                     </div>
                                 ))}
                                 <Button
                                     variant="contained"
                                     color="primary"
-                                    onClick={() => append({ name: '', option: [] })}
+                                    onClick={() => append({ type: 'option', name: '', cost_price: 0, sell_price: 0, qty: 0, discount_price: 0, thumbnail: null })}
                                     startIcon={<AddIcon />}
                                 >
                                     เพิ่มตัวเลือกสินค้า
@@ -761,7 +840,10 @@ function editProduct() {
                                 <div className="row">
                                     <div className="col-md-6"></div>
                                     <div className="col-md-6">
-                                        <Button className='w-100' variant="contained" color="primary" type='submit'>
+                                        <Button
+                                            disabled={saving}
+                                            startIcon={saving ? <CircularProgress /> : null}
+                                            className='w-100' variant="contained" color="primary" type='submit'>
                                             บันทึก
                                         </Button>
                                     </div>

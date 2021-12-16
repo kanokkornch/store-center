@@ -63,7 +63,7 @@ function EnhancedTableHead(props) {
 
     return (
         <TableHead>
-            <TableRow>
+            <TableRow className=''>
                 <TableCell padding="checkbox">
                     {rows.length > 0 && <input
                         className={`form-check-input ${numSelected > 0 && numSelected < rowCount ? 'indeterminate' : ''}`}
@@ -151,12 +151,12 @@ const EnhancedTableToolbar = (props) => {
                 <></>
             )}
 
-            {numSelected > 0 ? (
-                <Tooltip title="Delete">
-                    <IconButton aria-label="delete">
-                        <DeleteIcon />
-                    </IconButton>
-                </Tooltip>
+            {numSelected > 0 ? (<></>
+                // <Tooltip title="Delete">
+                //     <IconButton aria-label="delete">
+                //         <DeleteIcon />
+                //     </IconButton>
+                // </Tooltip>
             ) : (
                 // <Tooltip title="Filter list">
                 //     <IconButton aria-label="filter list">
