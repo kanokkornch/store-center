@@ -2,6 +2,7 @@ $main-bg-color: #EEF0F4;
 $app-color: #201ADB;
 $secound-app-color: #3A82FF;
 $danger-app-color: #D93232;
+$radius: 10px;
 
 @for $i from 1 through 150 {
     .w-#{$i}-per {
@@ -39,8 +40,40 @@ $danger-app-color: #D93232;
     }
 }
 
+.sidebar-haeder {
+    span {
+        font-size: 40px;
+        font-weight: 500;
+    }
+}
+
+.ant-modal-content {
+    border-radius: $radius !important;
+}
+
+.ant-modal-header {
+    border-radius: $radius $radius 0 0 !important;
+}
+
+.ant-modal-body {
+    padding: 15px !important;
+}
+
+.ant-modal.stock-modal {
+    width: 770px !important;
+}
+
+.input-group-text {
+    background-color: #fff !important;
+    border-right: none !important;
+}
+
 .MuiCard-root {
     overflow: visible !important;
+}
+
+.MuiPaper-rounded {
+    border-radius: $radius !important;
 }
 
 .main-overlay {
@@ -598,6 +631,13 @@ h3 {
 .MuiCircularProgress-root.MuiCircularProgress-colorPrimary.MuiCircularProgress-indeterminate {
     width: 18px !important;
     height: 18px !important;
+}
+
+img.table-image {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 4px;
 }
 
 .table-header-content {

@@ -18,6 +18,7 @@ import 'antd/dist/antd.css'
 Router.events.on('routeChangeStart', () => NProgress.start());
 Router.events.on('routeChangeComplete', () => NProgress.done());
 Router.events.on('routeChangeError', () => NProgress.done());
+// import '../firebase/initFirebase'
 function MyApp({ Component, pageProps }) {
   const router = useRouter()
   console.log(`pathname`, router.pathname)

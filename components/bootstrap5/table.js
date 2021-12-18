@@ -71,7 +71,7 @@ function EnhancedTableHead(props) {
                         type="checkbox"
                         onClick={onSelectAllClick}
                         aria-label='select all desserts'
-                        checked={rowCount > 0 && numSelected === rowCount}>
+                        defaultChecked={rowCount > 0 && numSelected === rowCount}>
                     </input>}
 
                 </TableCell>
@@ -200,14 +200,16 @@ const useStyles = makeStyles((theme) => ({
 
 export default function EnhancedTable(props) {
     const { headCells, rows, notFound = false,
-        handleDelete, listData, fetchProducts } = props
+        handleDelete, listData, fetchProducts,
+        setVisibleStock, visibleStock,
+        handleEditStock } = props
     const classes = useStyles();
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
     const [selected, setSelected] = React.useState([]);
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
-    const [rowsPerPage, setRowsPerPage] = React.useState(2);
+    const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [open, setOpen] = React.useState(false)
     const anchorRef = React.useRef(null)
 
@@ -267,7 +269,11 @@ export default function EnhancedTable(props) {
     };
 
     const handleChangePage = (event, newPage) => {
-        fetchProducts(parseInt(rowsPerPage), parseInt(listData.offset) + parseInt(rowsPerPage), '')
+        // if (newPage < page) {
+        //     fetchProducts(parseInt(rowsPerPage), parseInt(listData.offset) - parseInt(rowsPerPage), '')
+        // } else {
+        //     fetchProducts(parseInt(rowsPerPage), parseInt(listData.offset) + parseInt(rowsPerPage), '')
+        // }
         setPage(newPage);
     };
 
@@ -333,29 +339,38 @@ export default function EnhancedTable(props) {
                                                         checked={isItemSelected}>
                                                     </input>
                                                 </TableCell>
-                                                <TableCell component="th" id={labelId} scope="row" padding="none">
-                                                    <div className='d-flex table-header-content'>
-                                                        <img className='me-3 table-image' src={row.thumbnail} alt="" />
-                                                        <div className='d-flex flex-column'>
-                                                            <span className='title mb-1'>{row.name}</span>
-                                                            <span>
+                                                <TableCell style={{ minWidth: '260px' }} component="th" id={labelId} scope="row" padding="none">
+                                                    <div>
+                                                        <div className='d-flex table-header-content'>
+                                                            <img className='me-3 table-image' src={row.thumbnail} alt="" />
+                                                            <div className='d-flex flex-column'>
+                                                                <span className='title mb-1'>{row.name}</span>
                                                                 <span className='text-gray'>Seller sku: {row.sku}</span>
-                                                            </span>
+                                                            </div>
                                                         </div>
+                                                        {/* {row.product_options.length > 0 ? row.product_options.map(pd => (
+                                                            <p><div>
+                                                                <img className='me-3 table-image' src={pd.thumbnail} alt="" />
+                                                            </div>
+                                                            </p>
+                                                        )) : null} */}
                                                     </div>
+
+
                                                 </TableCell>
-                                                <TableCell align="right"><span className='text-gray'>฿</span>  {row.sell_price}
-                                                    <IconButton aria-label="delete" className='ms-2' size="small">
+                                                <TableCell align="right" style={{ minWidth: '115px' }}>
+                                                    <span className='text-gray'>฿</span>  {row.sell_price}
+                                                    <IconButton onClick={() => handleEditStock(row.id)} aria-label="delete" className='ms-2' size="small">
                                                         <BorderColorIcon fontSize="inherit" />
                                                     </IconButton>
                                                 </TableCell>
-                                                <TableCell align="right">
+                                                <TableCell align="right" style={{ minWidth: '115px' }}>
                                                     {row.qty}
                                                     <IconButton aria-label="delete" className='ms-2' size="small">
                                                         <BorderColorIcon fontSize="inherit" />
                                                     </IconButton>
                                                 </TableCell>
-                                                <TableCell align="center">
+                                                <TableCell align="center" style={{ minWidth: '150px' }}>
                                                     <Tooltip title="Edit">
                                                         <Link href={`/product/edit/${row.id}`}>
                                                             <IconButton color="primary" aria-label="edit">
@@ -364,7 +379,7 @@ export default function EnhancedTable(props) {
                                                         </Link>
                                                     </Tooltip>
                                                     <Tooltip title="Delete">
-                                                        <IconButton aria-label="delete" onClick={() => handleDelete(row.id, rowsPerPage, listData.offset + rowsPerPage, '')}>
+                                                        <IconButton aria-label="delete" onClick={() => handleDelete(row.id)}>
                                                             <DeleteIcon />
                                                         </IconButton>
                                                     </Tooltip>
@@ -394,10 +409,11 @@ export default function EnhancedTable(props) {
                             </TableBody>
                         </Table>
                     </TableContainer>
-                    {listData.counts > 0 && <TablePagination
-                        rowsPerPageOptions={[1, 2, 10, 20, 50]}
+                    {rows.length > 0 && <TablePagination
+                        rowsPerPageOptions={[10, 20, 50, 70]}
                         component="div"
-                        count={listData.counts ? listData.counts : rows.length}
+                        // count={listData.counts > rows.length ? listData.counts : rows.length}
+                        count={rows.length}
                         rowsPerPage={rowsPerPage}
                         page={page}
                         onPageChange={handleChangePage}
