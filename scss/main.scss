@@ -640,7 +640,8 @@ img.table-image {
     border-radius: 4px;
 }
 
-.MuiButton-root,.ant-btn {
+.MuiButton-root,
+.ant-btn {
     border-radius: 5px !important;
 }
 
@@ -658,6 +659,23 @@ img.table-image {
         color: #333;
         font-weight: 500;
     }
+}
+
+.shop-setting-logo.ant-upload-picture-card-wrapper {
+    width: max-content;
+}
+
+.logo-upload-btn-con {
+    align-self: end;
+    padding-bottom: 8px;
+    padding-left: 50px;
+}
+
+.ql-toolbar.ql-snow {
+    // height: 40px;
+}
+.ql-container.ql-snow {
+    height: 450px;
 }
 
 @media screen and (max-width: 960px) {
