@@ -201,8 +201,7 @@ const useStyles = makeStyles((theme) => ({
 export default function EnhancedTable(props) {
     const { headCells, rows, notFound = false,
         handleDelete, listData, fetchProducts,
-        setVisibleStock, visibleStock,
-        handleEditStock } = props
+        handleEditModal } = props
     const classes = useStyles();
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
@@ -360,15 +359,23 @@ export default function EnhancedTable(props) {
                                                 </TableCell>
                                                 <TableCell align="right" style={{ minWidth: '115px' }}>
                                                     <span className='text-gray'>฿</span>  {row.sell_price}
-                                                    <IconButton onClick={() => handleEditStock(row.id)} aria-label="delete" className='ms-2' size="small">
+                                                    <IconButton onClick={() => handleEditModal('price',row.id)} aria-label="delete" className='ms-2' size="small">
                                                         <BorderColorIcon fontSize="inherit" />
                                                     </IconButton>
+                                                    {/* {row.product_options.length > 0 ? row.product_options.map(pd => (
+                                                        <p><span>{row.sell_price}</span>
+                                                        </p>
+                                                    )) : null} */}
                                                 </TableCell>
                                                 <TableCell align="right" style={{ minWidth: '115px' }}>
                                                     {row.qty}
-                                                    <IconButton aria-label="delete" className='ms-2' size="small">
+                                                    <IconButton onClick={() => handleEditModal('stock',row.id)} aria-label="delete" className='ms-2' size="small">
                                                         <BorderColorIcon fontSize="inherit" />
                                                     </IconButton>
+                                                    {/* {row.product_options.length > 0 ? row.product_options.map(pd => (
+                                                        <p><span>{row.qty}</span>
+                                                        </p>
+                                                    )) : null} */}
                                                 </TableCell>
                                                 <TableCell align="center" style={{ minWidth: '150px' }}>
                                                     <Tooltip title="Edit">
@@ -383,7 +390,12 @@ export default function EnhancedTable(props) {
                                                             <DeleteIcon />
                                                         </IconButton>
                                                     </Tooltip>
+                                                    {/* {row.product_options.length > 0 ? row.product_options.map(pd => (
+                                                        <p><span>{row.qty}</span>
+                                                        </p>
+                                                    )) : null} */}
                                                 </TableCell>
+
                                             </TableRow>
                                         )
                                     }) : !notFound ? <TableRow

@@ -6,14 +6,14 @@ import {
     TablePagination, TableRow, TableSortLabel, Checkbox,
     Snackbar
 } from '@material-ui/core'
-import { notification, message, Modal } from 'antd'
+import { notification, message, Modal, Button as AntdButton } from 'antd'
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import DeleteIcon from '@material-ui/icons/Delete'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import SearchIcon from '@material-ui/icons/Search';
 import AddIcon from '@material-ui/icons/Add'
-import { getProducts, deleteProduct, getProductsById } from '../services/product'
+import { getProducts, deleteProduct, getProductsById, updateProduct } from '../services/product'
 import { geProductCategories } from '../store/actions/productAction'
 import { useDispatch, useSelector } from 'react-redux'
 import Select from "react-select"
@@ -21,7 +21,8 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 const MySwal = withReactContent(Swal)
 import CustomTable from '../components/bootstrap5/table'
-import FilterListIcon from '@material-ui/icons/FilterList';
+import FilterListIcon from '@material-ui/icons/FilterList'
+import Link from 'next/link'
 function product() {
     const dispatch = useDispatch()
     const store = useSelector(state => state.product)
@@ -33,6 +34,7 @@ function product() {
     const [filterValue, setFilterValue] = useState('')
     const [filterTitle, setFilterTitle] = useState({ value: 'name', text: 'ชื่อสินค้า' })
     const [visibleStock, setVisibleStock] = useState(false)
+    const [visiblePrice, setVisiblePrice] = useState(false)
     const [product, setProduct] = useState(null)
     const [filterParam, setFilterParam] = useState({
         category_id: '',
@@ -42,7 +44,10 @@ function product() {
         type: 'name',
         keyword: ''
     })
-    const searchInputModal = useRef("")
+    const [modalSearchKeyword, setModalSearchKeyword] = useState('')
+    const [modalSearchPrice, setModalSearchPrice] = useState('')
+    const [filterOptions, setFilterOptions] = useState([])
+    const [updateOption, setUpdateOption] = useState(null)
     const handleChangeTab = (e, newValue) => {
         setValue(newValue)
         e.preventDefault()
@@ -82,12 +87,17 @@ function product() {
         return () => { }
     }, [])
 
-    const handleEditStock = (id) => {
+    const handleEditModal = (type, id) => {
         getProductsById(id).then(res => {
             if (res.success) {
                 console.log(`getProductsById`, res.data)
                 setProduct(res.data)
-                setVisibleStock(!visibleStock)
+                if (type === 'price') {
+                    setVisiblePrice(!visiblePrice)
+                } else {
+                    setVisibleStock(!visibleStock)
+                }
+
             } else {
                 message.error(res.message)
             }
@@ -201,11 +211,108 @@ function product() {
         })
     }
 
+    useEffect(() => {
+        let filterData = []
+        if (product && product.product_options.length > 0) {
+            if (modalSearchKeyword.length) {
+                filterData = product.product_options.filter(item => {
+                    const includes =
+                        item.name.toLowerCase().includes(modalSearchKeyword.toLowerCase()) ||
+                        item.value.toLowerCase().includes(modalSearchKeyword.toLowerCase())
+                    if (includes) {
+                        return includes
+                    } else return null
+                })
+            }
+            if (modalSearchPrice.length) {
 
+            }
+            console.log(`filterData`, filterData)
+            // setFilterOptions(filterData)
+        }
+
+    }, [modalSearchKeyword, modalSearchPrice, product])
+
+    // const onFilterOption = () => {
+    //     if (product && product.product_options.length > 0) {
+    //         const clone = product
+    //         if (modalSearchKeyword.length) {
+    //             clone.product_options = filterOptions
+    //             setProduct(clone)
+    //         } else {
+    //             setProduct(clone)
+    //         }
+    //         console.log(`clone`, clone)
+    //     }
+
+    // }
+
+    const onChangeOption = (e, type, index) => {
+        const clone = product
+        e.preventDefault()
+        if (index !== null) {
+            clone.product_options[index][type] = parseFloat(e.target.value)
+            clone.product_options.splice(index, 1, clone.product_options[index])
+
+        } else {
+            clone[type] = parseFloat(e.target.value)
+        }
+        // console.log(`onChangeOption`, clone)
+        setUpdateOption(clone)
+    }
+    const onChangeStock = (e, index) => {
+        const clone = product
+        e.preventDefault()
+        if (index !== null) {
+            clone.product_options[index]['qty'] = parseFloat(e.target.value)
+            clone.product_options.splice(index, 1, clone.product_options[index])
+
+        } else {
+            clone['qty'] = parseFloat(e.target.value)
+        }
+        // console.log(`onChangeStock`, clone)
+        setUpdateOption(clone)
+    }
+
+    const onUpdateOption = () => {
+        let data = null
+        if (updateOption) {
+            data = updateOption
+        } else {
+            message.warning('ไม่มีการเปลี่ยนแปลงข้อมูล')
+            return
+        }
+        const loading = message.loading('กำลังอัพเดตข้อมูล...', 6000)
+        console.log(`onUpdateOption`, JSON.stringify(data))
+        updateProduct(data).then(res => {
+            setTimeout(loading, 0)
+            if (res.success) {
+                message.success('อัพเดตสำเร็จ')
+                fetchProducts()
+            } else {
+                message.error(`อัพเดตไม่สำเร็จ. ${res.message}`)
+            }
+        }).catch(err => {
+            setTimeout(loading, 0)
+            message.error(`service ไม่พร้อมใช้งานขณะนี้.`)
+        })
+    }
 
     return (
         <div>
-            <div className="h4">จัดการสินค้า</div>
+            <div className='d-flex justify-content-between'>
+                <span className="h4">จัดการสินค้า</span>
+                <Link href={`/product/creation`}>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        startIcon={<AddIcon />}
+                    >
+                        สินค้าใหม่
+                    </Button>
+                </Link>
+
+            </div>
             <Tabs
                 value={value}
                 onChange={handleChangeTab}
@@ -313,9 +420,7 @@ function product() {
                 notFound={notFound}
                 handleDelete={handleDelete}
                 fetchProducts={fetchProducts}
-                setVisibleStock={setVisibleStock}
-                visibleStock={visibleStock}
-                handleEditStock={handleEditStock}
+                handleEditModal={handleEditModal}
             />
             {/* </CardContent>
             </Card> */}
@@ -324,34 +429,35 @@ function product() {
                 centered
                 title="แก้ไขราคา"
                 style={{ top: 20 }}
-                visible={visibleStock}
-                onOk={() => { console.log(`obsearchInputModalject`, searchInputModal.current.value) }}
-                onCancel={() => setVisibleStock(!visibleStock)}
+                visible={visiblePrice}
+                onOk={onUpdateOption}
+                onCancel={() => setVisiblePrice(!visiblePrice)}
                 okText='ยืนยัน'
                 cancelText='ยกเลิก'
             >
-                <div className="modal-serch col-gap-5 d-flex mb-3">
+                {/* <div className="modal-serch col-gap-5 d-flex mb-3">
                     <div className="input-group">
                         <input
                             placeholder='ค้นหา...'
                             type="text"
-                            // ref={searchInputModal}
+                            onChange={e => setModalSearchKeyword(e.target.value)}
                             className="form-control"
                             aria-label="Amount (to the nearest dollar)" />
-                        <button type="button" className="btn btn-primary">
+                        <button type="button" className="btn btn-primary" onClick={() => onFilterOption()}>
                             <SearchIcon />
                         </button>
                     </div>
                     <div className="input-group">
-                        <span className="input-group-text" id="basic-addon1">฿</span>
-                        <input
-                            type="number"
-                            className="form-control"
-                            placeholder="ราคาสินค้า"
-                            aria-label="option-price"
-                            aria-describedby="basic-addon1" />
-                    </div>
-                </div>
+                            <span className="input-group-text" id="basic-addon1">฿</span>
+                            <input
+                                type="number"
+                                className="form-control"
+                                placeholder="ราคาสินค้า"
+                                onChange={e => setModalSearchPrice(e.target.value)}
+                                aria-label="option-price"
+                                aria-describedby="basic-addon1" />
+                        </div>
+                </div> */}
                 <div class="table-responsive">
                     <table class="table table-bordered" style={{ minWidth: '500px' }}>
                         <thead class="table-light">
@@ -365,7 +471,7 @@ function product() {
                         <tbody>
                             {product ? <>
                                 {product.product_options.length > 0 ?
-                                    product.product_options.map(pd => (
+                                    product.product_options.map((pd, i) => (
                                         <tr key={pd.id}>
                                             <td>
                                                 {`${pd.name} - ${pd.value}`}
@@ -377,6 +483,7 @@ function product() {
                                                     placeholder=""
                                                     aria-label="option-price"
                                                     defaultValue={pd.sell_price}
+                                                    onChange={e => onChangeOption(e, 'sell_price', i)}
                                                     aria-describedby="basic-addon1" />
                                             </td>
                                             <td style={{ width: '20%' }}>
@@ -386,6 +493,7 @@ function product() {
                                                     placeholder=""
                                                     aria-label="option-price"
                                                     defaultValue={pd.cost_price}
+                                                    onChange={e => onChangeOption(e, 'cost_price', i)}
                                                     aria-describedby="basic-addon1" />
                                             </td>
                                             <td style={{ width: '20%' }}>
@@ -395,6 +503,7 @@ function product() {
                                                     placeholder=""
                                                     aria-label="option-price"
                                                     defaultValue={pd.discount_price}
+                                                    onChange={e => onChangeOption(e, 'discount_price', i)}
                                                     aria-describedby="basic-addon1" />
                                             </td>
                                         </tr>
@@ -410,6 +519,7 @@ function product() {
                                                 placeholder=""
                                                 aria-label="option-price"
                                                 defaultValue={product.sell_price}
+                                                onChange={e => onChangeOption(e, 'sell_price', null)}
                                                 aria-describedby="basic-addon1" />
                                         </td>
                                         <td style={{ width: '20%' }}>
@@ -419,6 +529,7 @@ function product() {
                                                 placeholder=""
                                                 aria-label="option-price"
                                                 defaultValue={product.cost_price}
+                                                onChange={e => onChangeOption(e, 'cost_price', null)}
                                                 aria-describedby="basic-addon1" />
                                         </td>
                                         <td style={{ width: '20%' }}>
@@ -428,6 +539,7 @@ function product() {
                                                 placeholder=""
                                                 aria-label="option-price"
                                                 defaultValue={product.discount_price}
+                                                onChange={e => onChangeOption(e, 'discount_price', null)}
                                                 aria-describedby="basic-addon1" />
                                         </td>
                                     </tr>}
@@ -450,6 +562,82 @@ function product() {
                         </>}
                 </div> : null} */}
 
+            </Modal>
+            <Modal
+                className='stock-modal'
+                centered
+                title="แก้ไขสต็อก"
+                style={{ top: 20 }}
+                visible={visibleStock}
+                onOk={onUpdateOption}
+                onCancel={() => setVisibleStock(!visibleStock)}
+                okText='ยืนยัน'
+                cancelText='ยกเลิก'
+            >
+                <div class="table-responsive">
+                    <table class="table table-bordered" style={{ minWidth: '500px' }}>
+                        <thead class="table-light">
+                            <tr>
+                                <td>ข้อมูลสินค้า</td>
+                                <td>คลังสินค้า</td>
+                                {/* <td>จำนวน</td> */}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {product ? <>
+                                {product.product_options.length > 0 ?
+                                    product.product_options.map((pd, i) => (
+                                        <tr key={pd.id}>
+                                            <td>
+                                                {`${pd.name} - ${pd.value}`}
+                                            </td>
+                                            {/* <td style={{ width: '25%' }}>
+                                                {pd.qty}
+                                            </td> */}
+                                            <td style={{ width: '25%' }}>
+                                                <input
+                                                    type="number"
+                                                    className="form-control"
+                                                    placeholder=""
+                                                    aria-label="option-price"
+                                                    defaultValue={pd.qty}
+                                                    onChange={e => onChangeStock(e, i)}
+                                                    aria-describedby="basic-addon1" />
+                                            </td>
+                                        </tr>
+                                    ))
+                                    : <tr>
+                                        <td>
+                                            {product.name}
+                                        </td>
+                                        {/* <td style={{ width: '25%' }}>
+                                            { product.qty }
+                                            <input
+                                                disabled
+                                                type="number"
+                                                className="form-control"
+                                                placeholder=""
+                                                aria-label="option-price"
+                                                value={product.qty}
+                                                aria-describedby="basic-addon1" />
+                                        </td> */}
+                                        <td style={{ width: '25%' }}>
+                                            <input
+                                                type="number"
+                                                className="form-control"
+                                                placeholder=""
+                                                aria-label="option-price"
+                                                defaultValue={product.qty}
+                                                onChange={e => onChangeStock(e, null)}
+                                                aria-describedby="basic-addon1" />
+                                        </td>
+                                    </tr>}
+                            </> : null}
+
+
+                        </tbody>
+                    </table>
+                </div>
             </Modal>
         </div>
     )

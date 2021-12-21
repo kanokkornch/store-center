@@ -141,7 +141,7 @@ function creation(props) {
         if (data.product_options.length > 0) {
             product_options = await uploadProductOptionImage(data.product_options)
         }
-        data.thumbnail = thumbnailUpload.image_url
+        data.thumbnail = thumbnailUpload.url
         data.unit = data.unit.label
         data.category_id = categoryID
         data.sub_category_id = subCategoryId
@@ -186,7 +186,7 @@ function creation(props) {
         await Promise.all(data.map(async (img) => {
             await uploadImage({ type: 'cats', image_data: img.thumbnail }).then(res => {
                 if (res.success) {
-                    img.thumbnail = res.data.image_url
+                    img.thumbnail = res.data.url
                     list.push(img)
                 } else {
                     message.warning('UPLOAD ไม่สำเร็จ')
