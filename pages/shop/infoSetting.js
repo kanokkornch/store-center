@@ -8,7 +8,7 @@ import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import DeleteIcon from '@material-ui/icons/Delete'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import AddIcon from '@material-ui/icons/Add'
-// import { saveProduct } from '../../services/product'
+import { getShopInfo, updateShopInfo } from '../../services/shop'
 import { uploadImage } from '../../services/utills'
 import { geProductCategories, getUnits } from '../../store/actions/productAction'
 import { useDispatch, useSelector } from 'react-redux'
@@ -17,19 +17,7 @@ import { Alert, message, Upload, Button as AntButton, Divider } from 'antd'
 import { useQuill } from 'react-quilljs'
 import 'quill/dist/quill.snow.css'
 function infoSetting() {
-    const { register, control, handleSubmit, formState: { errors }, setValue, getValues, reset, watch } = useForm({
-        defaultValues: {
-            unit: {
-                value: 1,
-                label: "กล่อง"
-            },
-            qty: 1,
-            cost_price: 0,
-            sell_price: 0,
-            discount_price: 0,
-            product_options: []
-        }
-    })
+    const { register, control, handleSubmit, formState: { errors }, setValue, getValues, reset, watch } = useForm()
 
     const [fileList, setFileList] = useState([])
     const [fileListCover, setFileListCover] = useState([])
@@ -37,10 +25,50 @@ function infoSetting() {
     const [coverFile, setcoverFile] = useState(null)
     const [logoUrl, setLogoUrl] = useState(null)
     const [coverUrl, setCoverUrl] = useState(null)
+    const [shopInfo, setshopInfo] = useState(null)
+    const [description, setdescription] = useState(null)
+
     const { quill, quillRef } = useQuill()
+
     useEffect(() => {
-        console.log(`logoUrl`, logoUrl)
-    }, [logoUrl])
+        getShopInfo().then(res => {
+            if (res.success) {
+                setshopInfo(res.data)
+                setValue('id', res.data.id)
+                setValue('name', res.data.name)
+                setValue('email', res.data.email)
+                setValue('phone', res.data.phone)
+                setValue('username', res.data.username)
+                setValue('facebook', res.data.facebook)
+                setValue('twitter', res.data.twitter)
+                setValue('instagram', res.data.instagram)
+                setValue('line', res.data.line)
+                setValue('website', res.data.website)
+                if (res.data.logo) {
+                    setLogoUrl(res.data.logo)
+                    setFileList([{
+                        uid: '-1',
+                        name: 'image.png',
+                        status: 'done',
+                        url: res.data.logo,
+                    }])
+                }
+                if (res.data.cover) {
+                    setCoverUrl(res.data.cover)
+                    setFileListCover([{
+                        uid: '-1',
+                        name: 'image.png',
+                        status: 'done',
+                        url: res.data.cover,
+                    }])
+                }
+
+            } else {
+                setshopInfo(null)
+            }
+        }).catch(err => message.error('service ไม่พร้อมใช้งานขณะนี้'))
+    }, [])
+
 
     const onChange = ({ fileList: newFileList }) => {
         setFileList(newFileList);
@@ -52,6 +80,7 @@ function infoSetting() {
             reader.readAsDataURL(newFileList[0].originFileObj)
         } else {
             setlogoFile(null)
+            setLogoUrl(null)
         }
     }
     const onChangeCover = ({ fileList: newFileList }) => {
@@ -64,6 +93,7 @@ function infoSetting() {
             reader.readAsDataURL(newFileList[0].originFileObj)
         } else {
             setcoverFile(null)
+            setCoverUrl(null)
         }
     }
 
@@ -108,6 +138,26 @@ function infoSetting() {
 
 
     const onSaveSetting = (data) => {
+        if (!logoUrl || !coverUrl) {
+            message.warning('กรุณา upload รูปโลโก้หรือหน้าปก')
+            return
+        }
+        data.logo = logoUrl
+        data.cover = coverUrl
+        data.description = description
+        const loading = message.loading('กำลังอัพเดตข้อมูล...')
+        updateShopInfo(data).then(res => {
+            setTimeout(loading, 0)
+            if (res.success) {
+                message.success('อัพเดตสำเร็จ')
+            } else {
+                message.warning('อัพเดตไม่สำเร็จ')
+            }
+        }).catch(err => {
+            setTimeout(loading, 0)
+            message.error('service ไม่พร้อมใช้งานขณะนี้')
+        })
+
         // if (imagesFile.length < 1) {
         //     message.warning('กรุณา Upload รูปของสินค้า อย่างน้อย 1 รูปภาพ')
         //     return
@@ -129,14 +179,42 @@ function infoSetting() {
     const clearform = () => {
         reset()
     }
+    const selectLocalImage = () => {
+        const input = document.createElement('input');
+        input.setAttribute('type', 'file');
+        input.setAttribute('accept', 'image/*');
+        input.click();
+
+        input.onchange = () => {
+            const file = input.files[0]
+            const reader = new FileReader()
+            reader.readAsDataURL(file)
+            reader.onloadend = () => {
+                uploadImage({ type: 'quilljs', image_data: reader.result }).then(res => {
+                    if (res.success) {
+                        const range = quill.getSelection()
+                        quill.insertEmbed(range.index, 'image', res.data.url)
+                    } else {
+                        message.warning('บันทึกรูปภาพไม่สำเร็จ')
+                        return
+                    }
+                })
+            }
+        }
+    }
+
 
     useEffect(() => {
         if (quill) {
+            quill.getModule('toolbar').addHandler('image', selectLocalImage)
             quill.on('text-change', (delta, oldDelta, source) => {
-                // console.log(quill.root.innerHTML); // Get innerHTML using quill
+                setdescription(quill.root.innerHTML)
             });
+            if (shopInfo && shopInfo.description) {
+                quill.clipboard.dangerouslyPasteHTML(shopInfo.description)
+            }
         }
-    }, [quill])
+    }, [quill, shopInfo])
     return (
         <div>
             <div className="h4">ตั้งค่าร้านค้า</div>
@@ -146,7 +224,7 @@ function infoSetting() {
                         <div className="row">
                             <div className="col-12">
                                 <label htmlFor="name" className="form-label">
-                                    {/* <span className='requird'>* </span> */}
+                                    <span className='requird'>* </span>
                                     โลโก้ร้านค้า
                                 </label>
                                 <p>รูปแบบไฟล์ JPEG, ขนาดสูงสุด 1 MB โลโก้จะปรากฏบนหน้าโฮมเพจร้านค้า ฟีต แชท ค้นหาด้วยการ Search และหน้าอื่น ๆ</p>
@@ -173,7 +251,7 @@ function infoSetting() {
                             </div>
                             <div className="col-12">
                                 <label htmlFor="name" className="form-label">
-                                    {/* <span className='requird'>* </span> */}
+                                    <span className='requird'>* </span>
                                     หน้าปกร้านค้า
                                 </label>
                                 <div className="d-flex">
@@ -208,6 +286,7 @@ function infoSetting() {
                                         </label>
                                         <input
                                             type="text"
+                                            defaultValue={shopInfo && shopInfo.name}
                                             {...register('name', { required: true, })}
                                             className={`form-control ${errors.name ? 'is-invalid' : ''}`}
                                             id="name"
@@ -221,6 +300,7 @@ function infoSetting() {
                                         <input
                                             type="text"
                                             {...register('email', { required: true, })}
+                                            defaultValue={shopInfo && shopInfo.email}
                                             className={`form-control ${errors.email ? 'is-invalid' : ''}`}
                                             id="email"
                                             placeholder="email" />
@@ -233,6 +313,7 @@ function infoSetting() {
                                         <input
                                             type="text"
                                             {...register('phone', { required: true, })}
+                                            defaultValue={shopInfo && shopInfo.phone}
                                             className={`form-control ${errors.phone ? 'is-invalid' : ''}`}
                                             id="phone"
                                             placeholder="phone" />
@@ -244,7 +325,9 @@ function infoSetting() {
                                         </label>
                                         <input
                                             type="text"
+                                            disabled
                                             {...register('username', { required: true, })}
+                                            defaultValue={shopInfo && shopInfo.username}
                                             className={`form-control ${errors.username ? 'is-invalid' : ''}`}
                                             id="username"
                                             placeholder="Username" />
@@ -253,7 +336,7 @@ function infoSetting() {
                             </div>
                         </div>
                         <label htmlFor="name" className="form-label">
-                            <span className='requird'>* </span>
+                            {/* <span className='requird'>* </span> */}
                             รายละเอียดร้านค้า
                         </label>
                         <div style={{ width: '100%', height: 'fit-content' }}>
@@ -268,46 +351,54 @@ function infoSetting() {
                                 <div className="row">
                                     <div className="col-lg-6 mb-3">
                                         <label htmlFor="facebook" className="form-label">
+                                            <span className='requird'>* </span>
                                             facebook
                                         </label>
                                         <input
                                             type="text"
-                                            {...register('facebook', { required: false, })}
+                                            {...register('facebook', { required: true, })}
                                             id="facebook"
-                                            className={`form-control`}
+                                            defaultValue={shopInfo && shopInfo.facebook}
+                                            className={`form-control ${errors.facebook ? 'is-invalid' : ''}`}
                                             placeholder="Facebook" />
                                     </div>
                                     <div className="col-lg-6 mb-3">
                                         <label htmlFor="twitter" className="form-label">
+                                            <span className='requird'>* </span>
                                             twitter
                                         </label>
                                         <input
                                             type="text"
-                                            {...register('twitter', { required: false, })}
+                                            {...register('twitter', { required: true, })}
                                             id="twitter"
-                                            className={`form-control`}
+                                            className={`form-control ${errors.twitter ? 'is-invalid' : ''}`}
+                                            defaultValue={shopInfo && shopInfo.twitter}
                                             placeholder="twitter" />
                                     </div>
                                     <div className="col-lg-6 mb-3">
                                         <label htmlFor="twitter" className="form-label">
+                                            <span className='requird'>* </span>
                                             instagram
                                         </label>
                                         <input
                                             type="text"
-                                            {...register('instagram', { required: false, })}
+                                            {...register('instagram', { required: true, })}
                                             id="instagram"
-                                            className={`form-control`}
+                                            className={`form-control ${errors.instagram ? 'is-invalid' : ''}`}
+                                            defaultValue={shopInfo && shopInfo.instagram}
                                             placeholder="instagram" />
                                     </div>
                                     <div className="col-lg-6 mb-3">
                                         <label htmlFor="twitter" className="form-label">
+                                            <span className='requird'>* </span>
                                             line
                                         </label>
                                         <input
                                             type="text"
-                                            {...register('line', { required: false, })}
+                                            {...register('line', { required: true, })}
                                             id="line"
-                                            className={`form-control`}
+                                            className={`form-control ${errors.line ? 'is-invalid' : ''}`}
+                                            defaultValue={shopInfo && shopInfo.line}
                                             placeholder="line" />
                                     </div>
                                     <div className="col-lg-6 mb-3">
@@ -319,6 +410,7 @@ function infoSetting() {
                                             {...register('website', { required: false, })}
                                             id="website"
                                             className={`form-control`}
+                                            defaultValue={shopInfo && shopInfo.website}
                                             placeholder="website" />
                                     </div>
                                 </div>

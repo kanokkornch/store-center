@@ -134,7 +134,6 @@ function editProduct() {
                     setThumbnail(res.data.thumbnail)
                     setValue('id', id)
                     setValue('name', res.data.name)
-                    setValue('name', res.data.name)
                     setValue('code', res.data.code)
                     setValue('sku', res.data.sku)
                     setValue('thumbnail', res.data.thumbnail)
