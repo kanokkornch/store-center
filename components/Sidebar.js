@@ -81,21 +81,21 @@ function Sidebar() {
                             <ListItem className={`main-menu ${index === i && indexOpen ? 'active' : ''}`} onClick={() => setOpenCollapseMeu(i, index !== i ? true : !indexOpen)}>
                                 <ListItemIcon>{menu.icon}</ListItemIcon>
                                 <ListItemText primary={menu.title} />
-                                {index === i && indexOpen ? <ExpandLess /> : <ExpandMore />}
+                                {/* {index === i && indexOpen ? <ExpandLess /> : <ExpandMore />} */}
                             </ListItem>
                             {menu.subNav.map(sub => (
-                                <Collapse key={sub.title} in={index === i && indexOpen} timeout="auto" unmountOnExit>
-                                    <List disablePadding>
-                                        <Link href={`${menu.prefix}${sub.path}`}>
-                                            <ListItem className='sub-menu' button className={clsx(classes.nested, {
-                                                [classes.menuActive]: `${menu.prefix}${sub.path}` === router.pathname,
-                                                [classes.menu]: `${menu.prefix}${sub.path}` !== router.pathname,
-                                            })}>
-                                                <ListItemText primary={sub.title} />
-                                            </ListItem>
-                                        </Link>
-                                    </List>
-                                </Collapse>
+                                // <Collapse key={sub.title} in={index === i && indexOpen} timeout="auto" unmountOnExit>
+                                <List disablePadding key={sub.title}>
+                                    <Link href={`${menu.prefix}${sub.path}`}>
+                                        <ListItem className='sub-menu' button className={clsx(classes.nested, {
+                                            [classes.menuActive]: `${menu.prefix}${sub.path}` === router.pathname,
+                                            [classes.menu]: `${menu.prefix}${sub.path}` !== router.pathname,
+                                        })}>
+                                            <ListItemText primary={sub.title} />
+                                        </ListItem>
+                                    </Link>
+                                </List>
+                                // </Collapse>
                             ))}
                         </>}
                         {!menu.subNav && <Link href={`${menu.prefix}`}>

@@ -674,8 +674,17 @@ img.table-image {
 .ql-toolbar.ql-snow {
     // height: 40px;
 }
+
 .ql-container.ql-snow {
     height: 450px;
+}
+
+.MuiListItemIcon-root {
+    min-width: 35px !important;
+}
+
+div.MuiButtonBase-root:not(.one-menu) {
+    padding-left: 2.5rem;
 }
 
 @media screen and (max-width: 960px) {
