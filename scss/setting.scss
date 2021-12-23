@@ -1,0 +1,21 @@
+$main-bg-color: #EEF0F4;
+$app-color: #201ADB;
+$secound-app-color: #3A82FF;
+$danger-app-color: #D93232;
+$radius: 10px;
+
+.acc-setting {
+    row-gap: 5px;
+
+    button.ant-btn {
+        border: none;
+        background: transparent;
+        box-shadow: none;
+        text-align: left;
+
+        &.active {
+            background: #3a82ff;
+            color: #fff;
+        }
+    }
+}

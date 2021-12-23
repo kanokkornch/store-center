@@ -683,6 +683,13 @@ div.MuiButtonBase-root:not(.one-menu) {
     padding-left: 2.5rem;
 }
 
+.ant-dropdown.ant-dropdown-placement-bottomRight {
+    width: 200px;
+}
+.ant-dropdown-menu-item, .ant-dropdown-menu-submenu-title {
+    text-align: center;
+}
+
 @media screen and (max-width: 960px) {
     .content-container {
         padding-left: 2rem !important;
