@@ -7,7 +7,7 @@ import { CardContent, Card } from '@material-ui/core'
 
 import { useForm, Controller, useFieldArray } from "react-hook-form"
 
-function shop() {
+function ShopSettingPage() {
     const { register, control, handleSubmit, formState: { errors }, setValue, getValues, reset } = useForm({})
     const onSubmitForm = (data) => {
         console.log(`form`, data)
@@ -37,4 +37,4 @@ function shop() {
     )
 }
 
-export default shop
+export default ShopSettingPage

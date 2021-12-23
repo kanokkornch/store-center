@@ -1,6 +1,6 @@
 import React from 'react'
 
-function pageManage() {
+function PageManage() {
     return (
         <div>
             Page Manage
@@ -8,4 +8,4 @@ function pageManage() {
     )
 }
 
-export default pageManage
+export default PageManage

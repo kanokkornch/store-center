@@ -74,7 +74,7 @@ function NestedOption({ nestIndex, control, register }) {
     )
 }
 
-function creation(props) {
+function CreationPage(props) {
     const dispatch = useDispatch()
     const store = useSelector(state => state.product)
     const { categories, units } = store
@@ -741,5 +741,5 @@ export async function getStaticProps(context) {
         props: {}, // will be passed to the page component as props
     }
 }
-export default creation
+export default CreationPage
 

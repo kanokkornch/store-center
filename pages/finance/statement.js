@@ -1,6 +1,6 @@
 import React from 'react'
 
-function statement() {
+function StatementPage() {
     return (
         <div>
             รายการเดินบัญชี
@@ -8,4 +8,4 @@ function statement() {
     )
 }
 
-export default statement
+export default StatementPage

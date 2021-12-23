@@ -1,6 +1,6 @@
 import React from 'react'
 
-function order() {
+function OrderPage() {
     return (
         <div>
             Order
@@ -8,4 +8,4 @@ function order() {
     )
 }
 
-export default order
+export default OrderPage

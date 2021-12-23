@@ -3,7 +3,7 @@ import { useForm, Controller, useFieldArray } from "react-hook-form"
 import Select from "react-select"
 import { Upload } from 'antd'
 
-function bank() {
+function BankVerifyPage() {
     const { register, control, handleSubmit, formState: { errors }, setValue, getValues, reset } = useForm({})
     const [fileList, setFileList] = useState([])
     const [bookFile, setbookFile] = useState(null)
@@ -116,4 +116,4 @@ function bank() {
     )
 }
 
-export default bank
+export default BankVerifyPage

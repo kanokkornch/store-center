@@ -1,5 +1,5 @@
 import { Fragment } from 'react'
-function store() {
+function StorePage() {
     return (
         <div>
             Store
@@ -7,4 +7,4 @@ function store() {
     )
 }
 
-export default store
+export default StorePage

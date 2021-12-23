@@ -20,7 +20,7 @@ import { APIshopLogin } from '../services/api'
 import { message } from 'antd'
 const MySwal = withReactContent(Swal)
 
-function login() {
+function LoginPage() {
     const dispatch = useDispatch()
     const [main, setMain] = useState(1)
     const [showPassword, setShowPassword] = useState(false)
@@ -140,5 +140,5 @@ function login() {
     )
 }
 
-export default login
+export default LoginPage
 

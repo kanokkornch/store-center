@@ -16,7 +16,7 @@ import Select from "react-select"
 import { Alert, message, Upload, Button as AntButton, Divider } from 'antd'
 import { useQuill } from 'react-quilljs'
 import 'quill/dist/quill.snow.css'
-function infoSetting() {
+function InfoSettingPage() {
     const { register, control, handleSubmit, formState: { errors }, setValue, getValues, reset, watch } = useForm()
 
     const [fileList, setFileList] = useState([])
@@ -438,4 +438,4 @@ function infoSetting() {
     )
 }
 
-export default infoSetting
+export default InfoSettingPage

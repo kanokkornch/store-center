@@ -88,10 +88,10 @@ function Sidebar() {
                                 // <Collapse key={sub.title} in={index === i && indexOpen} timeout="auto" unmountOnExit>
                                 <List disablePadding key={sub.title}>
                                     <Link href={`${menu.prefix}${sub.path}`}>
-                                        <ListItem className='sub-menu' button className={clsx(classes.nested, {
+                                        <ListItem button className={clsx(classes.nested, {
                                             [classes.menuActive]: `${menu.prefix}${sub.path}` === router.pathname,
                                             [classes.menu]: `${menu.prefix}${sub.path}` !== router.pathname,
-                                        })}>
+                                        }),'sub-menu'}>
                                             <ListItemText primary={sub.title} />
                                         </ListItem>
                                     </Link>

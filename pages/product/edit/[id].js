@@ -71,7 +71,7 @@ function NestedOption({ nestIndex, control, register }) {
         </div>
     )
 }
-function editProduct() {
+function EditProductPage() {
     const router = useRouter()
     const { id } = router.query
     const [data, setData] = useState(null)
@@ -860,4 +860,4 @@ function editProduct() {
     )
 }
 
-export default editProduct
+export default EditProductPage

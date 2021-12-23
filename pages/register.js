@@ -17,7 +17,7 @@ import Link from 'next/link'
 import { useForm, Controller } from "react-hook-form";
 import { APIshopRegister } from '../services/api'
 import { message } from 'antd'
-function register() {
+function RegisterPage() {
     const { reset, control, handleSubmit, formState: { errors }, setError, clearErrors, clearForm } = useForm({
         defaultValues: {
             name: '',
@@ -239,4 +239,4 @@ function register() {
     )
 }
 
-export default register
+export default RegisterPage

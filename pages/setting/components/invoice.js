@@ -1,6 +1,6 @@
 import React from 'react'
 
-function invoice() {
+function InvoiceSettingPage() {
     return (
         <div>
             ใบกำกับภาษี
@@ -8,4 +8,4 @@ function invoice() {
     )
 }
 
-export default invoice
+export default InvoiceSettingPage

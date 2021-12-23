@@ -10,7 +10,7 @@ import BankComponent from './components/bank'
 import InvoiceComponent from './components/invoice'
 
 
-function myAccount() {
+function MyAccountPage() {
     const [active, setActive] = useState(1)
 
     const menu = [
@@ -45,4 +45,4 @@ function myAccount() {
     )
 }
 
-export default myAccount
+export default MyAccountPage

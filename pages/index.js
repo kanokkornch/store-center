@@ -7,12 +7,6 @@ import { fetchPosts } from '../store/actions/postAction'
 import { getUserLoginData } from '../store/actions/authAction'
 import MainLayout from '../components/MainLayout'
 export default function Home() {
-  const dispatch = useDispatch()
-  const { posts } = useSelector(state => state.post)
-  useEffect(() => {
-    dispatch(fetchPosts())
-    dispatch(getUserLoginData())
-  }, [])
   return (
     <>
       {/* <MainLayout title='หน้าแรก' >

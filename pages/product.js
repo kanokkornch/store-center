@@ -23,7 +23,7 @@ const MySwal = withReactContent(Swal)
 import CustomTable from '../components/bootstrap5/table'
 import FilterListIcon from '@material-ui/icons/FilterList'
 import Link from 'next/link'
-function product() {
+function ProductPage() {
     const dispatch = useDispatch()
     const store = useSelector(state => state.product)
     const { categories } = store
@@ -458,9 +458,9 @@ function product() {
                                 aria-describedby="basic-addon1" />
                         </div>
                 </div> */}
-                <div class="table-responsive">
-                    <table class="table table-bordered" style={{ minWidth: '500px' }}>
-                        <thead class="table-light">
+                <div className="table-responsive">
+                    <table className="table table-bordered" style={{ minWidth: '500px' }}>
+                        <thead className="table-light">
                             <tr>
                                 <td>ข้อมูลสินค้า</td>
                                 <td>ราคาขาย</td>
@@ -574,9 +574,9 @@ function product() {
                 okText='ยืนยัน'
                 cancelText='ยกเลิก'
             >
-                <div class="table-responsive">
-                    <table class="table table-bordered" style={{ minWidth: '500px' }}>
-                        <thead class="table-light">
+                <div className="table-responsive">
+                    <table className="table table-bordered" style={{ minWidth: '500px' }}>
+                        <thead className="table-light">
                             <tr>
                                 <td>ข้อมูลสินค้า</td>
                                 <td>คลังสินค้า</td>
@@ -643,4 +643,4 @@ function product() {
     )
 }
 
-export default product
+export default ProductPage

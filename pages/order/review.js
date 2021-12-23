@@ -1,6 +1,6 @@
 import React from 'react'
 
-function review() {
+function ReviewPage() {
     return (
         <div>
             Review
@@ -8,4 +8,4 @@ function review() {
     )
 }
 
-export default review
+export default ReviewPage
