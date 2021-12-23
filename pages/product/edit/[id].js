@@ -134,7 +134,6 @@ function editProduct() {
                     setThumbnail(res.data.thumbnail)
                     setValue('id', id)
                     setValue('name', res.data.name)
-                    setValue('name', res.data.name)
                     setValue('code', res.data.code)
                     setValue('sku', res.data.sku)
                     setValue('thumbnail', res.data.thumbnail)
@@ -177,7 +176,7 @@ function editProduct() {
         const loading = message.loading('กำลังบันทึกข้อมูล...')
         let gals = []
         if (galleries.length > 0) {
-            gals = galleries.map(img => ({ image_url: img }))
+            gals = galleries.map(img => ({ url: img }))
         }
         let product_galleries = []
         if (imagesFile.length > 0) {
@@ -211,7 +210,7 @@ function editProduct() {
         if (data.product_options.length > 0) {
             product_options = await uploadProductOptionImage(data.product_options)
         }
-        data.thumbnail = thumbnailUpload && thumbnailUpload.image_url ? thumbnailUpload.image_url : thumbnailUpload
+        data.thumbnail = thumbnailUpload && thumbnailUpload.url ? thumbnailUpload.url : thumbnailUpload
         data.unit = data.unit.label
         data.category_id = categoryID
         data.sub_category_id = subCategoryId
@@ -230,7 +229,7 @@ function editProduct() {
         }).catch(err => {
             setSaving(false)
             setTimeout(loading, 0)
-            message.error(`อัพเดตไม่สำเร็จ. ${res.message}`)
+            message.error(`service ไม่พร้อมใช้งานขณะนี้.`)
         })
     }
 
@@ -257,7 +256,7 @@ function editProduct() {
             if (!img.thumbnail.includes('http')) {
                 await uploadImage({ type: 'cats', image_data: img.thumbnail }).then(res => {
                     if (res.success) {
-                        img.thumbnail = res.data.image_url
+                        img.thumbnail = res.data.url
                         list.push(img)
                     } else {
                         message.warning('UPLOAD ไม่สำเร็จ')

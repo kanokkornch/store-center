@@ -6,6 +6,7 @@ import { Provider } from 'react-redux'
 import { createWrapper } from 'next-redux-wrapper'
 import store from '../store/store'
 import '../scss/main.scss'
+import '../scss/setting.scss'
 import { ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import theme from '../src/theme';
@@ -18,6 +19,7 @@ import 'antd/dist/antd.css'
 Router.events.on('routeChangeStart', () => NProgress.start());
 Router.events.on('routeChangeComplete', () => NProgress.done());
 Router.events.on('routeChangeError', () => NProgress.done());
+// import '../firebase/initFirebase'
 function MyApp({ Component, pageProps }) {
   const router = useRouter()
   console.log(`pathname`, router.pathname)

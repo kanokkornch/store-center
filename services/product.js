@@ -45,11 +45,11 @@ export const updateProduct = async (data) => {
         return err
     }
 }
-export const getProducts = async () => {
+export const getProducts = async (filter) => {
     const storage = JSON.parse(sessionStorage.getItem('_data'))
     axios.defaults.headers.common['Authorization'] = `Bearer ${storage.api_token}`
     try {
-        const res = await axios.get(`${BASE_API_URL}/products`)
+        const res = await axios.get(`${BASE_API_URL}/products`, { params: filter })
         return await res.data
     } catch (err) {
         console.log(`err`, err)
