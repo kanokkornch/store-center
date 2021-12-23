@@ -1,6 +1,6 @@
 import React from 'react'
 
-function promotion() {
+function PromotionPage() {
     return (
         <div>
             Promotion
@@ -8,4 +8,4 @@ function promotion() {
     )
 }
 
-export default promotion
+export default PromotionPage

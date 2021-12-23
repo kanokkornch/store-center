@@ -1,6 +1,6 @@
 import { useEffect, useState, Fragment } from 'react'
 import { Card, CardContent, CardAction } from '@material-ui/core'
-function dashbord() {
+function Dashbord() {
     return (
         <div>
             <div className="row">
@@ -23,4 +23,4 @@ function dashbord() {
     )
 }
 
-export default dashbord
+export default Dashbord

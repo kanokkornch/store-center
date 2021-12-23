@@ -17,9 +17,10 @@ import { useForm, Controller } from "react-hook-form";
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { APIshopLogin } from '../services/api'
+import { message } from 'antd'
 const MySwal = withReactContent(Swal)
 
-function login() {
+function LoginPage() {
     const dispatch = useDispatch()
     const [main, setMain] = useState(1)
     const [showPassword, setShowPassword] = useState(false)
@@ -28,24 +29,17 @@ function login() {
     }
     const { register, control, handleSubmit, formState: { errors }, setError } = useForm()
     const onSubmit = (data) => {
+        const loading = message.loading('รอสักครู่...')
         APIshopLogin(data).then(res => {
+            setTimeout(loading, 0)
             if (res && !res.status) {
-                return MySwal.fire({
-                    position: 'top-end',
-                    icon: 'error',
-                    text: res.message,
-                    showConfirmButton: false,
-                    timer: 2000
-                })
+                message.error(res.message)
+            } else {
+                message.success('กำลังเข้าสู่เว็บไซต์...')
             }
         }).catch(err => {
-            return MySwal.fire({
-                position: 'top-end',
-                icon: 'error',
-                text: 'เกิดความผิดพลาดของ Service',
-                showConfirmButton: false,
-                timer: 2000
-            })
+            setTimeout(loading, 0)
+            message.error('เกิดความผิดพลาดของ Service')
         })
     }
     return (
@@ -146,5 +140,5 @@ function login() {
     )
 }
 
-export default login
+export default LoginPage
 

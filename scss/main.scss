@@ -2,6 +2,7 @@ $main-bg-color: #EEF0F4;
 $app-color: #201ADB;
 $secound-app-color: #3A82FF;
 $danger-app-color: #D93232;
+$radius: 10px;
 
 @for $i from 1 through 150 {
     .w-#{$i}-per {
@@ -39,8 +40,40 @@ $danger-app-color: #D93232;
     }
 }
 
+.sidebar-haeder {
+    span {
+        font-size: 40px;
+        font-weight: 500;
+    }
+}
+
+.ant-modal-content {
+    border-radius: $radius !important;
+}
+
+.ant-modal-header {
+    border-radius: $radius $radius 0 0 !important;
+}
+
+.ant-modal-body {
+    padding: 15px !important;
+}
+
+.ant-modal.stock-modal {
+    width: 770px !important;
+}
+
+.input-group-text {
+    background-color: #fff !important;
+    border-right: none !important;
+}
+
 .MuiCard-root {
     overflow: visible !important;
+}
+
+.MuiPaper-rounded {
+    border-radius: $radius !important;
 }
 
 .main-overlay {
@@ -73,11 +106,15 @@ svg.delete-icon {
     }
 }
 
+.text-gray {
+    color: #999;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-size: 15px;
+    font-size: 13px;
     font-family: 'Sarabun', sans-serif !important;
 }
 
@@ -114,8 +151,15 @@ svg.delete-icon {
     }
 }
 
-.select__control.css-1s2u09g-control {
-    min-height: 40px;
+.select__control.css-1s2u09g-control,
+.select__control.select__control--menu-is-open,
+.select__control--is-focused.css-1pahdxg-control {
+    min-height: 35px !important;
+}
+
+.css-tlfecz-indicatorContainer,
+.css-1gtu0rj-indicatorContainer {
+    padding: 6px 8px !important;
 }
 
 .MuiTypography-body1 {
@@ -139,6 +183,10 @@ td.MuiTableCell-body.no-data-table {
     line-height: 200px;
 }
 
+.MuiTableCell-root {
+    font-size: 13px !important;
+}
+
 input[type='checkbox'] {
 
     &.indeterminate {
@@ -150,6 +198,21 @@ input[type='checkbox'] {
 
 .MuiListItem-root:hover {
     color: #111;
+}
+
+.MuiTableRow-head {
+    background: #deeaff;
+}
+
+button.MuiTab-root.MuiTab-textColorPrimary {
+    span.MuiTab-wrapper {
+        font-size: 14px;
+        font-weight: 600;
+    }
+}
+
+.PrivateTabIndicator-root-4.PrivateTabIndicator-colorPrimary-5.MuiTabs-indicator {
+    height: 4px;
 }
 
 .main-menu {
@@ -522,9 +585,110 @@ h3 {
     margin-bottom: 10px;
 }
 
+.ant-alert.ant-alert-info {
+    .ant-alert-icon {
+        padding-top: 5px;
 
+        svg {
+            font-size: 18px;
+        }
+    }
 
+    .ant-alert-content {
+        .ant-alert-message {
+            font-size: 18px;
+            font-weight: 600;
+            color: $secound-app-color;
+        }
+    }
+}
 
+.upload-btn-wrapper {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+}
+
+.upload-btn-wrapper {
+    .btn {
+        border: none;
+        color: #fff;
+        background-color: $secound-app-color;
+        padding: 4px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    input[type=file] {
+        font-size: 100px;
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+    }
+}
+
+.MuiCircularProgress-root.MuiCircularProgress-colorPrimary.MuiCircularProgress-indeterminate {
+    width: 18px !important;
+    height: 18px !important;
+}
+
+img.table-image {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.MuiButton-root,
+.ant-btn {
+    border-radius: 5px !important;
+}
+
+.table-header-content {
+
+    img.table-image {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+
+    span.title {
+        font-size: 14px;
+        color: #333;
+        font-weight: 500;
+    }
+}
+
+.shop-setting-logo.ant-upload-picture-card-wrapper {
+    width: max-content;
+}
+
+.logo-upload-btn-con {
+    align-self: end;
+    padding-bottom: 8px;
+    padding-left: 50px;
+}
+
+.ql-container.ql-snow {
+    height: 450px;
+}
+
+.MuiListItemIcon-root {
+    min-width: 35px !important;
+}
+
+div.MuiButtonBase-root:not(.one-menu) {
+    padding-left: 2.5rem;
+}
+
+.ant-dropdown.ant-dropdown-placement-bottomRight {
+    width: 200px;
+}
+.ant-dropdown-menu-item, .ant-dropdown-menu-submenu-title {
+    text-align: center;
+}
 
 @media screen and (max-width: 960px) {
     .content-container {

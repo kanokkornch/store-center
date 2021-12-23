@@ -16,11 +16,9 @@ import registering from '../assets/images/undraw_Accept_terms_re_lj38.png'
 import Link from 'next/link'
 import { useForm, Controller } from "react-hook-form";
 import { APIshopRegister } from '../services/api'
-import Swal from 'sweetalert2'
-import withReactContent from 'sweetalert2-react-content'
-const MySwal = withReactContent(Swal)
-function register() {
-    const { reset, control, handleSubmit, formState: { errors }, setError, clearErrors } = useForm({
+import { message } from 'antd'
+function RegisterPage() {
+    const { reset, control, handleSubmit, formState: { errors }, setError, clearErrors, clearForm } = useForm({
         defaultValues: {
             name: '',
             username: '',
@@ -37,35 +35,26 @@ function register() {
     const handleMouseDownPassword = (event) => {
         event.preventDefault();
     }
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
         if (data.password !== data.confirm_password) {
             setError('confirm_password', { type: 'manual', message: 'ยืนยันรหัสผ่านไม่ตรงกับรหัสผ่าน' })
         } else if (!acceptTermService) {
             setError('accept_term_service', { type: 'manual', message: 'กรุณายอมรับเงื่อนไขก่อนลงทะเบียน' })
         } else {
+            const loading = message.loading('รอสักครู่...')
             APIshopRegister(data).then(res => {
+                setTimeout(loading, 0)
                 if (res.success) {
                     reset()
-                    return MySwal.fire({
-                        title: res.message,
-                        text: 'ท่านสามารถเข้าสู่ระบบได้แล้ว',
-                        icon: 'success'
-                    })
+                    setAcceptTermService(false)
+                    message.success('ลงทะเบียนสำเร็จ. คุณสามารถเข้าสู่ระบบได้แล้ว')
                 } else {
-                    return MySwal.fire({
-                        title: 'ข้อความจากระบบ',
-                        text: res.message,
-                        icon: 'error'
-                    })
+                    message.error(res.message)
                 }
             }).catch(err => {
-                return MySwal.fire({
-                    position: 'top-end',
-                    icon: 'error',
-                    title: 'เกิดความผิดพลาดของ Service',
-                    showConfirmButton: false,
-                    timer: 2000
-                })
+                setTimeout(loading, 0)
+                message.error('service ไม่พร้อมใช้งานขณะนี้')
+                console.error(err)
             })
             // console.log(`REGISTER DATA`, data)
         }
@@ -222,14 +211,15 @@ function register() {
                             rules={{ required: true, pattern: /[0-9]{10}/, maxLength: 10 }}
                         />
                         {errors.phone && <FormHelperText id="error-text">หมายเลขโทรศัพท์ไม่ถูกต้อง</FormHelperText>}
-                        <div class="form-check mt-3">
+                        <div className="form-check mt-3">
                             <input
-                                class="form-check-input"
+                                className="form-check-input"
                                 name='acceptTermService'
                                 type="checkbox"
+                                checked={acceptTermService}
                                 onChange={handleAcceptTermService}
                                 id="acceptTermService" />
-                            <label class="form-check-label" for="acceptTermService">
+                            <label className="form-check-label" htmlFor="acceptTermService">
                                 ยอมรับเงื่อนไขและข้อตกลง
                             </label>
                         </div>
@@ -244,9 +234,9 @@ function register() {
                         </Button>
                     </Link>
                 </div>
-            </div>
+            </div >
         </div >
     )
 }
 
-export default register
+export default RegisterPage

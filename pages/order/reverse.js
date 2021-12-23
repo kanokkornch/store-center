@@ -1,6 +1,6 @@
 import React from 'react'
 
-function reverse() {
+function ReversePage() {
     return (
         <div>
             การคืนสินค้า
@@ -8,4 +8,4 @@ function reverse() {
     )
 }
 
-export default reverse
+export default ReversePage
