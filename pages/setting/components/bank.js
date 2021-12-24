@@ -1,14 +1,45 @@
 import { useState, useEffect, useRef, Fragment } from 'react'
 import { useForm, Controller, useFieldArray } from "react-hook-form"
 import Select from "react-select"
-import { Upload } from 'antd'
+import { message, Upload } from 'antd'
+import { Button } from '@material-ui/core'
+import { shopVerification } from '../../../services/verification'
+import { uploadImage } from '../../../services/utills'
 
-function BankVerifyPage() {
+function BankVerifyPage(props) {
+    const { banks } = props
     const { register, control, handleSubmit, formState: { errors }, setValue, getValues, reset } = useForm({})
     const [fileList, setFileList] = useState([])
     const [bookFile, setbookFile] = useState(null)
     const onSubmitForm = (data) => {
-        console.log(`form`, data)
+        data.type = 'BANK_VERIFY'
+        data.bank_id = data.bank.id
+        if (!bookFile) {
+            message.warning('กรุณาอัพโหลดหน้าสมุดบัญชี')
+            return
+        }
+        const loading = message.loading('กำลังอัพเดตข้อมูล...')
+        uploadImage({ type: 'bank_verify', image_data: bookFile }).then(res => {
+            if (res.success) {
+                data.attach_file = res.data.url
+                shopVerification(data).then(res => {
+                    setTimeout(loading, 0)
+                    if (res.success) {
+                        message.success('อัพเดตข้อมูลสำเร็จ')
+                    } else {
+                        message.error(res.message)
+                    }
+                }).catch(err => {
+                    setTimeout(loading, 0)
+                    message.error('service ไม่พร้อมใช้งานขณะนี้')
+                })
+            } else {
+                message.error(res.message)
+            }
+        }).catch(err => {
+            setTimeout(loading, 0)
+            message.error('service ไม่พร้อมใช้งานขณะนี้')
+        })
     }
     const onChange = ({ fileList: newFileList }) => {
         setFileList(newFileList);
@@ -39,11 +70,11 @@ function BankVerifyPage() {
     }
     return (
         <div>
-            <div className="h4">ยืนยันตัวตน</div>
+            <div className="h4">ยืนยันบัญชีธนาคาร</div>
             <form onSubmit={handleSubmit(onSubmitForm)}>
                 <div className="row">
                     <div className="col-md-6">
-                        <div className="mb-3">
+                        <div className="my-3">
                             <label htmlFor="name" className="form-label">
                                 <span className='requird'>* </span>
                                 ชื่อบัญชี
@@ -53,7 +84,7 @@ function BankVerifyPage() {
                                 {...register('bank_account_name', { required: true, })}
                                 className={`form-control ${errors.bank_account_name ? 'is-invalid' : ''}`}
                                 id="bank_account_name"
-                                placeholder="ชื่อสินค้า" />
+                                placeholder="" />
                         </div>
                         <div className="mb-3">
                             <label htmlFor="name" className="form-label">
@@ -61,11 +92,11 @@ function BankVerifyPage() {
                                 เลขบัญชี
                             </label>
                             <input
-                                type="text"
+                                type="number"
                                 {...register('bank_account_number', { required: true, })}
                                 className={`form-control ${errors.bank_account_number ? 'is-invalid' : ''}`}
                                 id="bank_account_number"
-                                placeholder="ชื่อสินค้า" />
+                                placeholder="" />
                         </div>
                         <div className="mb-3">
                             <label htmlFor="name" className="form-label">
@@ -73,7 +104,7 @@ function BankVerifyPage() {
                                 ธนาคาร
                             </label>
                             <Controller
-                                name="bank_id"
+                                name="bank"
                                 control={control}
                                 rules={{ required: true }}
                                 render={({ field }) => <Select
@@ -81,13 +112,13 @@ function BankVerifyPage() {
                                     className='react-select'
                                     classNamePrefix='select'
                                     isSearchable={false}
-                                    options={[]}
-                                // options={units.length ? units.map(it => {
-                                //     it.value = it.id
-                                //     it.label = it.name
-                                //     return it
-                                // }) : []
-                                // }
+                                    // defaultValue={banks[0]}
+                                    options={banks.length ? banks.map(it => {
+                                        it.value = it.id
+                                        it.label = it.name
+                                        return it
+                                    }) : []
+                                    }
                                 />}
                             />
                         </div>
@@ -98,7 +129,7 @@ function BankVerifyPage() {
                             </label>
                             <div className="d-flex">
                                 <Upload
-                                    className='shop-setting-logo'
+                                    className=''
                                     listType="picture-card"
                                     fileList={fileList}
                                     onChange={onChange}
@@ -108,6 +139,15 @@ function BankVerifyPage() {
                                     {fileList.length < 1 && '+ Upload'}
                                 </Upload>
                             </div>
+                        </div>
+                        <div>
+                            <Button
+                                type='submit'
+                                className='w-100'
+                                variant="contained"
+                                color="primary">
+                                บันทึก
+                            </Button>
                         </div>
                     </div>
                 </div>

@@ -9,15 +9,22 @@ import ShopComponent from './components/shop'
 import BankComponent from './components/bank'
 import InvoiceComponent from './components/invoice'
 
+import { getAllBanks } from '../../services/utills'
+
 
 function MyAccountPage() {
     const [active, setActive] = useState(1)
+    const [banks, setBanks] = useState([])
 
     const menu = [
         { id: 1, name: 'ยืนยันตัวตน', icon: <StoreIcon /> },
         { id: 2, name: 'ยืนยันบัญชีธนาคาร', icon: <CreditCardIcon /> },
-        { id: 3, name: 'ใบกำกับภาษี', icon: <InsertDriveFileIcon /> },
+        // { id: 3, name: 'ใบกำกับภาษี', icon: <InsertDriveFileIcon /> },
     ]
+    useEffect(async () => {
+        const banks = await getAllBanks()
+        setBanks(banks)
+    }, [])
     return (
         <div className="row">
             <div className="col-md-4 d-flex flex-column acc-setting">
@@ -36,7 +43,7 @@ function MyAccountPage() {
                 <Card>
                     <CardContent>
                         {active === 1 && <ShopComponent />}
-                        {active === 2 && <BankComponent />}
+                        {active === 2 && <BankComponent banks={banks}/>}
                         {active === 3 && <InvoiceComponent />}
                     </CardContent>
                 </Card>
