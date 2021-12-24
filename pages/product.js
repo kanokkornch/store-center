@@ -82,6 +82,7 @@ function ProductPage() {
     }
 
     useEffect(() => {
+        document.title = 'จัดการสินค้า'
         fetchProducts()
         dispatch(geProductCategories())
         return () => { }

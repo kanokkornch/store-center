@@ -8,18 +8,21 @@ import { CardContent, Card } from '@material-ui/core'
 import ShopComponent from './components/shop'
 import BankComponent from './components/bank'
 import InvoiceComponent from './components/invoice'
+import SellerComponent from './components/seller'
+import BusinessComponent from './components/business'
 
 import { getAllBanks } from '../../services/utills'
 
 
-function MyAccountPage() {
+function ProfilePage() {
     const [active, setActive] = useState(1)
     const [banks, setBanks] = useState([])
 
     const menu = [
-        { id: 1, name: 'ยืนยันตัวตน', icon: <StoreIcon /> },
-        { id: 2, name: 'ยืนยันบัญชีธนาคาร', icon: <CreditCardIcon /> },
-        // { id: 3, name: 'ใบกำกับภาษี', icon: <InsertDriveFileIcon /> },
+        { id: 1, name: 'ข้อมูลบัญชีผู้ใช้งาน', icon: <StoreIcon /> },
+        { id: 2, name: 'ข้อมูลทางธุรกิจ', icon: <StoreIcon /> },
+        { id: 3, name: 'บัญชีธนาคาร', icon: <CreditCardIcon /> },
+        { id: 4, name: 'ที่อยู่คลังสินค้า', icon: <CreditCardIcon /> }
     ]
     useEffect(async () => {
         const banks = await getAllBanks()
@@ -34,7 +37,7 @@ function MyAccountPage() {
                         className={it.id === active ? 'active' : ''}
                         onClick={() => setActive(it.id)}
                     >
-                        {it.icon}
+                        {/* {it.icon} */}
                         <span className='ms-3'>{it.name}</span>
                     </Button>
                 ))}
@@ -42,9 +45,9 @@ function MyAccountPage() {
             <div className="col-md-8 mt-md-0 mt-3">
                 <Card>
                     <CardContent>
-                        {active === 1 && <ShopComponent />}
-                        {active === 2 && <BankComponent banks={banks}/>}
-                        {active === 3 && <InvoiceComponent />}
+                        {active === 1 && <SellerComponent />}
+                        {active === 2 && <BusinessComponent />}
+                        {active === 3 && <BankComponent banks={banks}/>}
                     </CardContent>
                 </Card>
             </div>
@@ -52,4 +55,4 @@ function MyAccountPage() {
     )
 }
 
-export default MyAccountPage
+export default ProfilePage

@@ -127,7 +127,7 @@ function Sidebar() {
         },
         {
             name: 'ข้อมูลส่วนตัว',
-            path: '/dashbord',
+            path: '/account/profile',
             onClick: () => { }
         },
         {
@@ -137,7 +137,7 @@ function Sidebar() {
         },
         {
             name: 'ตั้งค่าบัญชี',
-            path: '/setting/myAccount',
+            path: '/dashbord',
             onClick: () => { }
         },
         {
