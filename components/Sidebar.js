@@ -91,7 +91,7 @@ function Sidebar() {
                                         <ListItem button className={clsx(classes.nested, {
                                             [classes.menuActive]: `${menu.prefix}${sub.path}` === router.pathname,
                                             [classes.menu]: `${menu.prefix}${sub.path}` !== router.pathname,
-                                        }),'sub-menu'}>
+                                        })}>
                                             <ListItemText primary={sub.title} />
                                         </ListItem>
                                     </Link>
