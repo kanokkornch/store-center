@@ -140,16 +140,16 @@ function BankVerifyPage(props) {
                                 </Upload>
                             </div>
                         </div>
-                        <div>
-                            <Button
-                                type='submit'
-                                className='w-100'
-                                variant="contained"
-                                color="primary">
-                                บันทึก
-                            </Button>
-                        </div>
+
                     </div>
+                </div>
+                <div className='text-end'>
+                    <Button
+                        type='submit'
+                        variant="contained"
+                        color="primary">
+                        บันทึก
+                    </Button>
                 </div>
             </form>
         </div>

@@ -5,11 +5,10 @@ import CreditCardIcon from '@material-ui/icons/CreditCard'
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile'
 import { CardContent, Card } from '@material-ui/core'
 
-import ShopComponent from './components/shop'
 import BankComponent from './components/bank'
-import InvoiceComponent from './components/invoice'
 import SellerComponent from './components/seller'
 import BusinessComponent from './components/business'
+import AddressComponent from './components/address'
 
 import { getAllBanks } from '../../services/utills'
 
@@ -47,7 +46,8 @@ function ProfilePage() {
                     <CardContent>
                         {active === 1 && <SellerComponent />}
                         {active === 2 && <BusinessComponent />}
-                        {active === 3 && <BankComponent banks={banks}/>}
+                        {active === 3 && <BankComponent banks={banks} />}
+                        {active === 4 && <AddressComponent />}
                     </CardContent>
                 </Card>
             </div>
