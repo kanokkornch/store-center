@@ -144,10 +144,6 @@ function OrderPage() {
             </Card>
             <OrderTable
                 headCells={[
-                    // { id: 'name', numeric: false, disablePadding: true, label: 'ข้อมูลสินค้า' },
-                    // { id: 'sell_price', numeric: true, disablePadding: false, label: 'ราคา' },
-                    // { id: 'qty', numeric: true, disablePadding: false, label: 'จำนวน' },
-                    // { id: 'manage', numeric: false, disablePadding: false, label: '' },
                     { id: 'id', numeric: false, disablePadding: true, label: 'หมายเลขการสั่งซื้อ' },
                     { id: 'name', numeric: false, disablePadding: false, label: 'ชื่อผู้ซื้อ' },
                     { id: 'total_amount', numeric: true, disablePadding: false, label: 'รวม' },

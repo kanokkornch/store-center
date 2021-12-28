@@ -343,7 +343,10 @@ export default function EnhancedTable(props) {
                                                         <div className='d-flex table-header-content'>
                                                             <img className='me-3 table-image' src={row.thumbnail} alt="" />
                                                             <div className='d-flex flex-column'>
-                                                                <span className='title mb-1'>{row.name}</span>
+                                                                {/* <span className='title mb-1'>{row.name}</span> */}
+                                                                <Link href={`/product/edit/${row.id}`}>
+                                                                <a className='title mb-1'>{row.name}</a>
+                                                                </Link>
                                                                 <span className='text-gray'>Seller sku: {row.sku}</span>
                                                             </div>
                                                         </div>

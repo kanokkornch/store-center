@@ -131,6 +131,7 @@ function OrderDetailPage() {
                                                 <Image src={row.product_thumbnail} width={40} height={40} />
                                                 <div className='d-flex flex-column ms-2'>
                                                     <span className='fw-500'>{row.product_name}</span>
+                                                    {row.product_option_name && <span>{row.product_option_name} : {row.product_option_value}</span>}
                                                     <span>จำนวน: {row.product_qty}</span>
                                                 </div>
                                             </div>

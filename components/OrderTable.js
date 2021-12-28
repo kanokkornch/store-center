@@ -353,6 +353,9 @@ export default function OrderTable(props) {
                                                                 <Image className='table-image' src={dt.product_thumbnail} width={40} height={40} />
                                                                 <div className='d-flex flex-column ms-1'>
                                                                     <span className='title mb-1'>{dt.product_name}</span>
+                                                                    {dt.product_option_name && <span className='text-gray'>
+                                                                        {dt.product_option_name} : {dt.product_option_value}
+                                                                    </span>}
                                                                     <span className='text-gray'>จำนวน: {dt.product_qty}</span>
                                                                 </div>
                                                             </div>
