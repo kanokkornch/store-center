@@ -4,6 +4,9 @@ module.exports = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  images: {
+    domains: ['localhost'],
+  },
   redirects: async () => {
     return [
       {

@@ -23,9 +23,36 @@ $radius: 10px;
 .MuiBadge-anchorOriginTopRightRectangle {
     top: -3px !important;
 }
+
 .MuiBadge-badge {
     height: 17px !important;
     min-width: 17px !important;
+}
+
+.antd-loading {
+    width: 100%;
+    height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.summary-content {
+    display: flex;
+    flex-direction: column;
+    text-align: end;
+    row-gap: 5px;
+}
+
+.ant-divider-horizontal {
+    margin: 15px 0 !important;
+}
+.table-overflow {
+    overflow-x: auto;
+}
+
+tbody.MuiTableBody-root {
+    background: #fff;
 }
 
 @media (min-width: 600px) {
@@ -33,3 +60,9 @@ $radius: 10px;
         min-width: auto !important;
     }
 }
+
+// X-Small devices (portrait phones, less than 576px)
+@media (max-width: 575.98px) {}
+
+// Small devices (landscape phones, less than 768px)
+@media (max-width: 767.98px) {}
