@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link'
+import Image from 'next/image'
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
@@ -241,19 +242,19 @@ export default function OrderTable(props) {
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = rows.map((n) => n.name);
+            const newSelecteds = rows.map((n) => n.id);
             setSelected(newSelecteds);
             return;
         }
         setSelected([]);
     };
 
-    const handleClick = (event, name) => {
-        const selectedIndex = selected.indexOf(name);
+    const handleClick = (event, id) => {
+        const selectedIndex = selected.indexOf(id);
         let newSelected = [];
 
         if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
+            newSelected = newSelected.concat(selected, id);
         } else if (selectedIndex === 0) {
             newSelected = newSelected.concat(selected.slice(1));
         } else if (selectedIndex === selected.length - 1) {
@@ -264,7 +265,6 @@ export default function OrderTable(props) {
                 selected.slice(selectedIndex + 1),
             );
         }
-
         setSelected(newSelected);
     };
 
@@ -286,7 +286,11 @@ export default function OrderTable(props) {
         setDense(event.target.checked);
     };
 
-    const isSelected = (name) => selected.indexOf(name) !== -1;
+    const isSelected = (id) => {
+        console.log(`selected`, selected)
+        console.log(`isSelected`, selected.indexOf(id) !== -1)
+        return selected.indexOf(id) !== -1;
+    }
 
     // const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
     const emptyRows = 0;
@@ -318,7 +322,7 @@ export default function OrderTable(props) {
                                 {rows.length > 0 ? stableSort(rows, getComparator(order, orderBy))
                                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                     .map((row, index) => {
-                                        const isItemSelected = isSelected(row.name);
+                                        const isItemSelected = isSelected(row.id);
                                         const labelId = `enhanced-table-checkbox-${index}`;
 
                                         return (
@@ -334,23 +338,26 @@ export default function OrderTable(props) {
                                                     <input
                                                         className="form-check-input"
                                                         type="checkbox"
-                                                        onClick={(event) => handleClick(event, row.name)}
+                                                        onClick={(event) => handleClick(event, row.id)}
                                                         aria-labelledby={labelId}
                                                         checked={isItemSelected}>
                                                     </input>
                                                 </TableCell>
                                                 <TableCell style={{ minWidth: '260px' }} component="th" id={labelId} scope="row" padding="none">
-                                                    <div>
-                                                        <div className='d-flex table-header-content'>
-                                                            {/* <img className='me-3 table-image' src={row.thumbnail} alt="" /> */}
-                                                            <div className='d-flex flex-column'>
-                                                                <Link href={`/order/${row.id}`}>
-                                                                    <a>{row.id}</a>
-                                                                </Link>
-                                                                {/* <span className='title mb-1'></span> */}
-                                                                {/* <span className='text-gray'>Seller sku: {row.sku}</span> */}
+                                                    <div className='py-3'>
+                                                        <Link href={`/order/${row.id}`}>
+                                                            <a>No. {row.id}</a>
+                                                        </Link>
+                                                        {row.order_detail.map(dt => (
+                                                            <div key={dt.product_id} className='d-flex table-header-content pt-3'>
+                                                                <Image className='table-image' src={dt.product_thumbnail} width={40} height={40} />
+                                                                <div className='d-flex flex-column ms-1'>
+                                                                    <span className='title mb-1'>{dt.product_name}</span>
+                                                                    <span className='text-gray'>จำนวน: {dt.product_qty}</span>
+                                                                </div>
                                                             </div>
-                                                        </div>
+                                                        ))}
+
                                                         {/* {row.product_options.length > 0 ? row.product_options.map(pd => (
                                                             <p><div>
                                                                 <img className='me-3 table-image' src={pd.thumbnail} alt="" />
