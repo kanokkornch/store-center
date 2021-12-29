@@ -6,7 +6,7 @@ import { Provider } from 'react-redux'
 import { createWrapper } from 'next-redux-wrapper'
 import store from '../store/store'
 import '../scss/main.scss'
-// import '../scss/setting.scss'
+import '../scss/setting.scss'
 import { ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import theme from '../src/theme';

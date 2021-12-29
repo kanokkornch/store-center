@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, Fragment } from 'react'
-import {Card,CardContent}from '@material-ui/core'
+import { Card, CardContent, Tabs, Tab } from '@material-ui/core'
 import Link from 'next/link'
 
 import ConfirmationNumberIcon from '@material-ui/icons/ConfirmationNumber'
@@ -10,18 +10,36 @@ import FiberNewIcon from '@material-ui/icons/FiberNew'
 function PromotionPage() {
     useEffect(() => {
         document.title = 'โปรโมชั่น'
-    }, [])
+    })
     return (
         <div>
             <div className="h4">โปรโมชั่น</div>
             <div className="row flex-row">
                 <Card className='mb-3'>
                     <CardContent>
-                        <div className="row">
-                            <div className="col-md-6">
-                                
+                        <div className='coupon-items'>
+                            <div className="coupon-card">
+                                <div className="icon">
+                                    <ConfirmationNumberIcon style={{ color: '#FF7441' }}/>
+                                </div>
+                                <div className="detail">
+                                    <div className="title">คูปองส่วนลดร้านค้า</div>
+                                    <div className="description">
+                                        เพิ่มยอดเข้าชมและยอดขายง่ายๆ ด้วยคูปองส่วนลดร้านค้า ลูกค้าสามารถกดรับคูปองได้เองที่หน้าร้านค้าของคุณ
+                                    </div>
+                                </div>
                             </div>
-                            <div className="col-md-6"></div>
+                            <div className="coupon-card">
+                                <div className="icon">
+                                    <LocalShippingIcon style={{ color: '#01BFA6' }}/>
+                                </div>
+                                <div className="detail">
+                                    <div className="title">ฟรีค่าจัดส่ง</div>
+                                    <div className="description">
+                                        โดดเด่นเหนือคู่แข่งด้วยโปรโมชั่นฟรีค่าจัดส่ง สินค้าที่ร่วมโปรโมชั่นจะได้รับสัญลักษณ์รถบรรทุกสีเขียวเพื่อแสดงให้ลูกค้ารู้ว่ามีส่วนลดค่าจัดส่ง
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         {/* <div className="h5 mb-2">โปรโมชั่นทั้งหมด</div>
                         <div className='row'>

@@ -47,12 +47,54 @@ $radius: 10px;
 .ant-divider-horizontal {
     margin: 15px 0 !important;
 }
+
 .table-overflow {
     overflow-x: auto;
 }
 
 tbody.MuiTableBody-root {
     background: #fff;
+}
+
+.coupon-items {
+    display: grid;
+    column-gap: 10px;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.coupon-card {
+    background: #F5F8FD;
+    padding: 10px;
+    display: flex;
+    column-gap: 10px;
+    border-radius: $radius;
+    cursor: pointer;
+    &:hover {
+        background: darken($color: #F5F8FD, $amount: 3);
+    }
+
+    .icon {
+        flex: 0 0 64px;
+        width: 64px;
+        height: 64px;
+        border-radius: $radius;
+        text-align: center;
+        background: #fff;
+
+        &>svg {
+            width: 100%;
+            height: 100%;
+            padding: 15px;
+        }
+    }
+
+    .title {
+        font-size: 15px;
+        margin-bottom: 5px;
+        font-weight: 600;
+        color: #7c7c7c;
+    }
+
 }
 
 @media (min-width: 600px) {
@@ -65,4 +107,9 @@ tbody.MuiTableBody-root {
 @media (max-width: 575.98px) {}
 
 // Small devices (landscape phones, less than 768px)
-@media (max-width: 767.98px) {}
+@media (max-width: 767.98px) {
+    .coupon-items {
+        row-gap: 10px;
+        grid-template-columns: repeat(1, 1fr);
+    }
+}
