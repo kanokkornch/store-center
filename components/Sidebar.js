@@ -32,6 +32,9 @@ const useStyles = makeStyles({
     },
     menu: {
         color: '#111'
+    },
+    primary: {
+        color: '#fff'
     }
 })
 function Sidebar() {
@@ -80,10 +83,15 @@ function Sidebar() {
                 {SidebarData.map((menu, i) => (
                     <div key={menu.id}>
                         {menu.subNav && menu.subNav.length && <>
-                            <ListItem className={`main-menu ${index === i && indexOpen ? 'active' : ''}`} onClick={() => setOpenCollapseMeu(i, index !== i ? true : !indexOpen)}>
+                            {/* <ListItem className={`main-menu ${index === i && indexOpen ? 'active' : ''}`} onClick={() => setOpenCollapseMeu(i, index !== i ? true : !indexOpen)}>
                                 <ListItemIcon>{menu.icon}</ListItemIcon>
                                 <ListItemText primary={menu.title} />
-                                {/* {index === i && indexOpen ? <ExpandLess /> : <ExpandMore />} */}
+                                {index === i && indexOpen ? <ExpandLess /> : <ExpandMore />}
+                            </ListItem> */}
+                            <Divider />
+                            <ListItem>
+                                <ListItemIcon className='menu-item-icon'>{menu.icon}</ListItemIcon>
+                                <ListItemText className='menu-item-title' primary={menu.title} />
                             </ListItem>
                             {menu.subNav.map(sub => (
                                 // <Collapse key={sub.title} in={index === i && indexOpen} timeout="auto" unmountOnExit>

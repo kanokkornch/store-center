@@ -14,13 +14,13 @@ function PromotionPage() {
     return (
         <div>
             <div className="h4">โปรโมชั่น</div>
-            <div className="row flex-row">
-                <Card className='mb-3'>
-                    <CardContent>
-                        <div className='coupon-items'>
+            <Card className='mt-3'>
+                <CardContent>
+                    <div className='coupon-items'>
+                        <Link href='/product/promotion/voucher'>
                             <div className="coupon-card">
                                 <div className="icon">
-                                    <ConfirmationNumberIcon style={{ color: '#FF7441' }}/>
+                                    <ConfirmationNumberIcon style={{ color: '#FF7441' }} />
                                 </div>
                                 <div className="detail">
                                     <div className="title">คูปองส่วนลดร้านค้า</div>
@@ -29,9 +29,11 @@ function PromotionPage() {
                                     </div>
                                 </div>
                             </div>
+                        </Link>
+                        <Link href='/product/promotion/freeShipping'>
                             <div className="coupon-card">
                                 <div className="icon">
-                                    <LocalShippingIcon style={{ color: '#01BFA6' }}/>
+                                    <LocalShippingIcon style={{ color: '#01BFA6' }} />
                                 </div>
                                 <div className="detail">
                                     <div className="title">ฟรีค่าจัดส่ง</div>
@@ -40,45 +42,10 @@ function PromotionPage() {
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        {/* <div className="h5 mb-2">โปรโมชั่นทั้งหมด</div>
+                        </Link>
+                    </div>
+                    {/* <div className="h5 mb-2">โปรโมชั่นทั้งหมด</div>
                         <div className='row'>
-                            <div className='col-12 col-xs-12 col-md-6 mb-3'>
-                                <Link href="/product/discount-list">
-                                    <div className='p-3' style={{ backgroundColor: '#F5F8FD', borderRadius: '10px', height: '104px' }}>
-                                        <div className='row d-flex align-items-center'>
-                                            <div className='col-4 col-xs-4 col-md-1'>
-                                                <div style={{ backgroundColor: 'white', width: '64px', height: '64px', borderRadius: '10px' }} className=' d-flex align-items-center justify-content-center'>
-                                                    <ConfirmationNumberIcon fontSize='large' style={{ color: '#FF7441' }} />
-                                                </div>
-                                            </div>
-                                            <div className='col-8 col-xs-8 col-md-11'>
-                                                <div style={{ marginLeft: '10px' }}>
-                                                    <h5 className="h5 mb-2">คูปองส่วนลดร้านค้า</h5>
-                                                    <p className="mb-2 mobile-none">เพิ่มยอดเข้าชมและยอดขายง่ายๆ ด้วยคูปองส่วนลดร้านค้า ลูกค้าสามารถกดรับคูปองได้เองที่หน้าร้านค้าของคุณ</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Link>
-                            </div>
-                            <div className='col-12 col-xs-12 col-md-6 mb-3'>
-                                <div className='p-3' style={{ backgroundColor: '#F5F8FD', borderRadius: '10px', height: '104px' }}>
-                                    <div className='row d-flex align-items-center'>
-                                        <div className='col-4 col-xs-4 col-md-1'>
-                                            <div style={{ backgroundColor: 'white', width: '64px', height: '64px', borderRadius: '10px' }} className=' d-flex align-items-center justify-content-center'>
-                                                <LocalShippingIcon fontSize='large' style={{ color: '#01BFA6' }} />
-                                            </div>
-                                        </div>
-                                        <div className='col-8 col-xs-8 col-md-11'>
-                                            <div style={{ marginLeft: '10px' }}>
-                                                <h5 className="h5 mb-2">ฟรีค่าจัดส่ง</h5>
-                                                <p className="mb-2 mobile-none">โดดเด่นเหนือคู่แข่งด้วยโปรโมชั่นฟรีค่าจัดส่ง สินค้าที่ร่วมโปรโมชั่นจะได้รับสัญลักษณ์รถบรรทุกสีเขียวเพื่อแสดงให้ลูกค้ารู้ว่ามีส่วนลดค่าจัดส่ง</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                             <div className='col-12 col-xs-12 col-md-6 mb-3'>
                                 <div className='p-3 ' style={{ backgroundColor: '#F5F8FD', borderRadius: '10px', height: '104px' }}>
                                     <div className='row d-flex align-items-center'>
@@ -115,9 +82,8 @@ function PromotionPage() {
                             </div>
                         </div> */}
 
-                    </CardContent>
-                </Card>
-            </div>
+                </CardContent>
+            </Card>
         </div>
     )
 }

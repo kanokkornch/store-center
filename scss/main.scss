@@ -50,6 +50,7 @@ $radius: 10px;
     .logo {
         object-fit: contain !important;
     }
+
     // span {
     //     font-size: 40px;
     //     font-weight: 500;
@@ -172,7 +173,7 @@ svg.delete-icon {
 }
 
 .MuiTypography-body1 {
-    font-size: 14px !important;
+    font-size: 13px !important;
     line-height: 1 !important;
 }
 
@@ -695,8 +696,81 @@ div.MuiButtonBase-root:not(.one-menu) {
 .ant-dropdown.ant-dropdown-placement-bottomRight {
     width: 200px;
 }
-.ant-dropdown-menu-item, .ant-dropdown-menu-submenu-title {
+
+.ant-dropdown-menu-item,
+.ant-dropdown-menu-submenu-title {
     text-align: center;
+}
+
+.menu-item-title>.MuiListItemText-primary {
+    opacity: 0.7;
+    font-size: 12px !important;
+}
+
+.menu-item-icon>svg {
+    opacity: 0.7;
+    font-size: 14px !important;
+}
+
+.MuiCardContent-root:last-child {
+    padding-bottom: 16px !important;
+}
+
+svg.large-icon {
+    font-size: 27px;
+}
+
+.coupon-type {
+    border: solid 1px #CBCED5;
+    padding: 10px;
+    border-radius: 5px;
+    width: 48%;
+    background: transparent;
+
+    &:hover {
+        cursor: pointer;
+        border: solid 1px $secound-app-color;
+    }
+
+    .title {
+        font-size: 15px;
+    }
+
+    .desc {
+        background: #F2F3F7;
+        padding: 5px;
+        margin-top: 5px;
+        border-radius: 5px;
+        div span.main-value span {
+            font-size: 18px !important;
+            font-weight: 500;
+            margin-right: 7px;
+        }
+
+        div {
+            color: #ABAFB9;
+            font-size: 11px;
+        }
+    }
+
+
+}
+
+.coupon-type.selected {
+    border: solid 1px $secound-app-color;
+    // background: aliceblue;
+
+    .title {
+        color: $secound-app-color;
+    }
+
+    .desc {
+        background: #FEF1F3;
+
+        div {
+            color: $danger-app-color;
+        }
+    }
 }
 
 @media screen and (max-width: 960px) {
