@@ -46,6 +46,15 @@ $radius: 10px;
     }
 }
 
+.login-form-container {
+    background: #fff;
+    width: 100%;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+
 .sidebar-haeder {
     .logo {
         object-fit: contain !important;
@@ -651,7 +660,7 @@ img.table-image {
 }
 
 .MuiButton-root,
-.ant-btn {
+.ant-btn:not(.ant-btn-circle) {
     border-radius: 5px !important;
 }
 
@@ -741,6 +750,7 @@ svg.large-icon {
         padding: 5px;
         margin-top: 5px;
         border-radius: 5px;
+
         div span.main-value span {
             font-size: 18px !important;
             font-weight: 500;
@@ -770,6 +780,15 @@ svg.large-icon {
         div {
             color: $danger-app-color;
         }
+    }
+}
+
+.social-login-btn {
+    border-radius: 50%;
+
+    &:hover {
+        cursor: pointer;
+        border: 1px solid #9F9F9F !important;
     }
 }
 
