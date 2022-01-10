@@ -187,7 +187,7 @@ function Sidebar() {
                 </IconButton>
                 <div>
                     {showVerify && <Button color="primary"
-                        onClick={() => { }}>
+                        onClick={() => { window.location.assign('/account/profile') }}>
                         กรุณายืนยันตัวตน
                     </Button>}
                     {/* <IconButton

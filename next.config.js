@@ -5,7 +5,7 @@ module.exports = {
     ignoreDuringBuilds: true,
   },
   images: {
-    domains: ['localhost'],
+    domains: ['localhost', 'e7.pngegg.com'],
   },
   redirects: async () => {
     return [

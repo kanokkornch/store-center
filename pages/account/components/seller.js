@@ -7,7 +7,8 @@ import { shopVerification } from '../../../services/verification'
 import { uploadImage } from '../../../services/utills'
 import Link from 'next/link'
 
-function AccountSellerPage() {
+function AccountSellerPage(props) {
+    const { shop } = props
     const [fileList, setFileList] = useState([])
     const [bookFile, setbookFile] = useState(null)
     return (
@@ -19,32 +20,32 @@ function AccountSellerPage() {
                         <label htmlFor="name" className="form-label fw-500">
                             รหัสร้านค้า
                         </label>
-                        <p>SF0001</p>
+                        <p>{`CS${shop.id}`}</p>
                     </div>
                     <div className="mb-3">
                         <label htmlFor="name" className="form-label fw-500">
                             ชื่อ - นามสกุล
                         </label>
-                        <p>กนกกร ชมภูหอม</p>
+                        <p>{shop.name}</p>
                     </div>
                     <div className="mb-3">
                         <label htmlFor="name" className="form-label fw-500">
                             อีเมล์ติดต่อ
                         </label>
-                        <p>kanokkorn17457@gmail.com</p>
+                        <p>{shop.email}</p>
                     </div>
                     <div className="mb-3">
                         <label htmlFor="name" className="form-label fw-500">
                             หมายเลขโทรศัพท์
                         </label>
-                        <p>0954018540</p>
+                        <p>{shop.phone}</p>
                     </div>
                     <div className="mb-3">
                         <label htmlFor="name" className="form-label fw-500">
                             ชื่อที่ปรากฏให้เห็น/ชื่อร้านค้า
                         </label>
-                        <p>SHOPFiiN
-                            <span className='me-3'/>
+                        <p>{shop.name}
+                            <span className='me-3' />
                             <Link href="/shop/infoSetting">
                                 <a>คลิกที่นี่เพื่อแก้ไขชื่อร้านค้า</a>
                             </Link>
