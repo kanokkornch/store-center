@@ -44,7 +44,7 @@ function OrderDetailPage() {
                             <div className="h5">รายละเอียดของลูกค้า</div>
                             <div className="row">
                                 <div className="col-md-6">
-                                    <div className='mb-3'>ข้อมูลเบื้องต้นของลูกค้า</div>
+                                    <div className='mb-3 text-decoration-underline'>ข้อมูลเบื้องต้นของลูกค้า</div>
                                     <div className="row">
                                         <div className="col-md-6 mb-0 mb-md-3">
                                             <label className="form-label">ชื่อผู้ซื้อ</label>
@@ -63,7 +63,7 @@ function OrderDetailPage() {
                                     </div>
                                 </div>
                                 <div className="col-md-6 mt-4 mt-md-0">
-                                    <div className='mb-3'>ที่อยู่จัดส่ง</div>
+                                    <div className='mb-3 text-decoration-underline'>ที่อยู่จัดส่ง</div>
                                     <div className="row">
                                         <div className="col-md-6">
                                             <label className="form-label">ชื่อผู้รับ</label>

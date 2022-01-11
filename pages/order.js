@@ -79,14 +79,13 @@ function OrderPage() {
                 aria-label="scrollable auto tabs example"
             >
                 <Tab label="ทั้งหมด" {...a11yProps(0)} />
-                <Tab label="รอการชำระเงิน" {...a11yProps(1)} />
-                <Tab label="สินค้าที่ต้องบรรจุ" {...a11yProps(2)} />
-                <Tab label="ที่ต้องจัดส่ง" {...a11yProps(3)} />
-                <Tab label="จัดส่งแล้ว" {...a11yProps(4)} />
-                <Tab label="ส่งแล้ว" {...a11yProps(5)} />
-                <Tab label="สินค้าถูกยกเลิก" {...a11yProps(6)} />
-                <Tab label="สินค้าถูกคืน" {...a11yProps(7)} />
-                <Tab label="จัดส่งไม่สำเร็จ" {...a11yProps(8)} />
+                <Tab label="คำสั่งซื้อใหม่" {...a11yProps(1)} />
+                <Tab label="อยู่ระหว่างดำเนินการ" {...a11yProps(2)} />
+                <Tab label="ยืนยันรายการสั่งซื้อ" {...a11yProps(3)} />
+                <Tab label="ยกเลิกรายการสั่งซื้อ" {...a11yProps(4)} />
+                <Tab label="ส่งกลับ" {...a11yProps(5)} />
+                <Tab label="จัดส่งแล้ว" {...a11yProps(6)} />
+                <Tab label="รายการเสร็จสมบูรณ์" {...a11yProps(7)} />
                 {/* <Tab label={<Badge badgeContent={1} color="primary">
                     Messages
                 </Badge>} {...a11yProps(8)} /> */}
