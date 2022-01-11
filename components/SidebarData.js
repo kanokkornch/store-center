@@ -3,6 +3,7 @@ import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 import AssessmentIcon from '@material-ui/icons/Assessment'
 import StorefrontIcon from '@material-ui/icons/Storefront';
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn'
+import AccountBoxIcon from '@material-ui/icons/AccountBox';
 export const SidebarData = [
     {
         id: 0,
@@ -75,6 +76,22 @@ export const SidebarData = [
             {
                 title: 'รายการเดินบัญชี',
                 path: '/statement'
+            }
+        ]
+    },
+    {
+        id: 5,
+        title: 'บัญชีของฉัน',
+        prefix: '/account',
+        icon: <AccountBoxIcon />,
+        subNav: [
+            {
+                title: 'ข้อมูลส่วนตัว',
+                path: '/profile'
+            },
+            {
+                title: 'ตั้งค่าบัญชี',
+                path: '/other'
             }
         ]
     },

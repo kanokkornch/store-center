@@ -1,6 +1,9 @@
 import { useEffect, useState, Fragment } from 'react'
 import { Card, CardContent, CardAction } from '@material-ui/core'
 function Dashbord() {
+    useEffect(() => {
+        document.title = 'Dashbord'
+    }, [])
     return (
         <div>
             <div className="row">

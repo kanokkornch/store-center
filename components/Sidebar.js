@@ -16,7 +16,8 @@ import {
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import { APIshopLogout } from '../services/api'
-import AppLogo from '../assets/images/icon-logo.png'
+// import AppLogo from '../assets/images/icon-logo.png'
+import AppLogo from '../assets/images/shipfin-logo.jpeg'
 import Image from 'next/image'
 import { Menu as AntMenu, Dropdown } from 'antd'
 
@@ -31,6 +32,9 @@ const useStyles = makeStyles({
     },
     menu: {
         color: '#111'
+    },
+    primary: {
+        color: '#fff'
     }
 })
 function Sidebar() {
@@ -71,18 +75,23 @@ function Sidebar() {
             role="presentation"
         >
             <div className='sidebar-haeder mx-2'>
-                <Image src={AppLogo} alt="me" width="64" height="64" />
-                <span>SHOPFiiN</span>
+                <Image className='logo' src={AppLogo} alt="me" width="500" height="500" />
+                {/* <span>SHOPFiiN</span> */}
             </div>
 
             <List component="nav">
                 {SidebarData.map((menu, i) => (
                     <div key={menu.id}>
                         {menu.subNav && menu.subNav.length && <>
-                            <ListItem className={`main-menu ${index === i && indexOpen ? 'active' : ''}`} onClick={() => setOpenCollapseMeu(i, index !== i ? true : !indexOpen)}>
+                            {/* <ListItem className={`main-menu ${index === i && indexOpen ? 'active' : ''}`} onClick={() => setOpenCollapseMeu(i, index !== i ? true : !indexOpen)}>
                                 <ListItemIcon>{menu.icon}</ListItemIcon>
                                 <ListItemText primary={menu.title} />
-                                {/* {index === i && indexOpen ? <ExpandLess /> : <ExpandMore />} */}
+                                {index === i && indexOpen ? <ExpandLess /> : <ExpandMore />}
+                            </ListItem> */}
+                            <Divider />
+                            <ListItem>
+                                <ListItemIcon className='menu-item-icon'>{menu.icon}</ListItemIcon>
+                                <ListItemText className='menu-item-title' primary={menu.title} />
                             </ListItem>
                             {menu.subNav.map(sub => (
                                 // <Collapse key={sub.title} in={index === i && indexOpen} timeout="auto" unmountOnExit>
@@ -91,7 +100,7 @@ function Sidebar() {
                                         <ListItem button className={clsx(classes.nested, {
                                             [classes.menuActive]: `${menu.prefix}${sub.path}` === router.pathname,
                                             [classes.menu]: `${menu.prefix}${sub.path}` !== router.pathname,
-                                        }),'sub-menu'}>
+                                        })}>
                                             <ListItemText primary={sub.title} />
                                         </ListItem>
                                     </Link>
@@ -127,7 +136,7 @@ function Sidebar() {
         },
         {
             name: 'ข้อมูลส่วนตัว',
-            path: '/dashbord',
+            path: '/account/profile',
             onClick: () => { }
         },
         {
@@ -137,7 +146,7 @@ function Sidebar() {
         },
         {
             name: 'ตั้งค่าบัญชี',
-            path: '/setting/myAccount',
+            path: '/account/other',
             onClick: () => { }
         },
         {
@@ -178,7 +187,7 @@ function Sidebar() {
                 </IconButton>
                 <div>
                     {showVerify && <Button color="primary"
-                        onClick={() => { }}>
+                        onClick={() => { window.location.assign('/account/profile') }}>
                         กรุณายืนยันตัวตน
                     </Button>}
                     {/* <IconButton

@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link'
-import PropTypes from 'prop-types';
+import PropTypes, { resetWarningCache } from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -28,6 +28,8 @@ import {
     Drawer, Button, Popper, MenuItem, Grow, ClickAwayListener,
     Divider, MenuList,
 } from '@material-ui/core'
+import moment from 'moment'
+import { numberFormat } from '../services/utills'
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -65,16 +67,6 @@ function EnhancedTableHead(props) {
     return (
         <TableHead>
             <TableRow className=''>
-                <TableCell padding="checkbox">
-                    {rows.length > 0 && <input
-                        className={`form-check-input ${numSelected > 0 && numSelected < rowCount ? 'indeterminate' : ''}`}
-                        type="checkbox"
-                        onClick={onSelectAllClick}
-                        aria-label='select all desserts'
-                        defaultChecked={rowCount > 0 && numSelected === rowCount}>
-                    </input>}
-
-                </TableCell>
                 {headCells.map((headCell) => (
                     <TableCell
                         key={headCell.id}
@@ -82,18 +74,7 @@ function EnhancedTableHead(props) {
                         padding={headCell.disablePadding ? 'none' : 'normal'}
                         sortDirection={orderBy === headCell.id ? order : false}
                     >
-                        <TableSortLabel
-                            active={orderBy === headCell.id}
-                            direction={orderBy === headCell.id ? order : 'asc'}
-                            onClick={createSortHandler(headCell.id)}
-                        >
-                            {headCell.label}
-                            {orderBy === headCell.id ? (
-                                <span className={classes.visuallyHidden}>
-                                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                                </span>
-                            ) : null}
-                        </TableSortLabel>
+                        {headCell.label}
                     </TableCell>
                 ))}
             </TableRow>
@@ -199,8 +180,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function EnhancedTable(props) {
-    const { headCells, rows, notFound = false,
-        handleDelete, listData, fetchProducts,
+    const { headCells, rows, notFound = false, voucherStatus,
+        handleDelete,
         handleEditModal } = props
     const classes = useStyles();
     const [order, setOrder] = React.useState('asc');
@@ -329,74 +310,35 @@ export default function EnhancedTable(props) {
                                                 key={row.id}
                                                 selected={isItemSelected}
                                             >
-                                                <TableCell padding="checkbox">
-                                                    <input
-                                                        className="form-check-input"
-                                                        type="checkbox"
-                                                        onClick={(event) => handleClick(event, row.name)}
-                                                        aria-labelledby={labelId}
-                                                        checked={isItemSelected}>
-                                                    </input>
+                                                <TableCell style={{ minWidth: '200px' }} component="th" id={labelId} scope="row">
+                                                    <Link href={row.type === 1 ? `/product/promotion/voucher/${row.id}` : `/product/promotion/freeShipping/${row.id}`}>
+                                                        <a>{row.name}</a>
+                                                    </Link>
                                                 </TableCell>
-                                                <TableCell style={{ minWidth: '260px' }} component="th" id={labelId} scope="row" padding="none">
-                                                    <div>
-                                                        <div className='d-flex table-header-content'>
-                                                            <img className='me-3 table-image' src={row.thumbnail} alt="" />
-                                                            <div className='d-flex flex-column'>
-                                                                {/* <span className='title mb-1'>{row.name}</span> */}
-                                                                <Link href={`/product/edit/${row.id}`}>
-                                                                <a className='title mb-1'>{row.name}</a>
-                                                                </Link>
-                                                                <span className='text-gray'>Seller sku: {row.sku}</span>
-                                                            </div>
-                                                        </div>
-                                                        {/* {row.product_options.length > 0 ? row.product_options.map(pd => (
-                                                            <p><div>
-                                                                <img className='me-3 table-image' src={pd.thumbnail} alt="" />
-                                                            </div>
-                                                            </p>
-                                                        )) : null} */}
-                                                    </div>
-
-
+                                                <TableCell style={{ minWidth: '200px' }}>
+                                                    {`จาก ${moment(row.started_at).format('YYYY-MM-DD HH:mm:ss')} ถึง ${moment(row.expired_at).format('YYYY-MM-DD HH:mm:ss')}`}
                                                 </TableCell>
-                                                <TableCell align="right" style={{ minWidth: '115px' }}>
-                                                    <span className='text-gray'>฿</span>  {row.sell_price}
-                                                    <IconButton onClick={() => handleEditModal('price',row.id)} aria-label="delete" className='ms-2' size="small">
-                                                        <BorderColorIcon fontSize="inherit" />
-                                                    </IconButton>
-                                                    {/* {row.product_options.length > 0 ? row.product_options.map(pd => (
-                                                        <p><span>{row.sell_price}</span>
-                                                        </p>
-                                                    )) : null} */}
+                                                <TableCell style={{ minWidth: '150px' }}>
+                                                    {`${row.count}/${row.total_created}`}
                                                 </TableCell>
-                                                <TableCell align="right" style={{ minWidth: '115px' }}>
-                                                    {row.qty}
-                                                    <IconButton onClick={() => handleEditModal('stock',row.id)} aria-label="delete" className='ms-2' size="small">
-                                                        <BorderColorIcon fontSize="inherit" />
-                                                    </IconButton>
-                                                    {/* {row.product_options.length > 0 ? row.product_options.map(pd => (
-                                                        <p><span>{row.qty}</span>
-                                                        </p>
-                                                    )) : null} */}
+                                                <TableCell style={{ minWidth: '200px' }}>
+                                                    มูลค่าส่วนลด {row.value_type === 2 && '฿'}{row.value}{row.value_type === 1 && '%'}<br />
+                                                    มูลค่าคำสั่งซื้อขั้นต่ำ: ฿{numberFormat(row.min_spend)}
                                                 </TableCell>
-                                                <TableCell align="center" style={{ minWidth: '150px' }}>
+                                                <TableCell style={{ minWidth: '140px' }}>
+                                                    {row.status === 0 ? 'ระงับการใช้งาน' : voucherStatus(row.started_at, row.expired_at)}
+                                                </TableCell>
+                                                <TableCell style={{ minWidth: '150px' }}>
                                                     <Tooltip title="Edit">
-                                                        <Link href={`/product/edit/${row.id}`}>
-                                                            <IconButton color="primary" aria-label="edit">
-                                                                <EditIcon />
-                                                            </IconButton>
+                                                        <Link href={row.type === 1 ? `/product/promotion/voucher/${row.id}` : `/product/promotion/freeShipping/${row.id}`}>
+                                                            <a>ดู</a>
                                                         </Link>
                                                     </Tooltip>
-                                                    <Tooltip title="Delete">
+                                                    {/* <Tooltip title="Delete">
                                                         <IconButton aria-label="delete" onClick={() => handleDelete(row.id)}>
                                                             <DeleteIcon />
                                                         </IconButton>
-                                                    </Tooltip>
-                                                    {/* {row.product_options.length > 0 ? row.product_options.map(pd => (
-                                                        <p><span>{row.qty}</span>
-                                                        </p>
-                                                    )) : null} */}
+                                                    </Tooltip> */}
                                                 </TableCell>
 
                                             </TableRow>

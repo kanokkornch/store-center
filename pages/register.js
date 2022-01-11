@@ -74,165 +74,167 @@ function RegisterPage() {
                     <div className='title'>Sign Up</div>
                 </div>
                 <div className="col-md-6 section-two">
-                    <div className="welcome d-flex d-md-none">FiinShop welcome.</div>
-                    <div className="title">Create your new account</div>
-                    <form className='w-100' onSubmit={handleSubmit(onSubmit)}>
-                        <Controller
-                            name="name"
-                            control={control}
-                            defaultValue=""
-                            render={({ field: { onChange, value }, fieldState: { error } }) => (
-                                <TextField
-                                    fullWidth
-                                    label="Fullname"
-                                    id="standard-basic"
-                                    value={value}
-                                    onChange={onChange}
-                                    error={!!error}
-                                    size="small"
-                                />
-                            )}
-                            rules={{ required: true }}
-                        />
-                        <Controller
-                            name="username"
-                            control={control}
-                            defaultValue=""
-                            render={({ field: { onChange, value }, fieldState: { error } }) => (
-                                <TextField
-                                    type='text'
-                                    className="d-flex"
-                                    label="Username"
-                                    id="standard-basic"
-                                    value={value}
-                                    onChange={onChange}
-                                    error={!!error}
-                                    size="small"
-                                />
-                            )}
-                            rules={{ required: true }}
-                        />
-                        <Controller
-                            name="password"
-                            control={control}
-                            defaultValue=""
-                            render={({ field: { onChange, value }, fieldState: { error } }) => (
-                                <FormControl className='d-block'>
-                                    <InputLabel htmlFor="password-input">Password</InputLabel>
-                                    <Input
+                    <div className="login-form-container">
+                        <div className="welcome d-flex d-md-none">FiinShop welcome.</div>
+                        <div className="title">Create your new account</div>
+                        <form className='w-100' onSubmit={handleSubmit(onSubmit)}>
+                            <Controller
+                                name="name"
+                                control={control}
+                                defaultValue=""
+                                render={({ field: { onChange, value }, fieldState: { error } }) => (
+                                    <TextField
                                         fullWidth
+                                        label="Fullname"
+                                        id="standard-basic"
+                                        value={value}
+                                        onChange={onChange}
+                                        error={!!error}
                                         size="small"
-                                        label="Password"
-                                        id="password-input"
-                                        type={showPassword ? 'text' : 'password'}
+                                    />
+                                )}
+                                rules={{ required: true }}
+                            />
+                            <Controller
+                                name="username"
+                                control={control}
+                                defaultValue=""
+                                render={({ field: { onChange, value }, fieldState: { error } }) => (
+                                    <TextField
+                                        type='text'
+                                        className="d-flex"
+                                        label="Username"
+                                        id="standard-basic"
                                         value={value}
                                         onChange={onChange}
                                         error={!!error}
-                                        endAdornment={
-                                            <InputAdornment position="end">
-                                                <IconButton
-                                                    aria-label="toggle password visibility"
-                                                    onClick={() => setShowPassword(!showPassword)}
-                                                    onMouseDown={handleMouseDownPassword}
-                                                >
-                                                    {showPassword ? <Visibility /> : <VisibilityOff />}
-                                                </IconButton>
-                                            </InputAdornment>
-                                        }
+                                        size="small"
                                     />
-                                </FormControl>
-                            )}
-                            rules={{ required: true }}
-                        />
-                        <Controller
-                            name="confirm_password"
-                            control={control}
-                            defaultValue=""
-                            render={({ field: { onChange, value }, fieldState: { error } }) => (
-                                <FormControl className='d-block'>
-                                    <InputLabel htmlFor="confirm-password-input">Confirm password</InputLabel>
-                                    <Input
-                                        fullWidth
-                                        id="confirm-password-input"
-                                        type={showConfirmPassword ? 'text' : 'password'}
+                                )}
+                                rules={{ required: true }}
+                            />
+                            <Controller
+                                name="password"
+                                control={control}
+                                defaultValue=""
+                                render={({ field: { onChange, value }, fieldState: { error } }) => (
+                                    <FormControl className='d-block'>
+                                        <InputLabel htmlFor="password-input">Password</InputLabel>
+                                        <Input
+                                            fullWidth
+                                            size="small"
+                                            label="Password"
+                                            id="password-input"
+                                            type={showPassword ? 'text' : 'password'}
+                                            value={value}
+                                            onChange={onChange}
+                                            error={!!error}
+                                            endAdornment={
+                                                <InputAdornment position="end">
+                                                    <IconButton
+                                                        aria-label="toggle password visibility"
+                                                        onClick={() => setShowPassword(!showPassword)}
+                                                        onMouseDown={handleMouseDownPassword}
+                                                    >
+                                                        {showPassword ? <Visibility /> : <VisibilityOff />}
+                                                    </IconButton>
+                                                </InputAdornment>
+                                            }
+                                        />
+                                    </FormControl>
+                                )}
+                                rules={{ required: true }}
+                            />
+                            <Controller
+                                name="confirm_password"
+                                control={control}
+                                defaultValue=""
+                                render={({ field: { onChange, value }, fieldState: { error } }) => (
+                                    <FormControl className='d-block'>
+                                        <InputLabel htmlFor="confirm-password-input">Confirm password</InputLabel>
+                                        <Input
+                                            fullWidth
+                                            id="confirm-password-input"
+                                            type={showConfirmPassword ? 'text' : 'password'}
+                                            value={value}
+                                            onChange={onChange}
+                                            error={!!error}
+                                            endAdornment={
+                                                <InputAdornment position="end">
+                                                    <IconButton
+                                                        aria-label="toggle password visibility"
+                                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                                        onMouseDown={handleMouseDownPassword}
+                                                    >
+                                                        {showConfirmPassword ? <Visibility /> : <VisibilityOff />}
+                                                    </IconButton>
+                                                </InputAdornment>
+                                            }
+                                        />
+                                    </FormControl>
+                                )}
+                                rules={{ required: true, minLength: 8 }}
+                            />
+                            {errors.confirm_password && errors.confirm_password.message && <FormHelperText id="error-text">{errors.confirm_password.message}</FormHelperText>}
+                            <Controller
+                                name="email"
+                                control={control}
+                                defaultValue=""
+                                render={({ field: { onChange, value }, fieldState: { error } }) => (
+                                    <TextField
+                                        type='email'
+                                        className="d-flex"
+                                        label="Email"
+                                        id="standard-basic"
                                         value={value}
                                         onChange={onChange}
                                         error={!!error}
-                                        endAdornment={
-                                            <InputAdornment position="end">
-                                                <IconButton
-                                                    aria-label="toggle password visibility"
-                                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                                    onMouseDown={handleMouseDownPassword}
-                                                >
-                                                    {showConfirmPassword ? <Visibility /> : <VisibilityOff />}
-                                                </IconButton>
-                                            </InputAdornment>
-                                        }
                                     />
-                                </FormControl>
-                            )}
-                            rules={{ required: true, minLength: 8 }}
-                        />
-                        {errors.confirm_password && errors.confirm_password.message && <FormHelperText id="error-text">{errors.confirm_password.message}</FormHelperText>}
-                        <Controller
-                            name="email"
-                            control={control}
-                            defaultValue=""
-                            render={({ field: { onChange, value }, fieldState: { error } }) => (
-                                <TextField
-                                    type='email'
-                                    className="d-flex"
-                                    label="Email"
-                                    id="standard-basic"
-                                    value={value}
-                                    onChange={onChange}
-                                    error={!!error}
-                                />
-                            )}
-                            rules={{ required: true }}
-                        />
-                        <Controller
-                            name="phone"
-                            control={control}
-                            defaultValue=""
-                            render={({ field: { onChange, value }, fieldState: { error } }) => (
-                                <TextField
-                                    type='text'
-                                    className="d-flex"
-                                    label="หมายเลขโทรศัพท์"
-                                    id="standard-basic"
-                                    value={value}
-                                    onChange={onChange}
-                                    placeholder="081999XXXX"
-                                    error={!!error}
-                                />
-                            )}
-                            rules={{ required: true, pattern: /[0-9]{10}/, maxLength: 10 }}
-                        />
-                        {errors.phone && <FormHelperText id="error-text">หมายเลขโทรศัพท์ไม่ถูกต้อง</FormHelperText>}
-                        <div className="form-check mt-3">
-                            <input
-                                className="form-check-input"
-                                name='acceptTermService'
-                                type="checkbox"
-                                checked={acceptTermService}
-                                onChange={handleAcceptTermService}
-                                id="acceptTermService" />
-                            <label className="form-check-label" htmlFor="acceptTermService">
-                                ยอมรับเงื่อนไขและข้อตกลง
-                            </label>
-                        </div>
-                        {errors.accept_term_service && <FormHelperText id="error-text">{errors.accept_term_service.message}</FormHelperText>}
-                        <Button className="w-100 my-2" type='submit' variant="contained" color="primary">
-                            ลงทะเบียน
-                        </Button>
-                    </form>
-                    <Link href="/login">
-                        <Button className="w-100" variant="outlined" color="primary">
-                            เข้าสู่ระบบ
-                        </Button>
-                    </Link>
+                                )}
+                                rules={{ required: true }}
+                            />
+                            <Controller
+                                name="phone"
+                                control={control}
+                                defaultValue=""
+                                render={({ field: { onChange, value }, fieldState: { error } }) => (
+                                    <TextField
+                                        type='text'
+                                        className="d-flex"
+                                        label="หมายเลขโทรศัพท์"
+                                        id="standard-basic"
+                                        value={value}
+                                        onChange={onChange}
+                                        placeholder="081999XXXX"
+                                        error={!!error}
+                                    />
+                                )}
+                                rules={{ required: true, pattern: /[0-9]{10}/, maxLength: 10 }}
+                            />
+                            {errors.phone && <FormHelperText id="error-text">หมายเลขโทรศัพท์ไม่ถูกต้อง</FormHelperText>}
+                            <div className="form-check mt-3">
+                                <input
+                                    className="form-check-input"
+                                    name='acceptTermService'
+                                    type="checkbox"
+                                    checked={acceptTermService}
+                                    onChange={handleAcceptTermService}
+                                    id="acceptTermService" />
+                                <label className="form-check-label" htmlFor="acceptTermService">
+                                    ยอมรับเงื่อนไขและข้อตกลง
+                                </label>
+                            </div>
+                            {errors.accept_term_service && <FormHelperText id="error-text">{errors.accept_term_service.message}</FormHelperText>}
+                            <Button className="w-100 my-2" type='submit' variant="contained" color="primary">
+                                ลงทะเบียน
+                            </Button>
+                        </form>
+                        <Link href="/login">
+                            <Button className="w-100" variant="outlined" color="primary">
+                                เข้าสู่ระบบ
+                            </Button>
+                        </Link>
+                    </div>
                 </div>
             </div >
         </div >

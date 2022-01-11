@@ -112,6 +112,12 @@ function CreationPage(props) {
             name: "product_options"
         }
     )
+
+    useEffect(() => {
+        document.title = 'เพิ่มสินค้า'
+        dispatch(geProductCategories())
+        dispatch(getUnits())
+    }, [])
     const clearform = () => {
         reset()
         setImages([])
@@ -219,10 +225,6 @@ function CreationPage(props) {
         }
         handleSaveProduct(data)
     }
-    useEffect(() => {
-        dispatch(geProductCategories())
-        dispatch(getUnits())
-    }, [])
     useEffect(() => {
         console.log(`errors`, errors)
     }, [errors])

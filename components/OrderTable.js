@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link'
+import Image from 'next/image'
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
@@ -28,6 +29,7 @@ import {
     Drawer, Button, Popper, MenuItem, Grow, ClickAwayListener,
     Divider, MenuList,
 } from '@material-ui/core'
+import dayjs from 'dayjs';
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -198,9 +200,9 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function EnhancedTable(props) {
+export default function OrderTable(props) {
     const { headCells, rows, notFound = false,
-        handleDelete, listData, fetchProducts,
+        handleDelete, fetchProducts,
         handleEditModal } = props
     const classes = useStyles();
     const [order, setOrder] = React.useState('asc');
@@ -240,19 +242,19 @@ export default function EnhancedTable(props) {
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = rows.map((n) => n.name);
+            const newSelecteds = rows.map((n) => n.id);
             setSelected(newSelecteds);
             return;
         }
         setSelected([]);
     };
 
-    const handleClick = (event, name) => {
-        const selectedIndex = selected.indexOf(name);
+    const handleClick = (event, id) => {
+        const selectedIndex = selected.indexOf(id);
         let newSelected = [];
 
         if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
+            newSelected = newSelected.concat(selected, id);
         } else if (selectedIndex === 0) {
             newSelected = newSelected.concat(selected.slice(1));
         } else if (selectedIndex === selected.length - 1) {
@@ -263,7 +265,6 @@ export default function EnhancedTable(props) {
                 selected.slice(selectedIndex + 1),
             );
         }
-
         setSelected(newSelected);
     };
 
@@ -285,7 +286,11 @@ export default function EnhancedTable(props) {
         setDense(event.target.checked);
     };
 
-    const isSelected = (name) => selected.indexOf(name) !== -1;
+    const isSelected = (id) => {
+        console.log(`selected`, selected)
+        console.log(`isSelected`, selected.indexOf(id) !== -1)
+        return selected.indexOf(id) !== -1;
+    }
 
     // const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
     const emptyRows = 0;
@@ -317,7 +322,7 @@ export default function EnhancedTable(props) {
                                 {rows.length > 0 ? stableSort(rows, getComparator(order, orderBy))
                                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                     .map((row, index) => {
-                                        const isItemSelected = isSelected(row.name);
+                                        const isItemSelected = isSelected(row.id);
                                         const labelId = `enhanced-table-checkbox-${index}`;
 
                                         return (
@@ -333,23 +338,29 @@ export default function EnhancedTable(props) {
                                                     <input
                                                         className="form-check-input"
                                                         type="checkbox"
-                                                        onClick={(event) => handleClick(event, row.name)}
+                                                        onClick={(event) => handleClick(event, row.id)}
                                                         aria-labelledby={labelId}
                                                         checked={isItemSelected}>
                                                     </input>
                                                 </TableCell>
                                                 <TableCell style={{ minWidth: '260px' }} component="th" id={labelId} scope="row" padding="none">
-                                                    <div>
-                                                        <div className='d-flex table-header-content'>
-                                                            <img className='me-3 table-image' src={row.thumbnail} alt="" />
-                                                            <div className='d-flex flex-column'>
-                                                                {/* <span className='title mb-1'>{row.name}</span> */}
-                                                                <Link href={`/product/edit/${row.id}`}>
-                                                                <a className='title mb-1'>{row.name}</a>
-                                                                </Link>
-                                                                <span className='text-gray'>Seller sku: {row.sku}</span>
+                                                    <div className='py-3'>
+                                                        <Link href={`/order/${row.id}`}>
+                                                            <a>No. {row.id}</a>
+                                                        </Link>
+                                                        {row.order_detail.map(dt => (
+                                                            <div key={dt.product_id} className='d-flex table-header-content pt-3'>
+                                                                <Image className='table-image' src={dt.product_thumbnail} width={40} height={40} />
+                                                                <div className='d-flex flex-column ms-1'>
+                                                                    <span className='title mb-1'>{dt.product_name}</span>
+                                                                    {dt.product_option_name && <span className='text-gray'>
+                                                                        {dt.product_option_name} : {dt.product_option_value}
+                                                                    </span>}
+                                                                    <span className='text-gray'>จำนวน: {dt.product_qty}</span>
+                                                                </div>
                                                             </div>
-                                                        </div>
+                                                        ))}
+
                                                         {/* {row.product_options.length > 0 ? row.product_options.map(pd => (
                                                             <p><div>
                                                                 <img className='me-3 table-image' src={pd.thumbnail} alt="" />
@@ -360,39 +371,24 @@ export default function EnhancedTable(props) {
 
 
                                                 </TableCell>
+                                                <TableCell style={{ minWidth: '115px' }}>
+                                                    {row.name}
+                                                </TableCell>
                                                 <TableCell align="right" style={{ minWidth: '115px' }}>
-                                                    <span className='text-gray'>฿</span>  {row.sell_price}
-                                                    <IconButton onClick={() => handleEditModal('price',row.id)} aria-label="delete" className='ms-2' size="small">
+                                                    <span className='text-gray'>฿</span>  {row.total_amount}
+                                                    {/* <IconButton onClick={() => handleEditModal('price',row.id)} aria-label="delete" className='ms-2' size="small">
                                                         <BorderColorIcon fontSize="inherit" />
-                                                    </IconButton>
+                                                    </IconButton> */}
                                                     {/* {row.product_options.length > 0 ? row.product_options.map(pd => (
                                                         <p><span>{row.sell_price}</span>
                                                         </p>
                                                     )) : null} */}
                                                 </TableCell>
-                                                <TableCell align="right" style={{ minWidth: '115px' }}>
-                                                    {row.qty}
-                                                    <IconButton onClick={() => handleEditModal('stock',row.id)} aria-label="delete" className='ms-2' size="small">
+                                                <TableCell style={{ minWidth: '115px' }}>
+                                                    {dayjs(row.created_at).format('DD MMM YYYY HH:mm')}
+                                                    {/* <IconButton onClick={() => handleEditModal('stock',row.id)} aria-label="delete" className='ms-2' size="small">
                                                         <BorderColorIcon fontSize="inherit" />
-                                                    </IconButton>
-                                                    {/* {row.product_options.length > 0 ? row.product_options.map(pd => (
-                                                        <p><span>{row.qty}</span>
-                                                        </p>
-                                                    )) : null} */}
-                                                </TableCell>
-                                                <TableCell align="center" style={{ minWidth: '150px' }}>
-                                                    <Tooltip title="Edit">
-                                                        <Link href={`/product/edit/${row.id}`}>
-                                                            <IconButton color="primary" aria-label="edit">
-                                                                <EditIcon />
-                                                            </IconButton>
-                                                        </Link>
-                                                    </Tooltip>
-                                                    <Tooltip title="Delete">
-                                                        <IconButton aria-label="delete" onClick={() => handleDelete(row.id)}>
-                                                            <DeleteIcon />
-                                                        </IconButton>
-                                                    </Tooltip>
+                                                    </IconButton> */}
                                                     {/* {row.product_options.length > 0 ? row.product_options.map(pd => (
                                                         <p><span>{row.qty}</span>
                                                         </p>
@@ -409,7 +405,6 @@ export default function EnhancedTable(props) {
                                         <TableCell scope="row" padding="none">
                                             <Skeleton active />
                                         </TableCell>
-                                        <TableCell><Skeleton active /></TableCell>
                                         <TableCell><Skeleton active /></TableCell>
                                         <TableCell><Skeleton active /></TableCell>
                                     </TableRow> : <TableRow>

@@ -4,6 +4,9 @@ module.exports = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  images: {
+    domains: ['localhost', 'e7.pngegg.com', 'www.pngplay.com', 'www.freepnglogos.com'],
+  },
   redirects: async () => {
     return [
       {
