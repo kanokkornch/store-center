@@ -39,7 +39,9 @@ function ProfilePage() {
         const resVerify = await shopVerificationInfo()
         setVerify(resVerify.data)
     }
-
+    useEffect(() => {
+        document.title = "Profile"
+    })
     useEffect(async () => {
         const banks = await getAllBanks()
         setBanks(banks)
