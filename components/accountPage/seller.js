@@ -1,10 +1,4 @@
 import { useState, useEffect, useRef, Fragment } from 'react'
-import { useForm, Controller, useFieldArray } from "react-hook-form"
-import Select from "react-select"
-import { Upload, message } from 'antd'
-import { Button } from '@material-ui/core'
-import { shopVerification } from '../../../services/verification'
-import { uploadImage } from '../../../services/utills'
 import Link from 'next/link'
 
 function AccountSellerPage(props) {

@@ -1,11 +1,9 @@
 import { useState, useEffect, useRef, Fragment } from 'react'
-import { useForm, Controller, useFieldArray } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import Select from "react-select"
 import { Upload, message, Checkbox, Radio, Spin } from 'antd'
 import { Button } from '@material-ui/core'
-import { shopVerification } from '../../../services/verification'
-import { uploadImage } from '../../../services/utills'
-import { updateShopInvoiceAddress } from '../../../services/shop'
+import { updateShopInvoiceAddress } from '../../services/shop'
 
 function ShopSettingPage(props) {
     const { shop, fetchShopInfo } = props

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useForm } from "react-hook-form"
 import { Spin, message } from 'antd'
 import { Button } from '@material-ui/core'
-import { updateShopAddress } from '../../../services/shop'
+import { updateShopAddress } from '../../services/shop'
 
 function AddressSettingPage({ fetchShopInfo, shop }) {
     const { register, control, handleSubmit, formState: { errors }, setValue, getValues, reset } = useForm({})

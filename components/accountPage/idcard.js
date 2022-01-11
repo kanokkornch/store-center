@@ -1,14 +1,12 @@
 import { useState, useEffect, useRef, Fragment } from 'react'
 import { useForm, Controller, useFieldArray } from "react-hook-form"
-import Select from "react-select"
-import { message, Upload, Spin, Alert } from 'antd'
+import { Upload, message, Checkbox, Radio, Spin, Alert } from 'antd'
 import { Button } from '@material-ui/core'
-import { shopVerification } from '../../../services/verification'
-import { uploadImage } from '../../../services/utills'
+import { shopVerification } from '../../services/verification'
+import { uploadImage } from '../../services/utills'
 import Image from 'next/image'
 
-function BankVerifyPage(props) {
-    const { banks, verify, fetchShopVerifyInfo } = props
+function IdCardVerificationPage({ shop, fetchShopInfo, verify, fetchShopVerifyInfo }) {
     const { register, control, handleSubmit, formState: { errors }, setValue, getValues, reset, watch } = useForm({
         defaultValues: {
             status: 0
@@ -18,18 +16,14 @@ function BankVerifyPage(props) {
     const [bookFile, setbookFile] = useState(null)
     const [mode, setMode] = useState('show')
     const [saving, setSaving] = useState(false)
-    const [bankInfo, setBankInfo] = useState(null)
+    const [cardInfo, setCardInfo] = useState(null)
     useEffect(() => {
         if (verify && verify.length > 0) {
-            const info = verify.find(it => it.type === 2)
+            const info = verify.find(it => it.type === 1)
             if (info) {
-                const selectedBank = banks.find(b => b.id === info.bank_id)
-                setBankInfo(info)
+                setCardInfo(info)
                 setValue('id', info.id)
-                setValue('bank_account_name', info.bank_account_name)
-                setValue('bank_account_number', info.bank_account_number)
-                setValue('bank', selectedBank)
-                setValue('bankName', selectedBank.name)
+                setValue('id_card_no', info.id_card_no)
                 setValue('image', info.attach_file)
                 setValue('status', info.status)
                 setFileList([{
@@ -42,22 +36,21 @@ function BankVerifyPage(props) {
         }
     }, [verify])
     const onSubmitForm = (data) => {
-        data.type = 'BANK_VERIFY'
-        data.bank_id = data.bank.id
-        data.bank_account_number = data.bank_account_number.toString()
+        data.id = shop.id
+        data.type = 'SHOP_VERIFY'
         if (!bookFile && fileList.length < 1) {
-            message.warning('กรุณาอัพโหลดหน้าสมุดบัญชี')
+            message.warning('กรุณาอัพโหลดภาพถ่ายบัตรประชาชน')
             return
         }
         setSaving(true)
         if (bookFile) {
-            uploadImage({ type: 'bank_verify', image_data: bookFile }).then(res => {
+            uploadImage({ type: 'id_card_verify', image_data: bookFile }).then(res => {
                 if (res.success) {
                     data.attach_file = res.data.url
                     shopVerification(data).then(res => {
                         setSaving(false)
                         if (res.success) {
-                            message.success('อัพเดตข้อมูลสำเร็จ')
+                            message.success('บันทึกข้อมูลสำเร็จ')
                             fetchShopVerifyInfo()
                         } else {
                             message.error(res.message)
@@ -78,7 +71,7 @@ function BankVerifyPage(props) {
             shopVerification(data).then(res => {
                 setSaving(false)
                 if (res.success) {
-                    message.success('อัพเดตข้อมูลสำเร็จ')
+                    message.success('บันทึกข้อมูลสำเร็จ')
                     fetchShopVerifyInfo()
                 } else {
                     message.error(res.message)
@@ -88,6 +81,7 @@ function BankVerifyPage(props) {
                 message.error('service ไม่พร้อมใช้งานขณะนี้')
             })
         }
+
     }
     const onChange = ({ fileList: newFileList }) => {
         setFileList(newFileList);
@@ -103,28 +97,33 @@ function BankVerifyPage(props) {
         }
     }
     const onPreview = async file => {
-        let src = file.url;
+        let src = file.url
         if (!src) {
             src = await new Promise(resolve => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file.originFileObj);
-                reader.onload = () => resolve(reader.result);
-            });
+                const reader = new FileReader()
+                reader.readAsDataURL(file.originFileObj)
+                reader.onload = () => resolve(reader.result)
+            })
         }
-        const image = new Image();
-        image.src = src;
-        const imgWindow = window.open(src);
-        imgWindow.document.write(image.outerHTML);
+        const image = new Image()
+        image.src = src
+        const imgWindow = window.open(src)
+        imgWindow.document.write(image.outerHTML)
     }
+
+    const cancelEdit = () => {
+        setMode('show')
+    }
+
     return (
         <div>
             <Spin spinning={saving} tip='กำลังบันทึก...'>
-                <div className="h4">ยืนยันบัญชีธนาคาร</div>
-                {bankInfo && bankInfo.status === 0 && <Alert
+                <div className="h4">ยืนยันตัวตน</div>
+                {cardInfo && cardInfo.status === 0 && <Alert
                     description="โปรดรอการตรวจสอบข้อมูลและการอนุมัติจากแอดมิน"
                     type="info" />
                 }
-                {bankInfo && bankInfo.status === 1 && <Alert
+                {cardInfo && cardInfo.status === 1 && <Alert
                     description="ยืนยันตัวตนสำเร็จ. หากต้องการแก้ไขข้อมูลกรุณาติดต่อแอดมินเพื่อแก้ไขอีกครั้ง"
                     type="success" />
                 }
@@ -132,59 +131,21 @@ function BankVerifyPage(props) {
                     <div className="row">
                         <div className="col-md-6">
                             <div className="my-3">
-                                <label htmlFor="name" className="form-label">
+                                <label htmlFor="name" className="form-label fw-500">
                                     {mode === 'edit' ? <span className='requird'>* </span> : null}
-                                    ชื่อบัญชี
+                                    หมายเลขบัตรประจำตัวประชาชน
                                 </label>
-                                {mode === 'show' ? <p>{watch('bank_account_name') ? watch('bank_account_name') : '-'}</p> : <input
-                                    type="text"
-                                    {...register('bank_account_name', { required: true, })}
-                                    className={`form-control ${errors.bank_account_name ? 'is-invalid' : ''}`}
-                                    id="bank_account_name"
-                                    placeholder="" />}
-                            </div>
-                            <div className="mb-3">
-                                <label htmlFor="name" className="form-label">
-                                    {mode === 'edit' ? <span className='requird'>* </span> : null}
-                                    เลขบัญชี
-                                </label>
-                                {mode === 'show' ? <p>{watch('bank_account_number') ? watch('bank_account_number') : '-'}</p> : <input
+                                {mode === 'show' ? <p>{watch('id_card_no') ? watch('id_card_no') : '-'}</p> : <input
                                     type="number"
-                                    {...register('bank_account_number', { required: true, })}
-                                    className={`form-control ${errors.bank_account_number ? 'is-invalid' : ''}`}
-                                    id="bank_account_number"
+                                    {...register('id_card_no', { required: true, })}
+                                    className={`form-control ${errors.id_card_no ? 'is-invalid' : ''}`}
+                                    id="id_card_no"
                                     placeholder="" />}
-
                             </div>
                             <div className="mb-3">
-                                <label htmlFor="name" className="form-label">
+                                <label htmlFor="name" className="form-label fw-500">
                                     {mode === 'edit' ? <span className='requird'>* </span> : null}
-                                    ธนาคาร
-                                </label>
-                                {mode === 'show' ? <p>{watch('bankName') ? watch('bankName') : '-'}</p> : <Controller
-                                    name="bank"
-                                    control={control}
-                                    rules={{ required: true }}
-                                    render={({ field }) => <Select
-                                        {...field}
-                                        className='react-select'
-                                        classNamePrefix='select'
-                                        isSearchable={false}
-                                        // defaultValue={banks[0]}
-                                        options={banks.length ? banks.map(it => {
-                                            it.value = it.id
-                                            it.label = it.name
-                                            return it
-                                        }) : []
-                                        }
-                                    />}
-                                />}
-
-                            </div>
-                            <div className="mb-3">
-                                <label htmlFor="name" className="form-label">
-                                    {mode === 'edit' ? <span className='requird'>* </span> : null}
-                                    หน้าสมุดบัญชี
+                                    ภาพบัตรประชาชน
                                 </label>
                                 <div className="d-flex">
                                     {mode === 'show' ? <Image
@@ -192,7 +153,8 @@ function BankVerifyPage(props) {
                                         src={watch('image') ? watch('image') : 'https://e7.pngegg.com/pngimages/709/358/png-clipart-price-toyservice-soil-business-no-till-farming-no-rectangle-pie.png'}
                                         alt="me"
                                         width="500"
-                                        height="500" /> : <Upload
+                                        height="500" /> :
+                                        <Upload
                                             className=''
                                             listType="picture-card"
                                             fileList={fileList}
@@ -200,12 +162,12 @@ function BankVerifyPage(props) {
                                             onPreview={onPreview}
                                             accept='image/*'
                                         >
-                                        {fileList.length < 1 && '+ Upload'}
-                                    </Upload>}
+                                            {fileList.length < 1 && '+ Upload'}
+                                        </Upload>
+                                    }
 
                                 </div>
                             </div>
-
                         </div>
                     </div>
                     <div className='text-end'>
@@ -222,7 +184,7 @@ function BankVerifyPage(props) {
                                 type='submit'
                                 className=''
                                 variant="outlined"
-                                onClick={() => setMode('show')}>
+                                onClick={cancelEdit}>
                                 ยกเลิก
                             </Button>
                             <Button
@@ -242,4 +204,4 @@ function BankVerifyPage(props) {
     )
 }
 
-export default BankVerifyPage
+export default IdCardVerificationPage
