@@ -91,7 +91,7 @@ export const SidebarData = [
             },
             {
                 title: 'ตั้งค่าบัญชี',
-                path: '/setting'
+                path: '/other'
             }
         ]
     },

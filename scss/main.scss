@@ -792,6 +792,20 @@ svg.large-icon {
     }
 }
 
+.other-info {
+    display: grid;
+    column-gap: 35px;
+    grid-template-columns: max-content auto;
+    row-gap: 15px;
+}
+
+@media (max-width: 575.98px) {
+    .other-info {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
 @media screen and (max-width: 960px) {
     .content-container {
         padding-left: 2rem !important;

@@ -146,7 +146,7 @@ function Sidebar() {
         },
         {
             name: 'ตั้งค่าบัญชี',
-            path: '/dashbord',
+            path: '/account/other',
             onClick: () => { }
         },
         {
