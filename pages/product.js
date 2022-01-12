@@ -116,6 +116,11 @@ function ProductPage() {
         { value: 'qty', text: 'จำนวน stock' },
     ]
 
+    const handleDeleteSelected = (list) => {
+        console.log(`list`, list)
+    }
+
+
     const handleDelete = (id) => {
         return MySwal.fire({
             text: "ยืนยันลบสินค้า?",
@@ -422,6 +427,7 @@ function ProductPage() {
                 handleDelete={handleDelete}
                 fetchProducts={fetchProducts}
                 handleEditModal={handleEditModal}
+                handleDeleteSelected={handleDeleteSelected}
             />
             {/* </CardContent>
             </Card> */}
