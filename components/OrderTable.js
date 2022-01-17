@@ -29,7 +29,8 @@ import {
     Drawer, Button, Popper, MenuItem, Grow, ClickAwayListener,
     Divider, MenuList,
 } from '@material-ui/core'
-import dayjs from 'dayjs';
+import dayjs from 'dayjs'
+import { numberFormat } from '../services/utills'
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -375,7 +376,7 @@ export default function OrderTable(props) {
                                                     {row.name}
                                                 </TableCell>
                                                 <TableCell align="right" style={{ minWidth: '115px' }}>
-                                                    <span className='text-gray'>฿</span>  {row.total_amount}
+                                                    <span className='text-gray'>฿</span>  {numberFormat(row.total_amount)}
                                                     {/* <IconButton onClick={() => handleEditModal('price',row.id)} aria-label="delete" className='ms-2' size="small">
                                                         <BorderColorIcon fontSize="inherit" />
                                                     </IconButton> */}
