@@ -66,7 +66,8 @@ function MyApp({ Component, pageProps }) {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         {
-          router.pathname !== '/login' && router.pathname !== '/register' ?
+          router.pathname !== '/login' && router.pathname !== '/register'
+          && router.pathname !== '/order/label' ?
             <MainLayout>
               <Component {...pageProps} />
             </MainLayout> :

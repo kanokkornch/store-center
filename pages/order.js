@@ -6,10 +6,15 @@ import {
     TablePagination, TableRow, TableSortLabel, Checkbox,
     Snackbar
 } from '@material-ui/core'
-import { notification, message, Modal, Button as AntdButton, DatePicker } from 'antd'
+import {
+    notification, message, Modal,
+    Button as AntdButton, DatePicker,
+    Menu, Dropdown
+} from 'antd'
 import FilterListIcon from '@material-ui/icons/FilterList'
 import OrderTable from '../components/OrderTable'
 import { getOrders } from '../services/order'
+import { DownOutlined, UserOutlined } from '@ant-design/icons'
 
 const { RangePicker } = DatePicker
 
@@ -50,7 +55,7 @@ function OrderPage() {
         e.preventDefault()
     }
     const resetFilter = () => {
-        setValue(0)
+        // setValue(0)
         // setFilterValue('')
         // setFilterTitle({ value: 'name', text: 'ชื่อสินค้า' })
         // setFilterParam({
@@ -66,6 +71,23 @@ function OrderPage() {
         console.log(`input : ${input} | value: ${value}`)
     }
 
+    const menu = (
+        <Menu onClick={(e) => {
+            if (e.key === '1') {
+
+            }
+            if (e.key === '2') {
+
+            }
+        }}>
+            <Menu.Item key="1" >
+                พิมพ์ใบกำกับสินค้า
+            </Menu.Item>
+            <Menu.Item key="2" >
+                พิมพ์ฉลากสำหรับจัดส่ง
+            </Menu.Item>
+        </Menu>
+    )
     return (
         <div>
             <div className="h4">Order</div>
@@ -150,6 +172,7 @@ function OrderPage() {
                 ]}
                 rows={orders}
                 notFound={notFound}
+                tab={tab}
             />
         </div>
     )

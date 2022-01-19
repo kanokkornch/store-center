@@ -24,7 +24,11 @@ import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
 import BorderColorIcon from '@material-ui/icons/BorderColor';
 import FilterListIcon from '@material-ui/icons/FilterList';
-import { Skeleton, Empty, Spin } from 'antd'
+import {
+    Skeleton, Empty, Spin, Button as AntdButton, DatePicker,
+    Menu, Dropdown, message
+} from 'antd'
+import { DownOutlined, UserOutlined } from '@ant-design/icons'
 import {
     Drawer, Button, Popper, MenuItem, Grow, ClickAwayListener,
     Divider, MenuList,
@@ -204,7 +208,7 @@ const useStyles = makeStyles((theme) => ({
 export default function OrderTable(props) {
     const { headCells, rows, notFound = false,
         handleDelete, fetchProducts,
-        handleEditModal } = props
+        handleEditModal, tab } = props
     const classes = useStyles();
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
@@ -296,8 +300,39 @@ export default function OrderTable(props) {
     // const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
     const emptyRows = 0;
 
+    const menu = (
+        <Menu onClick={(e) => {
+            if (selected.length < 1) {
+                message.warning('กรุณาเลือกรายการ')
+            } else {
+                window.location.assign(`/order/label?type=${e.key}&id=${selected.join(',')}`)
+            }
+        }}>
+            <Menu.Item key="invoice" >
+                พิมพ์ใบกำกับสินค้า
+            </Menu.Item>
+            <Menu.Item key="label" >
+                พิมพ์ฉลากสำหรับจัดส่ง
+            </Menu.Item>
+        </Menu>
+    )
+
     return (
         <div className={classes.root}>
+            {
+                tab === 3 ? <div className='mb-2'>
+                    <div className="row">
+                        <div className="col-lg-2 col-md-3 col-sm-4">
+                            <Dropdown overlay={menu}>
+                                <AntdButton>
+                                    พิมพ์ <DownOutlined />
+                                </AntdButton>
+                            </Dropdown>
+                        </div>
+                    </div>
+
+                </div> : null
+            }
             <Spin spinning={false}>
                 <Paper className={classes.paper}>
                     <EnhancedTableToolbar numSelected={selected.length} />

@@ -799,6 +799,43 @@ svg.large-icon {
     row-gap: 15px;
 }
 
+.anticon.anticon-down {
+    svg {
+        font-size: 10px;
+    }
+}
+
+.invoice-summary {
+    display: grid;
+    grid-template-columns: 50% 50%;
+
+    div {
+        text-align: right;
+    }
+}
+
+.print-label {
+    .header {
+        position: sticky;
+        top: 0;
+        width: 100%;
+        background: rgb(242, 243, 247);
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .preview {
+        box-sizing: content-box;
+        width: 700px;
+        min-height: 990px;
+        padding: 20px;
+        border: 1px solid #ccc;
+        margin: 0 auto 30px;
+    }
+}
+
 @media (max-width: 575.98px) {
     .other-info {
         display: flex;
@@ -830,4 +867,21 @@ svg.large-icon {
     // .login-form {
     //     width: 55% !important;
     // }
+}
+
+@media print {
+    .print-label {
+        .header {
+            display: none;
+        }
+
+        .preview {
+            border: none;
+        }
+    }
+
+
+
+
+    /* ... the rest of the rules ... */
 }
