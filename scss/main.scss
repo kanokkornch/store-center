@@ -5,12 +5,13 @@ $danger-app-color: #D93232;
 $radius: 10px;
 
 // @import './setting.scss';
+@import url('https://fonts.googleapis.com/css2?family=Dongle&display=swap');
 
 .fw-500 {
     font-weight: 500;
 }
 
-@for $i from 1 through 150 {
+@for $i from 1 through 200 {
     .w-#{$i}-per {
         width: percentage($i/100);
     }
@@ -38,6 +39,14 @@ $radius: 10px;
     .font-size-#{$i} {
         font-size: #{$i}px !important;
     }
+
+    .min-height-#{$i} {
+        min-height: #{$i}px;
+    }
+
+    .border-radius-10 {
+        border-radius: $radius;
+    }
 }
 
 @for $i from -1 through 10000 {
@@ -56,8 +65,20 @@ $radius: 10px;
 
 
 .sidebar-haeder {
-    .logo {
-        object-fit: contain !important;
+
+    // .logo {
+    //     object-fit: contain !important;
+    // }
+    .app-name {
+        font-weight: 600;
+        color: #FDA700;
+        // text-shadow: 2px 1px 0px #cccccc;
+    }
+
+    .app-title {
+        margin-top: -5px;
+        color: #0165DE;
+        font-weight: 600;
     }
 
     // span {
@@ -127,6 +148,53 @@ svg.delete-icon {
 
 .text-gray {
     color: #999;
+}
+
+.ant-carousel {
+    .slick-slider.dashbord.slick-initialized {
+        .slick-list {
+            border-radius: $radius;
+        }
+    }
+
+    .slick-slider.stat-cards.slick-initialized {
+
+        .slick-prev,
+        .slick-prev:hover {
+            left: 0px;
+            z-index: 2;
+            color: #303030;
+            font-size: 20px;
+            background: #fff;
+            padding-top: 3px;
+            border-radius: 50%;
+            box-shadow: rgba(67, 71, 85, 0.27) 0px 0px 0.25em, rgba(90, 125, 188, 0.05) 0px 0.25em 1em;
+        }
+
+        .slick-next,
+        .ant-carousel .slick-next:hover {
+            right: 0px;
+            z-index: 2;
+            color: black;
+            font-size: 20px;
+            background: #fff;
+            padding-top: 3px;
+            border-radius: 50%;
+            box-shadow: rgba(67, 71, 85, 0.27) 0px 0px 0.25em, rgba(90, 125, 188, 0.05) 0px 0.25em 1em;
+        }
+
+        .slick-dots-bottom li {
+            display: none;
+        }
+
+        .carousel-card {
+            background: #F4F6F9;
+            min-width: 150px;
+            width: 50%;
+            border-radius: $radius;
+            padding: 1rem;
+        }
+    }
 }
 
 * {
@@ -833,6 +901,64 @@ svg.large-icon {
         padding: 20px;
         border: 1px solid #ccc;
         margin: 0 auto 30px;
+    }
+}
+
+.MuiPaper-root.MuiCard-root.stat-card,
+.stat-card {
+    &.bg-gray {
+        background: #F4F6F9;
+    }
+
+    .stat-title {
+        margin-bottom: 5px;
+        // font-size: 15px;
+    }
+
+    .stat-value {
+        font-size: 20px;
+        font-weight: 600;
+
+        span {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .baht {
+            font-weight: 500;
+            font-size: 16px;
+            margin-right: 4px;
+        }
+    }
+}
+
+.space-nowrap {
+    white-space: nowrap;
+}
+
+.ant-progress.ant-progress-circle.product-dashboard {
+    .ant-progress-inner {
+        width: 180px !important;
+        height: 180px !important;
+    }
+
+    span.ant-progress-text {
+        top: 40% !important;
+
+        .text-format {
+            display: flex;
+            flex-direction: column;
+
+            .desc {
+                font-weight: 500;
+            }
+
+            .value {
+                margin-top: 15px;
+                font-size: 35px;
+                font-weight: 600;
+            }
+        }
     }
 }
 
