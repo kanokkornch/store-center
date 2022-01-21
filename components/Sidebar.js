@@ -17,7 +17,8 @@ import {
 import { makeStyles } from '@material-ui/core/styles'
 import { APIshopLogout } from '../services/api'
 // import AppLogo from '../assets/images/icon-logo.png'
-import AppLogo from '../assets/images/shipfin-logo.jpeg'
+// import AppLogo from '../assets/images/shipfin-logo.jpeg'
+import AppLogo from '../assets/images/shopchill-icon-rounded.png'
 import Image from 'next/image'
 import { Menu as AntMenu, Dropdown } from 'antd'
 
@@ -75,8 +76,21 @@ function Sidebar() {
             role="presentation"
         >
             <div className='sidebar-haeder mx-2'>
-                <Image className='logo' src={AppLogo} alt="me" width="500" height="500" />
-                {/* <span>SHOPFiiN</span> */}
+                <div className='w-30-per me-3'>
+                    <Image
+                        className='logo'
+                        src={AppLogo}
+                        alt="me"
+                        // width="100"
+                        // height="100"
+                        layout='responsive'
+                    />
+                </div>
+                <div className='w-65-per d-flex flex-column'>
+                    <span className='app-name font-size-30'>Shop Chill</span>
+                    <span className='app-title font-size-20'>Seller Center</span>
+                </div>
+
             </div>
 
             <List component="nav">
