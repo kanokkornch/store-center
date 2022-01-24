@@ -35,6 +35,7 @@ import {
 } from '@material-ui/core'
 import dayjs from 'dayjs'
 import { numberFormat } from '../services/utills'
+import { v4 as uuidv4 } from 'uuid'
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -84,7 +85,7 @@ function EnhancedTableHead(props) {
                 </TableCell>
                 {headCells.map((headCell) => (
                     <TableCell
-                        key={headCell.id}
+                        key={`${headCell.id}_${uuidv4()}`}
                         align={headCell.numeric ? 'right' : 'left'}
                         padding={headCell.disablePadding ? 'none' : 'normal'}
                         sortDirection={orderBy === headCell.id ? order : false}
@@ -381,11 +382,9 @@ export default function OrderTable(props) {
                                                 </TableCell>
                                                 <TableCell style={{ minWidth: '260px' }} component="th" id={labelId} scope="row" padding="none">
                                                     <div className='py-3'>
-                                                        <Link href={`/order/${row.id}`}>
-                                                            <a>No. {row.id}</a>
-                                                        </Link>
+                                                        หมายเลขการสั่งซื้อ: <Link href={`/order/${row.id}`}><a>{row.id}</a></Link>
                                                         {row.order_detail.map(dt => (
-                                                            <div key={dt.product_id} className='d-flex table-header-content pt-3'>
+                                                            <div key={`${dt.product_id}_${uuidv4()}`} className='d-flex table-header-content pt-3'>
                                                                 <Image className='table-image' src={dt.product_thumbnail} width={40} height={40} />
                                                                 <div className='d-flex flex-column ms-1'>
                                                                     <span className='title mb-1'>{dt.product_name}</span>
@@ -396,16 +395,24 @@ export default function OrderTable(props) {
                                                                 </div>
                                                             </div>
                                                         ))}
-
-                                                        {/* {row.product_options.length > 0 ? row.product_options.map(pd => (
-                                                            <p><div>
-                                                                <img className='me-3 table-image' src={pd.thumbnail} alt="" />
-                                                            </div>
-                                                            </p>
-                                                        )) : null} */}
                                                     </div>
-
-
+                                                </TableCell>
+                                                <TableCell style={{ minWidth: '115px' }}>
+                                                    <div className='py-3'>
+                                                        <div className="invisible">หมายเลขการสั่งซื้อ: </div>
+                                                        {row.order_detail.map(dt => (
+                                                            <div key={`${dt.product_id}_${uuidv4()}`} className='d-flex table-header-content pt-3'>
+                                                                <Image className='table-image invisible' src={dt.product_thumbnail} width={40} height={40} />
+                                                                <div className='d-flex flex-column ms-1 w-100'>
+                                                                    <span className='title text-end mb-1'>{numberFormat(dt.product_sell_price)}</span>
+                                                                    {dt.product_option_name && <span className='invisible text-gray'>
+                                                                        {dt.product_option_name} : {dt.product_option_value}
+                                                                    </span>}
+                                                                    <span className='text-gray invisible'>จำนวน: {dt.product_qty}</span>
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
                                                 </TableCell>
                                                 <TableCell style={{ minWidth: '115px' }}>
                                                     {row.name}

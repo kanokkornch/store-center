@@ -62,7 +62,7 @@ function Label() {
                     </div>
                 </div>
                 {orders.map(order => (<>
-                    <div className="preview">
+                    <div key={order.id} className="preview">
                         {type === 'invoice' ? <>
                             <div className='text-end'>
                                 <div>{shopInfo.name}</div>
@@ -93,7 +93,7 @@ function Label() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {order.order_detail.map((item, idx) => <tr>
+                                    {order.order_detail.map((item, idx) => <tr key={item.id}>
                                         <th scope="row">{idx + 1}</th>
                                         <td>{item.product_name}</td>
                                         <td>{<div className='d-flex justify-content-between'>

@@ -166,6 +166,7 @@ function OrderPage() {
             <OrderTable
                 headCells={[
                     { id: 'id', numeric: false, disablePadding: true, label: 'หมายเลขการสั่งซื้อ' },
+                    { id: 'price', numeric: true, disablePadding: false, label: 'ราคาขายปลีก' },
                     { id: 'name', numeric: false, disablePadding: false, label: 'ชื่อผู้ซื้อ' },
                     { id: 'total_amount', numeric: true, disablePadding: false, label: 'รวม' },
                     { id: 'created_at', numeric: false, disablePadding: false, label: 'วันที่สั่งซื้อ' },

@@ -21,7 +21,7 @@ import { APIshopLogout } from '../services/api'
 import AppLogo from '../assets/images/shopchill-icon-rounded.png'
 import Image from 'next/image'
 import { Menu as AntMenu, Dropdown } from 'antd'
-
+import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 
 const useStyles = makeStyles({
     nested: {
@@ -115,6 +115,7 @@ function Sidebar() {
                                             [classes.menuActive]: `${menu.prefix}${sub.path}` === router.pathname,
                                             [classes.menu]: `${menu.prefix}${sub.path}` !== router.pathname,
                                         })}>
+                                            <ListItemIcon className='sub-menu-icon'><FiberManualRecordIcon /></ListItemIcon>
                                             <ListItemText primary={sub.title} />
                                         </ListItem>
                                     </Link>

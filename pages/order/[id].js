@@ -4,8 +4,12 @@ import { getOrderDetail } from '../../services/order'
 import { numberFormat } from '../../services/utills'
 import { message, Spin, Alert, Divider } from 'antd'
 import dayjs from 'dayjs'
-import { Card, CardContent, Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core'
+import {
+    Card, CardContent, Table, TableBody,
+    TableCell, TableHead, TableRow, Button
+} from '@material-ui/core'
 import Image from 'next/image'
+import Link from 'next/link'
 
 function OrderDetailPage() {
     const router = useRouter()
@@ -143,6 +147,17 @@ function OrderDetailPage() {
                             </TableBody>
                         </Table>
                     </div>
+                </div>
+                <div className="col-12 mt-3 text-end">
+                    <Card>
+                        <CardContent>
+                            <Button variant="outlined">
+                                <Link href="/order">
+                                    <a style={{ color: 'currentColor' }}>กลับหน้ารายการ</a>
+                                </Link>
+                            </Button>
+                        </CardContent>
+                    </Card>
                 </div>
             </div>
         </div>
