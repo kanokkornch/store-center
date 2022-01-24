@@ -48,6 +48,10 @@ function ProductPage() {
     const [modalSearchPrice, setModalSearchPrice] = useState('')
     const [filterOptions, setFilterOptions] = useState([])
     const [updateOption, setUpdateOption] = useState(null)
+    useEffect(() => {
+      document.title = 'จัดการสินค้า'
+    })
+    
     const handleChangeTab = (e, newValue) => {
         setValue(newValue)
         e.preventDefault()
@@ -331,6 +335,7 @@ function ProductPage() {
                 <Tab label="ทั้งหมด" {...a11yProps(0)} />
                 <Tab label="ใช้งานอยู่" {...a11yProps(1)} />
                 <Tab label="ไม่ได้ใช้งาน" {...a11yProps(2)} />
+                <Tab label="ลบออกแล้ว" {...a11yProps(3)} />
             </Tabs>
             <Card className='my-3'>
                 <CardContent>
@@ -416,6 +421,7 @@ function ProductPage() {
                     { id: 'name', numeric: false, disablePadding: true, label: 'ข้อมูลสินค้า' },
                     { id: 'sell_price', numeric: true, disablePadding: false, label: 'ราคา' },
                     { id: 'qty', numeric: true, disablePadding: false, label: 'จำนวน' },
+                    { id: 'rating', numeric: false, disablePadding: false, label: 'คะแนนสินค้า' },
                     { id: 'manage', numeric: false, disablePadding: false, label: '' },
                 ]}
                 rows={products.length > 0 ? products.map(pd => {

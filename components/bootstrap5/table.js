@@ -28,6 +28,7 @@ import {
     Drawer, Button, Popper, MenuItem, Grow, ClickAwayListener,
     Divider, MenuList,
 } from '@material-ui/core'
+import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord'
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -384,6 +385,9 @@ export default function EnhancedTable(props) {
                                                         <p><span>{row.qty}</span>
                                                         </p>
                                                     )) : null} */}
+                                                </TableCell>
+                                                <TableCell style={{ minWidth: '130px' }}>
+                                                    <FiberManualRecordIcon className='dot-success' fontSize='small'/> ดีเยี่ยม
                                                 </TableCell>
                                                 <TableCell align="center" style={{ minWidth: '150px' }}>
                                                     <Tooltip title="Edit">
