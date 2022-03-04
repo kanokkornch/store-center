@@ -16,10 +16,12 @@ import {
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import { APIshopLogout } from '../services/api'
-import AppLogo from '../assets/images/icon-logo.png'
+// import AppLogo from '../assets/images/icon-logo.png'
+// import AppLogo from '../assets/images/shipfin-logo.jpeg'
+import AppLogo from '../assets/images/shopchill-icon-rounded.png'
 import Image from 'next/image'
 import { Menu as AntMenu, Dropdown } from 'antd'
-
+import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 
 const useStyles = makeStyles({
     nested: {
@@ -31,6 +33,9 @@ const useStyles = makeStyles({
     },
     menu: {
         color: '#111'
+    },
+    primary: {
+        color: '#fff'
     }
 })
 function Sidebar() {
@@ -71,18 +76,36 @@ function Sidebar() {
             role="presentation"
         >
             <div className='sidebar-haeder mx-2'>
-                <Image src={AppLogo} alt="me" width="64" height="64" />
-                <span>SHOPFiiN</span>
+                <div className='w-30-per me-3'>
+                    <Image
+                        className='logo'
+                        src={AppLogo}
+                        alt="me"
+                        // width="100"
+                        // height="100"
+                        layout='responsive'
+                    />
+                </div>
+                <div className='w-65-per d-flex flex-column'>
+                    <span className='app-name font-size-30'>Shop Chill</span>
+                    <span className='app-title font-size-20'>Seller Center</span>
+                </div>
+
             </div>
 
             <List component="nav">
                 {SidebarData.map((menu, i) => (
                     <div key={menu.id}>
                         {menu.subNav && menu.subNav.length && <>
-                            <ListItem className={`main-menu ${index === i && indexOpen ? 'active' : ''}`} onClick={() => setOpenCollapseMeu(i, index !== i ? true : !indexOpen)}>
+                            {/* <ListItem className={`main-menu ${index === i && indexOpen ? 'active' : ''}`} onClick={() => setOpenCollapseMeu(i, index !== i ? true : !indexOpen)}>
                                 <ListItemIcon>{menu.icon}</ListItemIcon>
                                 <ListItemText primary={menu.title} />
-                                {/* {index === i && indexOpen ? <ExpandLess /> : <ExpandMore />} */}
+                                {index === i && indexOpen ? <ExpandLess /> : <ExpandMore />}
+                            </ListItem> */}
+                            <Divider />
+                            <ListItem>
+                                <ListItemIcon className='menu-item-icon'>{menu.icon}</ListItemIcon>
+                                <ListItemText className='menu-item-title' primary={menu.title} />
                             </ListItem>
                             {menu.subNav.map(sub => (
                                 // <Collapse key={sub.title} in={index === i && indexOpen} timeout="auto" unmountOnExit>
@@ -92,6 +115,7 @@ function Sidebar() {
                                             [classes.menuActive]: `${menu.prefix}${sub.path}` === router.pathname,
                                             [classes.menu]: `${menu.prefix}${sub.path}` !== router.pathname,
                                         })}>
+                                            <ListItemIcon className='sub-menu-icon'><FiberManualRecordIcon /></ListItemIcon>
                                             <ListItemText primary={sub.title} />
                                         </ListItem>
                                     </Link>
@@ -137,7 +161,7 @@ function Sidebar() {
         },
         {
             name: 'ตั้งค่าบัญชี',
-            path: '/dashbord',
+            path: '/account/other',
             onClick: () => { }
         },
         {
@@ -178,7 +202,7 @@ function Sidebar() {
                 </IconButton>
                 <div>
                     {showVerify && <Button color="primary"
-                        onClick={() => { }}>
+                        onClick={() => { window.location.assign('/account/profile') }}>
                         กรุณายืนยันตัวตน
                     </Button>}
                     {/* <IconButton

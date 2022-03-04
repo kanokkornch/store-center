@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link'
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
@@ -28,6 +28,7 @@ import {
     Drawer, Button, Popper, MenuItem, Grow, ClickAwayListener,
     Divider, MenuList,
 } from '@material-ui/core'
+import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord'
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -133,7 +134,7 @@ const useToolbarStyles = makeStyles((theme) => ({
 
 const EnhancedTableToolbar = (props) => {
     const classes = useToolbarStyles();
-    const { numSelected } = props;
+    const { numSelected, deleteProducts } = props;
 
     return (
         <Toolbar
@@ -152,12 +153,12 @@ const EnhancedTableToolbar = (props) => {
                 <></>
             )}
 
-            {numSelected > 0 ? (<></>
-                // <Tooltip title="Delete">
-                //     <IconButton aria-label="delete">
-                //         <DeleteIcon />
-                //     </IconButton>
-                // </Tooltip>
+            {numSelected > 0 ? (
+                <Tooltip title="Delete">
+                    <IconButton aria-label="delete" onClick={deleteProducts}>
+                        <DeleteIcon />
+                    </IconButton>
+                </Tooltip>
             ) : (
                 // <Tooltip title="Filter list">
                 //     <IconButton aria-label="filter list">
@@ -201,7 +202,7 @@ const useStyles = makeStyles((theme) => ({
 export default function EnhancedTable(props) {
     const { headCells, rows, notFound = false,
         handleDelete, listData, fetchProducts,
-        handleEditModal } = props
+        handleEditModal, handleDeleteSelected } = props
     const classes = useStyles();
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
@@ -211,6 +212,11 @@ export default function EnhancedTable(props) {
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [open, setOpen] = React.useState(false)
     const anchorRef = React.useRef(null)
+
+    const deleteProducts = () => {
+        handleDeleteSelected(selected)
+    }
+
 
     const handleToggle = () => {
         setOpen((prevOpen) => !prevOpen);
@@ -240,19 +246,19 @@ export default function EnhancedTable(props) {
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = rows.map((n) => n.name);
+            const newSelecteds = rows.map((n) => n.id);
             setSelected(newSelecteds);
             return;
         }
         setSelected([]);
     };
 
-    const handleClick = (event, name) => {
-        const selectedIndex = selected.indexOf(name);
+    const handleClick = (event, id) => {
+        const selectedIndex = selected.indexOf(id);
         let newSelected = [];
 
         if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
+            newSelected = newSelected.concat(selected, id);
         } else if (selectedIndex === 0) {
             newSelected = newSelected.concat(selected.slice(1));
         } else if (selectedIndex === selected.length - 1) {
@@ -294,7 +300,7 @@ export default function EnhancedTable(props) {
         <div className={classes.root}>
             <Spin spinning={false}>
                 <Paper className={classes.paper}>
-                    <EnhancedTableToolbar numSelected={selected.length} />
+                    <EnhancedTableToolbar numSelected={selected.length} deleteProducts={deleteProducts} />
                     <TableContainer>
                         <Table
                             className={classes.table}
@@ -317,7 +323,7 @@ export default function EnhancedTable(props) {
                                 {rows.length > 0 ? stableSort(rows, getComparator(order, orderBy))
                                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                     .map((row, index) => {
-                                        const isItemSelected = isSelected(row.name);
+                                        const isItemSelected = isSelected(row.id);
                                         const labelId = `enhanced-table-checkbox-${index}`;
 
                                         return (
@@ -333,7 +339,7 @@ export default function EnhancedTable(props) {
                                                     <input
                                                         className="form-check-input"
                                                         type="checkbox"
-                                                        onClick={(event) => handleClick(event, row.name)}
+                                                        onClick={(event) => handleClick(event, row.id)}
                                                         aria-labelledby={labelId}
                                                         checked={isItemSelected}>
                                                     </input>
@@ -343,7 +349,10 @@ export default function EnhancedTable(props) {
                                                         <div className='d-flex table-header-content'>
                                                             <img className='me-3 table-image' src={row.thumbnail} alt="" />
                                                             <div className='d-flex flex-column'>
-                                                                <span className='title mb-1'>{row.name}</span>
+                                                                {/* <span className='title mb-1'>{row.name}</span> */}
+                                                                <Link href={`/product/edit/${row.id}`}>
+                                                                    <a className='title mb-1'>{row.name}</a>
+                                                                </Link>
                                                                 <span className='text-gray'>Seller sku: {row.sku}</span>
                                                             </div>
                                                         </div>
@@ -359,7 +368,7 @@ export default function EnhancedTable(props) {
                                                 </TableCell>
                                                 <TableCell align="right" style={{ minWidth: '115px' }}>
                                                     <span className='text-gray'>฿</span>  {row.sell_price}
-                                                    <IconButton onClick={() => handleEditModal('price',row.id)} aria-label="delete" className='ms-2' size="small">
+                                                    <IconButton onClick={() => handleEditModal('price', row.id)} aria-label="delete" className='ms-2' size="small">
                                                         <BorderColorIcon fontSize="inherit" />
                                                     </IconButton>
                                                     {/* {row.product_options.length > 0 ? row.product_options.map(pd => (
@@ -369,13 +378,16 @@ export default function EnhancedTable(props) {
                                                 </TableCell>
                                                 <TableCell align="right" style={{ minWidth: '115px' }}>
                                                     {row.qty}
-                                                    <IconButton onClick={() => handleEditModal('stock',row.id)} aria-label="delete" className='ms-2' size="small">
+                                                    <IconButton onClick={() => handleEditModal('stock', row.id)} aria-label="delete" className='ms-2' size="small">
                                                         <BorderColorIcon fontSize="inherit" />
                                                     </IconButton>
                                                     {/* {row.product_options.length > 0 ? row.product_options.map(pd => (
                                                         <p><span>{row.qty}</span>
                                                         </p>
                                                     )) : null} */}
+                                                </TableCell>
+                                                <TableCell style={{ minWidth: '130px' }}>
+                                                    <FiberManualRecordIcon className='dot-success' fontSize='small'/> ดีเยี่ยม
                                                 </TableCell>
                                                 <TableCell align="center" style={{ minWidth: '150px' }}>
                                                     <Tooltip title="Edit">
